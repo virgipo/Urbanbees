@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Urban Bees</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1c2a1f; --ink-soft:#3c4a3e;
+  --honey:#d98e1f; --honey-deep:#b06f0e;
+  --paper:#faf7f0; --card:#ffffff; --line:#e7e0d2; --leaf:#5a7a52;
+  --display:'Fraunces',serif; --body:'Archivo',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;justify-content:center;align-items:flex-start}
+.phone{width:100%;max-width:430px;min-height:100dvh;background:var(--paper);position:relative;display:flex;flex-direction:column;box-shadow:0 0 80px rgba(0,0,0,.5)}
+.screen{flex:1;overflow-y:auto;padding-bottom:96px;display:none}
+.screen.active{display:block}
+.hex{clip-path:polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0% 50%)}
+.hex-frame{width:74px;height:80px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(150deg,#fff 0%,#f3ecdd 100%)}
+.hex-wrap{width:80px;height:86px;flex-shrink:0;background:var(--honey);display:flex;align-items:center;justify-content:center}
+.hex-wrap .hex-frame{width:74px;height:80px}
+.hero{background:var(--ink);color:var(--paper);padding:28px 22px 30px;position:relative;overflow:hidden}
+.honeycomb-bg{position:absolute;right:-30px;top:-20px;opacity:.14;pointer-events:none}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.brand-mark{width:34px;height:38px;background:var(--honey);display:flex;align-items:center;justify-content:center;font-size:18px}
+.brand h1{font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:.01em}
+.langtoggle{margin-left:auto;display:flex;gap:2px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:3px}
+.langtoggle button{background:none;border:none;color:#c8cfc4;font-family:var(--body);font-weight:700;font-size:11.5px;padding:5px 11px;border-radius:100px;cursor:pointer;letter-spacing:.04em}
+.langtoggle button.on{background:var(--honey);color:var(--ink)}
+.hero .tagline{font-family:var(--display);font-weight:500;font-size:30px;line-height:1.15;max-width:300px;margin-bottom:10px}
+.hero .tagline em{font-style:italic;color:var(--honey)}
+.hero .sub{font-size:13.5px;color:#c8cfc4;max-width:300px;line-height:1.5}
+.ship-badge{display:inline-flex;align-items:center;gap:7px;margin-top:16px;background:rgba(217,142,31,.15);border:1px solid rgba(217,142,31,.45);color:var(--honey);font-size:12px;font-weight:600;letter-spacing:.04em;padding:7px 12px;border-radius:100px;text-transform:uppercase}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:18px 22px 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:8px 15px;border-radius:100px;font-size:13px;font-weight:500;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;font-family:var(--body);transition:all .15s}
+.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--leaf);padding:18px 22px 10px}
+.plist{padding:0 22px;display:flex;flex-direction:column;gap:12px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform .15s}
+.pcard:active{transform:scale(.985)}
+.pinfo{flex:1;min-width:0}
+.pregion{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--honey-deep);margin-bottom:3px}
+.pname{font-family:var(--display);font-weight:600;font-size:16.5px;line-height:1.2;margin-bottom:3px}
+.pfarm{font-size:12.5px;color:#7a8276;margin-bottom:8px}
+.prow{display:flex;align-items:center;justify-content:space-between}
+.pprice{font-weight:700;font-size:15px}
+.pprice span{font-size:11.5px;font-weight:400;color:#9aa096}
+.addbtn{background:var(--ink);color:var(--paper);border:none;border-radius:100px;font-family:var(--body);font-weight:600;font-size:12.5px;padding:8px 14px;cursor:pointer;transition:background .15s}
+.addbtn:active{background:var(--honey-deep)}
+.addbtn.added{background:var(--leaf)}
+.fcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin:0 22px 12px;display:flex;gap:16px;align-items:flex-start}
+.fbody h3{font-family:var(--display);font-weight:600;font-size:17px;margin-bottom:2px}
+.floc{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--honey-deep);margin-bottom:8px}
+.fdesc{font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
+.fstats{display:flex;gap:14px;margin-top:10px}
+.fstat{font-size:12px;color:#7a8276}
+.fstat b{color:var(--ink);font-weight:700}
+.cart-empty{padding:60px 32px;text-align:center}
+.cart-empty .big{font-size:44px;margin-bottom:14px}
+.cart-empty h3{font-family:var(--display);font-weight:600;font-size:20px;margin-bottom:8px}
+.cart-empty p{font-size:14px;color:#7a8276;line-height:1.5}
+.citem{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:0 22px 10px}
+.citem .hex-frame{width:50px;height:54px;font-size:24px}
+.cinfo{flex:1}
+.cinfo .n{font-family:var(--display);font-weight:600;font-size:14.5px}
+.cinfo .f{font-size:12px;color:#7a8276}
+.qty{display:flex;align-items:center;gap:10px}
+.qty button{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--paper);font-size:15px;cursor:pointer;color:var(--ink);line-height:1}
+.qty span{font-weight:700;font-size:14px;min-width:16px;text-align:center}
+.summary{margin:16px 22px;background:var(--ink);color:var(--paper);border-radius:18px;padding:20px}
+.srow{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:#c8cfc4}
+.srow.ship{color:var(--honey)}
+.srow.tot{font-weight:700;font-size:17px;color:var(--paper);margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15)}
+.checkout{width:100%;margin-top:16px;background:var(--honey);color:var(--ink);border:none;border-radius:100px;padding:14px;font-family:var(--body);font-weight:700;font-size:15px;cursor:pointer}
+.checkout:active{background:var(--honey-deep);color:var(--paper)}
+.ship-note{font-size:12px;color:#9aa096;text-align:center;margin:14px 32px 0;line-height:1.5}
+.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(250,247,240,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 0 max(14px, env(safe-area-inset-bottom));z-index:50}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:var(--body);font-size:11px;font-weight:600;color:#9aa096;position:relative;width:80px}
+.tab .ico{font-size:21px;filter:grayscale(1);opacity:.55;transition:all .15s}
+.tab.on{color:var(--ink)}
+.tab.on .ico{filter:none;opacity:1}
+.badge{position:absolute;top:-4px;right:18px;background:var(--honey);color:var(--ink);font-size:10px;font-weight:700;min-width:17px;height:17px;border-radius:100px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+.toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);font-size:13px;font-weight:600;padding:10px 18px;border-radius:100px;opacity:0;pointer-events:none;transition:all .25s;z-index:60;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <div class="screen active" id="screen-shop">
+    <header class="hero">
+      <svg class="honeycomb-bg" width="220" height="240" viewBox="0 0 220 240" fill="none">
+        <g stroke="#d98e1f" stroke-width="1.5">
+          <polygon points="55,10 105,10 130,52 105,94 55,94 30,52"/>
+          <polygon points="130,52 180,52 205,94 180,136 130,136 105,94"/>
+          <polygon points="55,94 105,94 130,136 105,178 55,178 30,136"/>
+          <polygon points="130,136 180,136 205,178 180,220 130,220 105,178"/>
+        </g>
+      </svg>
+      <div class="brand">
+        <div class="brand-mark hex">🐝</div>
+        <h1>Urban Bees</h1>
+        <div class="langtoggle">
+          <button id="lang-it" onclick="setLang('it')">IT</button>
+          <button id="lang-en" onclick="setLang('en')">EN</button>
+        </div>
+      </div>
+      <p class="tagline" id="t-tagline"></p>
+      <p class="sub" id="t-sub"></p>
+      <div class="ship-badge">📦 <span id="t-shipbadge"></span></div>
+    </header>
+    <div class="chips" id="chips"></div>
+    <div class="eyebrow" id="t-eyebrow"></div>
+    <div class="plist" id="plist"></div>
+  </div>
+
+  <div class="screen" id="screen-farmers">
+    <header class="hero" style="padding-bottom:24px">
+      <div class="brand"><div class="brand-mark hex">🐝</div><h1>Urban Bees</h1></div>
+      <p class="tagline" style="font-size:26px" id="t-farmers-title"></p>
+      <p class="sub" id="t-farmers-sub"></p>
+    </header>
+    <div style="height:18px"></div>
+    <div id="flist"></div>
+  </div>
+
+  <div class="screen" id="screen-cart">
+    <header class="hero" style="padding-bottom:24px">
+      <div class="brand"><div class="brand-mark hex">🐝</div><h1>Urban Bees</h1></div>
+      <p class="tagline" style="font-size:26px" id="t-cart-title"></p>
+    </header>
+    <div style="height:18px"></div>
+    <div id="cartbody"></div>
+  </div>
+
+  <nav class="tabbar">
+    <button class="tab on" data-tab="shop"><span class="ico">🍯</span><span id="t-tab-shop"></span></button>
+    <button class="tab" data-tab="farmers"><span class="ico">🌾</span><span id="t-tab-farmers"></span></button>
+    <button class="tab" data-tab="cart"><span class="ico">🧺</span><span id="t-tab-cart"></span><span class="badge" id="badge" style="display:none">0</span></button>
+  </nav>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ============ i18n ============ */
+const I18N = {
+  it: {
+    tagline:'Il meglio della terra italiana, <em>direttamente a casa tua.</em>',
+    sub:'Piccoli produttori selezionati. Niente intermediari, niente scaffali — solo eccellenza dal campo alla tavola.',
+    shipbadge:'Spedizione sempre inclusa',
+    eyebrow:'Selezione della settimana',
+    farmersTitle:'I nostri <em>produttori</em>',
+    farmersSub:'Ogni produttore è visitato e verificato. Conosci chi coltiva quello che mangi.',
+    cartTitle:'Il tuo <em>carrello</em>',
+    tabShop:'Scopri', tabFarmers:'Produttori', tabCart:'Carrello',
+    all:'Tutti', add:'Aggiungi', added:'Aggiunto ✓', toastAdd:'Aggiunto al carrello',
+    emptyTitle:'Il carrello è vuoto',
+    emptyText:"Esplora la selezione della settimana e scopri i migliori prodotti artigianali d'Italia.",
+    subtotal:'Subtotale', shipping:'Spedizione', shipIncluded:'Inclusa — a carico del produttore',
+    total:'Totale', checkout:"Procedi all'ordine", checkoutToast:'Demo: checkout in arrivo!',
+    shipNote:'Ogni produttore spedisce direttamente dal proprio territorio.<br>Nessun costo di spedizione per te, mai.',
+    products:'prodotti', verified:'Verificato',
+    dec:',',
+  },
+  en: {
+    tagline:'The best of the Italian land, <em>straight to your door.</em>',
+    sub:'Hand-picked small producers. No middlemen, no shelves — pure excellence from the field to your table.',
+    shipbadge:'Shipping always included',
+    eyebrow:"This week's selection",
+    farmersTitle:'Our <em>producers</em>',
+    farmersSub:'Every producer is visited and verified. Know the people who grow what you eat.',
+    cartTitle:'Your <em>basket</em>',
+    tabShop:'Discover', tabFarmers:'Producers', tabCart:'Basket',
+    all:'All', add:'Add', added:'Added ✓', toastAdd:'Added to basket',
+    emptyTitle:'Your basket is empty',
+    emptyText:"Browse this week's selection and discover Italy's finest artisan products.",
+    subtotal:'Subtotal', shipping:'Shipping', shipIncluded:'Included — covered by the producer',
+    total:'Total', checkout:'Place your order', checkoutToast:'Demo: checkout coming soon!',
+    shipNote:'Every producer ships directly from their own region.<br>No shipping cost for you, ever.',
+    products:'products', verified:'Verified',
+    dec:'.',
+  }
+};
+
+/* ============ Catalog (database-shaped: swap for Supabase later) ============ */
+const PRODUCTS = [
+  {id:1, emoji:'🍯', price:14.50, farm:'Apicoltura Valle Sacra',
+   cat:{it:'Miele',en:'Honey'}, name:{it:'Miele di Castagno',en:'Chestnut Honey'},
+   region:{it:'Piemonte',en:'Piedmont'}, unit:{it:'vasetto 400g',en:'400g jar'}},
+  {id:2, emoji:'🫒', price:24.00, farm:'Frantoio Le Murge',
+   cat:{it:'Olio',en:'Olive Oil'}, name:{it:'Olio EVO Coratina',en:'Coratina Extra Virgin Olive Oil'},
+   region:{it:'Puglia',en:'Puglia'}, unit:{it:'bottiglia 750ml',en:'750ml bottle'}},
+  {id:3, emoji:'🧀', price:32.00, farm:'Caseificio San Pietro',
+   cat:{it:'Formaggi',en:'Cheese'}, name:{it:'Parmigiano 36 Mesi',en:'Parmigiano Aged 36 Months'},
+   region:{it:'Emilia-Romagna',en:'Emilia-Romagna'}, unit:{it:'forma 1kg',en:'1kg wedge'}},
+  {id:4, emoji:'🌸', price:18.00, farm:"Azienda Zafferano d'Abruzzo",
+   cat:{it:'Spezie',en:'Spices'}, name:{it:'Zafferano Purissimo',en:'Pure Saffron Threads'},
+   region:{it:'Abruzzo',en:'Abruzzo'}, unit:{it:'pistilli 1g',en:'1g threads'}},
+  {id:5, emoji:'🌶️', price:12.50, farm:'Salumificio Spilinga',
+   cat:{it:'Salumi',en:'Cured Meats'}, name:{it:"'Nduja Artigianale",en:"Artisan 'Nduja"},
+   region:{it:'Calabria',en:'Calabria'}, unit:{it:'500g',en:'500g'}},
+  {id:6, emoji:'🍇', price:45.00, farm:'Acetaia Ducale',
+   cat:{it:'Aceti',en:'Vinegars'}, name:{it:'Balsamico Invecchiato 12 Anni',en:'12-Year Aged Balsamic'},
+   region:{it:'Emilia-Romagna',en:'Emilia-Romagna'}, unit:{it:'100ml',en:'100ml'}},
+  {id:7, emoji:'🐝', price:22.00, farm:'Apiario Sardo Antico',
+   cat:{it:'Miele',en:'Honey'}, name:{it:'Miele di Corbezzolo',en:'Corbezzolo (Strawberry Tree) Honey'},
+   region:{it:'Sardegna',en:'Sardinia'}, unit:{it:'vasetto 250g',en:'250g jar'}},
+  {id:8, emoji:'🌾', price:8.50, farm:'Pastificio dei Campi',
+   cat:{it:'Pasta',en:'Pasta'}, name:{it:'Pasta di Gragnano IGP',en:'Gragnano IGP Pasta'},
+   region:{it:'Campania',en:'Campania'}, unit:{it:'500g',en:'500g'}},
+];
+const FARMERS = [
+  {emoji:'🐝', name:'Apicoltura Valle Sacra', products:6, rating:{it:'4,9',en:'4.9'},
+   loc:{it:'Canavese, Piemonte',en:'Canavese, Piedmont'},
+   desc:{it:'Tre generazioni di apicoltori nomadi. Le arnie seguono le fioriture di castagno e rododendro tra 600 e 1.800 metri.',
+         en:'Three generations of nomadic beekeepers. Their hives follow the chestnut and rhododendron blooms between 600 and 1,800 metres.'}},
+  {emoji:'🫒', name:'Frantoio Le Murge', products:4, rating:{it:'5,0',en:'5.0'},
+   loc:{it:'Andria, Puglia',en:'Andria, Puglia'},
+   desc:{it:"Olive Coratina raccolte a mano e molite entro 6 ore. Estrazione a freddo, acidità sotto lo 0,2%.",
+         en:'Coratina olives picked by hand and pressed within 6 hours. Cold extraction, acidity below 0.2%.'}},
+  {emoji:'🧀', name:'Caseificio San Pietro', products:5, rating:{it:'4,8',en:'4.8'},
+   loc:{it:'Parma, Emilia-Romagna',en:'Parma, Emilia-Romagna'},
+   desc:{it:'Latte di vacche rosse reggiane, stagionatura minima 24 mesi in cantina naturale.',
+         en:'Milk from red Reggiana cows, aged a minimum of 24 months in a natural cellar.'}},
+  {emoji:'🌸', name:"Azienda Zafferano d'Abruzzo", products:2, rating:{it:'5,0',en:'5.0'},
+   loc:{it:'Navelli, Abruzzo',en:'Navelli, Abruzzo'},
+   desc:{it:"Zafferano dell'altopiano di Navelli, raccolto all'alba e sfiorato a mano lo stesso giorno.",
+         en:'Saffron from the Navelli plateau, harvested at dawn and hand-separated the same day.'}},
+];
+
+/* ============ State ============ */
+let lang = (navigator.language||'it').toLowerCase().startsWith('it') ? 'it' : 'en';
+let cart = {};
+let activeCat = null;
+
+const T = () => I18N[lang];
+const money = v => '€' + v.toFixed(2).replace('.', T().dec);
+
+function setLang(l){
+  lang = l;
+  document.documentElement.lang = l;
+  renderStatic(); renderChips(); renderProducts(); renderFarmers();
+  if(document.getElementById('screen-cart').classList.contains('active')) renderCart();
+}
+
+function renderStatic(){
+  const t = T();
+  document.getElementById('lang-it').classList.toggle('on', lang==='it');
+  document.getElementById('lang-en').classList.toggle('on', lang==='en');
+  document.getElementById('t-tagline').innerHTML = t.tagline;
+  document.getElementById('t-sub').textContent = t.sub;
+  document.getElementById('t-shipbadge').textContent = t.shipbadge;
+  document.getElementById('t-eyebrow').textContent = t.eyebrow;
+  document.getElementById('t-farmers-title').innerHTML = t.farmersTitle;
+  document.getElementById('t-farmers-sub').textContent = t.farmersSub;
+  document.getElementById('t-cart-title').innerHTML = t.cartTitle;
+  document.getElementById('t-tab-shop').textContent = t.tabShop;
+  document.getElementById('t-tab-farmers').textContent = t.tabFarmers;
+  document.getElementById('t-tab-cart').textContent = t.tabCart;
+}
+
+function renderChips(){
+  const t = T();
+  if(activeCat===null || activeCat==='__all__') activeCat='__all__';
+  const cats = [...new Set(PRODUCTS.map(p=>p.cat[lang]))];
+  const el = document.getElementById('chips');
+  el.innerHTML='';
+  const mk = (label, key)=>{
+    const b=document.createElement('button');
+    b.className='chip'+(key===activeCat?' on':'');
+    b.textContent=label;
+    b.onclick=()=>{activeCat=key;renderChips();renderProducts();};
+    el.appendChild(b);
+  };
+  mk(t.all,'__all__');
+  cats.forEach(c=>mk(c,c));
+  if(activeCat!=='__all__' && !cats.includes(activeCat)){activeCat='__all__';renderChips();}
+}
+
+function renderProducts(){
+  const t = T();
+  const el=document.getElementById('plist');
+  el.innerHTML='';
+  PRODUCTS.filter(p=>activeCat==='__all__'||p.cat[lang]===activeCat).forEach(p=>{
+    const d=document.createElement('div');
+    d.className='pcard';
+    d.innerHTML=`
+      <div class="hex-wrap hex"><div class="hex-frame hex">${p.emoji}</div></div>
+      <div class="pinfo">
+        <div class="pregion">${p.region[lang]}</div>
+        <div class="pname">${p.name[lang]}</div>
+        <div class="pfarm">${p.farm}</div>
+        <div class="prow">
+          <div class="pprice">${money(p.price)} <span>/ ${p.unit[lang]}</span></div>
+          <button class="addbtn" data-id="${p.id}">${t.add}</button>
+        </div>
+      </div>`;
+    el.appendChild(d);
+  });
+  el.querySelectorAll('.addbtn').forEach(b=>{
+    b.onclick=(e)=>{
+      e.stopPropagation();
+      addToCart(+b.dataset.id);
+      b.textContent=T().added;b.classList.add('added');
+      setTimeout(()=>{b.textContent=T().add;b.classList.remove('added');},1200);
+    };
+  });
+}
+
+function renderFarmers(){
+  const t = T();
+  const el=document.getElementById('flist');
+  el.innerHTML='';
+  FARMERS.forEach(f=>{
+    const d=document.createElement('div');
+    d.className='fcard';
+    d.innerHTML=`
+      <div class="hex-wrap hex" style="width:64px;height:70px"><div class="hex-frame hex" style="width:58px;height:64px;font-size:28px">${f.emoji}</div></div>
+      <div class="fbody">
+        <h3>${f.name}</h3>
+        <div class="floc">${f.loc[lang]}</div>
+        <p class="fdesc">${f.desc[lang]}</p>
+        <div class="fstats">
+          <div class="fstat"><b>${f.products}</b> ${t.products}</div>
+          <div class="fstat">★ <b>${f.rating[lang]}</b></div>
+          <div class="fstat" style="color:var(--leaf);font-weight:600">✓ ${t.verified}</div>
+        </div>
+      </div>`;
+    el.appendChild(d);
+  });
+}
+
+function addToCart(id){
+  cart[id]=(cart[id]||0)+1;
+  updateBadge();
+  showToast(T().toastAdd);
+}
+function updateBadge(){
+  const n=Object.values(cart).reduce((a,b)=>a+b,0);
+  const b=document.getElementById('badge');
+  b.style.display=n?'flex':'none';
+  b.textContent=n;
+}
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),1400);
+}
+
+function renderCart(){
+  const t = T();
+  const el=document.getElementById('cartbody');
+  const ids=Object.keys(cart);
+  if(!ids.length){
+    el.innerHTML=`<div class="cart-empty"><div class="big">🧺</div><h3>${t.emptyTitle}</h3><p>${t.emptyText}</p></div>`;
+    return;
+  }
+  let html='', subtotal=0;
+  ids.forEach(id=>{
+    const p=PRODUCTS.find(x=>x.id==id);
+    const q=cart[id];
+    subtotal+=p.price*q;
+    html+=`<div class="citem">
+      <div class="hex-frame hex">${p.emoji}</div>
+      <div class="cinfo"><div class="n">${p.name[lang]}</div><div class="f">${p.farm} · ${money(p.price)}</div></div>
+      <div class="qty">
+        <button onclick="chQty(${id},-1)" aria-label="−">−</button><span>${q}</span>
+        <button onclick="chQty(${id},1)" aria-label="+">+</button>
+      </div>
+    </div>`;
+  });
+  html+=`<div class="summary">
+    <div class="srow"><span>${t.subtotal}</span><span>${money(subtotal)}</span></div>
+    <div class="srow ship"><span>${t.shipping}</span><span>${t.shipIncluded}</span></div>
+    <div class="srow tot"><span>${t.total}</span><span>${money(subtotal)}</span></div>
+    <button class="checkout" onclick="startCheckout()">${t.checkout}</button>
+  </div>
+  <p class="ship-note">${t.shipNote}</p>`;
+  el.innerHTML=html;
+}
+function chQty(id,d){
+  cart[id]+=d;
+  if(cart[id]<=0)delete cart[id];
+  updateBadge();renderCart();
+}
+
+/* ============ Checkout stub — wire to Stripe later ============
+   When ready: POST cart to /api/checkout (serverless function that
+   creates a Stripe Checkout Session) and redirect to session.url.
+   ============================================================== */
+async function startCheckout(){
+  showToast(T().checkoutToast);
+  // const res = await fetch('/api/checkout', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cart, lang})});
+  // const {url} = await res.json();
+  // window.location.href = url;
+}
+
+/* tabs */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById('screen-'+t.dataset.tab).classList.add('active');
+    if(t.dataset.tab==='cart')renderCart();
+  };
+});
+
+setLang(lang);
+</script>
+</body>
+</html>
