@@ -35,7 +35,8 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 .hero .tagline em{font-style:italic;color:var(--honey)}
 .hero .sub{font-size:13.5px;color:#c8cfc4;max-width:300px;line-height:1.5}
 .ship-badge{display:inline-flex;align-items:center;gap:7px;margin-top:16px;background:rgba(217,142,31,.15);border:1px solid rgba(217,142,31,.45);color:var(--honey);font-size:12px;font-weight:600;letter-spacing:.04em;padding:7px 12px;border-radius:100px;text-transform:uppercase}
-.backbtn{position:absolute;left:22px;top:24px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:var(--paper);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.backbtn{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:var(--paper);font-family:var(--body);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.backbtn:active{background:rgba(255,255,255,.22)}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:18px 22px 6px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;padding:8px 15px;border-radius:100px;font-size:13px;font-weight:500;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;font-family:var(--body);transition:all .15s}
@@ -135,9 +136,11 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
   </div>
 
   <div class="screen" id="screen-detail">
-    <header class="hero" style="padding-bottom:20px">
-      <button class="backbtn" onclick="closeDetail()" aria-label="Back">←</button>
-      <div class="brand"><div class="brand-mark hex">🐝</div><h1>Urban Bees</h1></div>
+    <header class="hero" style="padding-bottom:56px">
+      <div class="brand">
+        <button class="backbtn" onclick="closeDetail()" aria-label="Back">←</button>
+        <div class="brand-mark hex">🐝</div><h1>Urban Bees</h1>
+      </div>
       <p class="tagline" style="font-size:24px" id="d-name"></p>
       <p class="sub" id="d-farm"></p>
     </header>
@@ -197,7 +200,7 @@ const I18N = {
     subtotal:'Subtotale', shipping:'Spedizione', shipIncluded:'Inclusa — a carico del produttore',
     total:'Totale', checkout:'Procedi all\'ordine', checkoutToast:'Demo: checkout in arrivo!',
     shipNote:'Ogni apicoltore spedisce direttamente dal proprio territorio.<br>Nessun costo di spedizione per te, mai.',
-    products:'varietà', verified:'Verificato',
+    product:'varietà', products:'varietà', verified:'Verificato',
     charColor:'Colore', charHarvest:'Raccolta', charCrystal:'Cristallizzazione', charFlavor:'Sapore',
     aboutTitle:'Il miele', pairingTitle:'Abbinamenti consigliati',
     dec:',',
@@ -217,7 +220,7 @@ const I18N = {
     subtotal:'Subtotal', shipping:'Shipping', shipIncluded:'Included — covered by the producer',
     total:'Total', checkout:'Place your order', checkoutToast:'Demo: checkout coming soon!',
     shipNote:'Every beekeeper ships directly from their own region.<br>No shipping cost for you, ever.',
-    products:'varieties', verified:'Verified',
+    product:'variety', products:'varieties', verified:'Verified',
     charColor:'Color', charHarvest:'Harvest', charCrystal:'Crystallization', charFlavor:'Flavor',
     aboutTitle:'About this honey', pairingTitle:'Suggested pairings',
     dec:'.',
@@ -430,7 +433,7 @@ function renderFarmers(){
         <div class="floc">${f.loc[lang]}</div>
         <p class="fdesc">${f.desc[lang]}</p>
         <div class="fstats">
-          <div class="fstat"><b>${f.products}</b> ${t.products}</div>
+          <div class="fstat"><b>${f.products}</b> ${f.products===1?t.product:t.products}</div>
           <div class="fstat">★ <b>${f.rating[lang]}</b></div>
           <div class="fstat" style="color:var(--leaf);font-weight:600">✓ ${t.verified}</div>
         </div>
