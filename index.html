@@ -35,6 +35,8 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 .hero .tagline em{font-style:italic;color:var(--honey)}
 .hero .sub{font-size:13.5px;color:#c8cfc4;max-width:300px;line-height:1.5}
 .ship-badge{display:inline-flex;align-items:center;gap:7px;margin-top:16px;background:rgba(217,142,31,.15);border:1px solid rgba(217,142,31,.45);color:var(--honey);font-size:12px;font-weight:600;letter-spacing:.04em;padding:7px 12px;border-radius:100px;text-transform:uppercase}
+.backbtn{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:var(--paper);font-family:var(--body);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.backbtn:active{background:rgba(255,255,255,.22)}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:18px 22px 6px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;padding:8px 15px;border-radius:100px;font-size:13px;font-weight:500;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;font-family:var(--body);transition:all .15s}
@@ -79,6 +81,19 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 .checkout{width:100%;margin-top:16px;background:var(--honey);color:var(--ink);border:none;border-radius:100px;padding:14px;font-family:var(--body);font-weight:700;font-size:15px;cursor:pointer}
 .checkout:active{background:var(--honey-deep);color:var(--paper)}
 .ship-note{font-size:12px;color:#9aa096;text-align:center;margin:14px 32px 0;line-height:1.5}
+.dhex-wrap{display:flex;justify-content:center;margin:-34px 0 6px}
+.dhex-wrap .hex-wrap{width:96px;height:104px}
+.dhex-wrap .hex-frame{width:88px;height:96px;font-size:44px}
+.dpricebar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 22px 6px;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+.dprice{font-family:var(--display);font-weight:700;font-size:20px}
+.dprice span{display:block;font-size:11.5px;font-weight:400;color:#9aa096;font-family:var(--body)}
+.chargrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 22px}
+.charcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.charlabel{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--leaf);margin-bottom:4px}
+.charvalue{font-size:13px;font-weight:600;line-height:1.35}
+.ddesc-block{margin:0 22px 14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.ddesc-block h4{font-family:var(--display);font-weight:600;font-size:15px;margin-bottom:8px}
+.ddesc-block p{font-size:13.5px;line-height:1.55;color:var(--ink-soft)}
 .tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(250,247,240,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 0 max(14px, env(safe-area-inset-bottom));z-index:50}
 .tab{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:var(--body);font-size:11px;font-weight:600;color:#9aa096;position:relative;width:80px}
 .tab .ico{font-size:21px;filter:grayscale(1);opacity:.55;transition:all .15s}
@@ -141,6 +156,25 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
     <div class="plist" id="plist"></div>
   </div>
 
+  <div class="screen" id="screen-detail">
+    <header class="hero" style="padding-bottom:56px">
+      <div class="brand">
+        <button class="backbtn" onclick="closeDetail()" aria-label="Back">←</button>
+        <div class="brand-mark hex">🐝</div><h1>Urban Bees</h1>
+      </div>
+      <p class="tagline" style="font-size:24px" id="d-name"></p>
+      <p class="sub" id="d-farm"></p>
+    </header>
+    <div class="dhex-wrap" id="d-emoji"></div>
+    <div class="dpricebar">
+      <div class="dprice" id="d-price"></div>
+      <button class="addbtn" id="d-addbtn"></button>
+    </div>
+    <div class="chargrid" id="d-chars"></div>
+    <div class="ddesc-block" id="d-about"></div>
+    <div class="ddesc-block" id="d-pairing"></div>
+  </div>
+
   <div class="screen" id="screen-farmers">
     <header class="hero" style="padding-bottom:24px">
       <div class="brand"><div class="brand-mark hex">🐝</div><h1>Urban Bees</h1></div>
@@ -162,7 +196,7 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 
   <nav class="tabbar">
     <button class="tab on" data-tab="shop"><span class="ico">🍯</span><span id="t-tab-shop"></span></button>
-    <button class="tab" data-tab="farmers"><span class="ico">🌾</span><span id="t-tab-farmers"></span></button>
+    <button class="tab" data-tab="farmers"><span class="ico">🐝</span><span id="t-tab-farmers"></span></button>
     <button class="tab" data-tab="cart"><span class="ico">🧺</span><span id="t-tab-cart"></span><span class="badge" id="badge" style="display:none">0</span></button>
   </nav>
 
@@ -173,93 +207,162 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 /* ============ i18n ============ */
 const I18N = {
   it: {
-    tagline:'Il meglio della terra italiana, <em>direttamente a casa tua.</em>',
-    sub:'Piccoli produttori selezionati. Niente intermediari, niente scaffali — solo eccellenza dal campo alla tavola.',
+    tagline:'Il miele più autentico d\'Italia, <em>direttamente a casa tua.</em>',
+    sub:'Varietà rare di apicoltori indipendenti. Niente intermediari, niente scaffali — ogni vasetto racconta un territorio e una fioritura.',
     shipbadge:'Spedizione sempre inclusa',
-    eyebrow:'Selezione della settimana',
-    farmersTitle:'I nostri <em>produttori</em>',
-    farmersSub:'Ogni produttore è visitato e verificato. Conosci chi coltiva quello che mangi.',
+    eyebrow:'Le nostre varietà di miele',
+    farmersTitle:'I nostri <em>apicoltori</em>',
+    farmersSub:'Ogni apiario è visitato e verificato. Conosci chi produce il miele che porti in tavola.',
     cartTitle:'Il tuo <em>carrello</em>',
-    tabShop:'Scopri', tabFarmers:'Produttori', tabCart:'Carrello',
+    tabShop:'Scopri', tabFarmers:'Apicoltori', tabCart:'Carrello',
     all:'Tutti', add:'Aggiungi', added:'Aggiunto ✓', toastAdd:'Aggiunto al carrello',
     emptyTitle:'Il carrello è vuoto',
-    emptyText:"Esplora la selezione della settimana e scopri i migliori prodotti artigianali d'Italia.",
+    emptyText:'Esplora le nostre varietà di miele e scopri i sapori più rari del territorio italiano.',
     subtotal:'Subtotale', shipping:'Spedizione', shipIncluded:'Inclusa — a carico del produttore',
-    total:'Totale', checkout:"Procedi all'ordine", checkoutToast:'Demo: checkout in arrivo!',
-    shipNote:'Ogni produttore spedisce direttamente dal proprio territorio.<br>Nessun costo di spedizione per te, mai.',
-    products:'prodotti', verified:'Verificato',
+    total:'Totale', checkout:'Procedi all\'ordine', checkoutToast:'Demo: checkout in arrivo!',
+    shipNote:'Ogni apicoltore spedisce direttamente dal proprio territorio.<br>Nessun costo di spedizione per te, mai.',
+    product:'varietà', products:'varietà', verified:'Verificato',
+    charColor:'Colore', charHarvest:'Raccolta', charCrystal:'Cristallizzazione', charFlavor:'Sapore',
+    aboutTitle:'Il miele', pairingTitle:'Abbinamenti consigliati',
     dec:',',
   },
   en: {
-    tagline:'The best of the Italian land, <em>straight to your door.</em>',
-    sub:'Hand-picked small producers. No middlemen, no shelves — pure excellence from the field to your table.',
+    tagline:'The most authentic honey from Italy, <em>straight to your door.</em>',
+    sub:'Rare varieties from independent beekeepers. No middlemen, no shelves — every jar tells the story of a territory and a bloom.',
     shipbadge:'Shipping always included',
-    eyebrow:"This week's selection",
-    farmersTitle:'Our <em>producers</em>',
-    farmersSub:'Every producer is visited and verified. Know the people who grow what you eat.',
+    eyebrow:'Our honey varieties',
+    farmersTitle:'Our <em>beekeepers</em>',
+    farmersSub:'Every apiary is visited and verified. Meet the people behind the honey on your table.',
     cartTitle:'Your <em>basket</em>',
-    tabShop:'Discover', tabFarmers:'Producers', tabCart:'Basket',
+    tabShop:'Discover', tabFarmers:'Beekeepers', tabCart:'Basket',
     all:'All', add:'Add', added:'Added ✓', toastAdd:'Added to basket',
     emptyTitle:'Your basket is empty',
-    emptyText:"Browse this week's selection and discover Italy's finest artisan products.",
+    emptyText:"Browse our honey varieties and discover Italy's rarest regional flavours.",
     subtotal:'Subtotal', shipping:'Shipping', shipIncluded:'Included — covered by the producer',
     total:'Total', checkout:'Place your order', checkoutToast:'Demo: checkout coming soon!',
-    shipNote:'Every producer ships directly from their own region.<br>No shipping cost for you, ever.',
-    products:'products', verified:'Verified',
+    shipNote:'Every beekeeper ships directly from their own region.<br>No shipping cost for you, ever.',
+    product:'variety', products:'varieties', verified:'Verified',
+    charColor:'Color', charHarvest:'Harvest', charCrystal:'Crystallization', charFlavor:'Flavor',
+    aboutTitle:'About this honey', pairingTitle:'Suggested pairings',
     dec:'.',
   }
 };
 
 /* ============ Catalog (database-shaped: swap for Supabase later) ============ */
 const PRODUCTS = [
-  {id:1, emoji:'🍯', price:14.50, farm:'Apicoltura Valle Sacra',
-   cat:{it:'Miele',en:'Honey'}, name:{it:'Miele di Castagno',en:'Chestnut Honey'},
-   region:{it:'Piemonte',en:'Piedmont'}, unit:{it:'vasetto 400g',en:'400g jar'}},
-  {id:2, emoji:'🫒', price:24.00, farm:'Frantoio Le Murge',
-   cat:{it:'Olio',en:'Olive Oil'}, name:{it:'Olio EVO Coratina',en:'Coratina Extra Virgin Olive Oil'},
-   region:{it:'Puglia',en:'Puglia'}, unit:{it:'bottiglia 750ml',en:'750ml bottle'}},
-  {id:3, emoji:'🧀', price:32.00, farm:'Caseificio San Pietro',
-   cat:{it:'Formaggi',en:'Cheese'}, name:{it:'Parmigiano 36 Mesi',en:'Parmigiano Aged 36 Months'},
-   region:{it:'Emilia-Romagna',en:'Emilia-Romagna'}, unit:{it:'forma 1kg',en:'1kg wedge'}},
-  {id:4, emoji:'🌸', price:18.00, farm:"Azienda Zafferano d'Abruzzo",
-   cat:{it:'Spezie',en:'Spices'}, name:{it:'Zafferano Purissimo',en:'Pure Saffron Threads'},
-   region:{it:'Abruzzo',en:'Abruzzo'}, unit:{it:'pistilli 1g',en:'1g threads'}},
-  {id:5, emoji:'🌶️', price:12.50, farm:'Salumificio Spilinga',
-   cat:{it:'Salumi',en:'Cured Meats'}, name:{it:"'Nduja Artigianale",en:"Artisan 'Nduja"},
-   region:{it:'Calabria',en:'Calabria'}, unit:{it:'500g',en:'500g'}},
-  {id:6, emoji:'🍇', price:45.00, farm:'Acetaia Ducale',
-   cat:{it:'Aceti',en:'Vinegars'}, name:{it:'Balsamico Invecchiato 12 Anni',en:'12-Year Aged Balsamic'},
-   region:{it:'Emilia-Romagna',en:'Emilia-Romagna'}, unit:{it:'100ml',en:'100ml'}},
-  {id:7, emoji:'🐝', price:22.00, farm:'Apiario Sardo Antico',
-   cat:{it:'Miele',en:'Honey'}, name:{it:'Miele di Corbezzolo',en:'Corbezzolo (Strawberry Tree) Honey'},
-   region:{it:'Sardegna',en:'Sardinia'}, unit:{it:'vasetto 250g',en:'250g jar'}},
-  {id:8, emoji:'🌾', price:8.50, farm:'Pastificio dei Campi',
-   cat:{it:'Pasta',en:'Pasta'}, name:{it:'Pasta di Gragnano IGP',en:'Gragnano IGP Pasta'},
-   region:{it:'Campania',en:'Campania'}, unit:{it:'500g',en:'500g'}},
+  {id:1, emoji:'🌼', price:13.50, farm:'Apicoltura Valle Sacra',
+   cat:{it:'Delicato',en:'Delicate'}, name:{it:'Miele di Acacia',en:'Acacia Honey'},
+   region:{it:'Piemonte',en:'Piedmont'}, unit:{it:'vasetto 400g',en:'400g jar'},
+   color:{it:'Ambra chiarissimo, quasi trasparente',en:'Very pale amber, almost transparent'},
+   harvest:{it:'Maggio',en:'May'},
+   crystal:{it:'Molto lenta — resta liquido per anni',en:'Very slow — stays liquid for years'},
+   flavor:{it:'Delicato, note di vaniglia e fiori bianchi',en:'Delicate, notes of vanilla and white flowers'},
+   pairing:{it:'Yogurt, formaggi freschi, tisane',en:'Yogurt, fresh cheeses, herbal tea'},
+   desc:{it:'Raccolto dalle fioriture di robinia lungo i pendii del Canavese, è il miele più delicato del nostro catalogo: quasi incolore, non copre mai il sapore di ciò che accompagna. Grazie all\'alto contenuto di fruttosio resta liquido per anni, senza mai cristallizzare.',
+         en:'Harvested from black locust blossoms along the Canavese hillsides, it\'s the most delicate honey in our catalogue — nearly colourless and it never overpowers what it\'s paired with. Thanks to its high fructose content, it stays liquid for years without crystallising.'}},
+  {id:2, emoji:'🌰', price:15.00, farm:'Apicoltura Valle Sacra',
+   cat:{it:'Deciso',en:'Bold'}, name:{it:'Miele di Castagno',en:'Chestnut Honey'},
+   region:{it:'Piemonte',en:'Piedmont'}, unit:{it:'vasetto 400g',en:'400g jar'},
+   color:{it:'Ambra scuro con riflessi rossastri',en:'Dark amber with reddish highlights'},
+   harvest:{it:'Giugno–Luglio',en:'June–July'},
+   crystal:{it:'Lenta — tende a restare liquido',en:'Slow — tends to stay liquid'},
+   flavor:{it:'Intenso, tannico, leggermente amaro',en:'Bold, tannic, slightly bitter'},
+   pairing:{it:'Formaggi stagionati, carni rosse, pane nero',en:'Aged cheeses, red meats, dark bread'},
+   desc:{it:'Prodotto sugli stessi crinali dell\'acacia ma un mese più tardi, quando fioriscono i castagneti secolari del Canavese. È il miele più identitario della cucina italiana: intenso e tannico, capace di reggere il confronto con un formaggio stagionato o una fetta di pane nero.',
+         en:'Produced on the same ridges as the acacia, a month later, when the centuries-old chestnut groves of Canavese bloom. It\'s the most iconic honey in Italian cuisine — bold and tannic, robust enough to stand up to an aged cheese or a slice of dark bread.'}},
+  {id:3, emoji:'🌳', price:26.00, farm:'Apiario Sardo Antico',
+   cat:{it:'Amaro',en:'Bitter'}, name:{it:'Miele di Corbezzolo',en:'Strawberry Tree Honey'},
+   region:{it:'Sardegna',en:'Sardinia'}, unit:{it:'vasetto 250g',en:'250g jar'},
+   color:{it:'Bruno scuro, quasi grigiastro',en:'Dark brown, almost grey'},
+   harvest:{it:'Novembre–Dicembre (raro)',en:'November–December (rare)'},
+   crystal:{it:'Rapida, cristalli fini',en:'Fast, fine crystals'},
+   flavor:{it:'Amaro deciso, note di caffè e liquirizia',en:'Strongly bitter, notes of coffee and liquorice'},
+   pairing:{it:'Pecorino stagionato, cioccolato fondente',en:'Aged pecorino, dark chocolate'},
+   desc:{it:'Una delle rarità assolute dell\'apicoltura mondiale: il corbezzolo fiorisce in piena autunno, quando quasi nessun\'altra pianta è attiva, e le api ne raccolgono pochissimo. Il risultato è un miele amaro e intenso, con note di caffè tostato e liquirizia, che in Sardegna si mangia tradizionalmente col pane carasau.',
+         en:'One of the true rarities of world beekeeping: the strawberry tree blooms in deep autumn, when almost nothing else is flowering, so bees gather very little of it. The result is a bitter, intense honey with notes of roasted coffee and liquorice, traditionally eaten in Sardinia with carasau bread.'}},
+  {id:4, emoji:'🌸', price:10.50, farm:'Apiario dei Colli Umbri',
+   cat:{it:'Delicato',en:'Delicate'}, name:{it:'Miele Millefiori',en:'Wildflower Honey'},
+   region:{it:'Umbria',en:'Umbria'}, unit:{it:'vasetto 500g',en:'500g jar'},
+   color:{it:'Ambra dorato, variabile per stagione',en:'Golden amber, varies by season'},
+   harvest:{it:'Aprile–Settembre',en:'April–September'},
+   crystal:{it:'Media — cristallizza in pochi mesi',en:'Medium — crystallizes within months'},
+   flavor:{it:'Equilibrato, floreale, versatile',en:'Balanced, floral, versatile'},
+   pairing:{it:'Colazione di tutti i giorni, dolci, tè',en:'Everyday breakfast, desserts, tea'},
+   desc:{it:'Il miele più antico e versatile: nasce quando le api bottinano su decine di specie diverse nello stesso raggio di volo, senza una fioritura dominante. Ogni vasetto è leggermente diverso dal precedente — un\'istantanea della campagna umbra in quella particolare settimana.',
+         en:'The oldest and most versatile honey: it comes from bees foraging across dozens of different species within the same flight range, with no single dominant bloom. Every jar is slightly different from the last — a snapshot of the Umbrian countryside in that particular week.'}},
+  {id:5, emoji:'🌿', price:12.00, farm:'Apicoltura Maremma Selvatica',
+   cat:{it:'Deciso',en:'Bold'}, name:{it:'Miele di Eucalipto',en:'Eucalyptus Honey'},
+   region:{it:'Toscana',en:'Tuscany'}, unit:{it:'vasetto 400g',en:'400g jar'},
+   color:{it:'Ambra scuro opaco',en:'Dark, opaque amber'},
+   harvest:{it:'Luglio–Agosto',en:'July–August'},
+   crystal:{it:'Rapida, consistenza cremosa',en:'Fast, creamy texture'},
+   flavor:{it:'Maltato, balsamico, retrogusto di liquirizia',en:'Malty, balsamic, liquorice aftertaste'},
+   pairing:{it:'Tisane per la gola, ricotta, torte speziate',en:'Throat-soothing teas, ricotta, spiced cakes'},
+   desc:{it:'Le arnie seguono i filari di eucalipto piantati oltre un secolo fa per prosciugare le paludi maremmane. Il miele che ne risulta è scuro, maltato, con un caratteristico retrogusto balsamico — da sempre usato nella tradizione contadina toscana contro il mal di gola.',
+         en:'Hives follow the eucalyptus rows planted more than a century ago to drain the Maremma marshland. The resulting honey is dark and malty, with a distinctive balsamic aftertaste — long used in Tuscan folk tradition to soothe sore throats.'}},
+  {id:6, emoji:'🍃', price:16.00, farm:'Apicoltura delle Dolomiti',
+   cat:{it:'Aromatico',en:'Aromatic'}, name:{it:'Miele di Tiglio',en:'Linden (Lime) Honey'},
+   region:{it:'Alto Adige',en:'South Tyrol'}, unit:{it:'vasetto 300g',en:'300g jar'},
+   color:{it:'Ambra chiaro con riflessi verdognoli',en:'Light amber with greenish tints'},
+   harvest:{it:'Giugno–Luglio',en:'June–July'},
+   crystal:{it:'Medio-veloce, grana fine',en:'Medium-fast, fine grain'},
+   flavor:{it:'Fresco, mentolato, leggermente balsamico',en:'Fresh, minty, slightly balsamic'},
+   pairing:{it:'Infusi serali, frutta secca, formaggi erborinati',en:'Evening infusions, dried fruit, blue cheese'},
+   desc:{it:'I tigli secolari della Val Pusteria fioriscono per una finestra brevissima e imprevedibile, spesso meno di due settimane. Chi riesce a raccoglierlo ottiene un miele fresco e balsamico, con un aroma mentolato che ricorda il fiore stesso.',
+         en:'The centuries-old lime trees of Val Pusteria bloom for a very short, unpredictable window — often less than two weeks. Beekeepers who manage to harvest it get a fresh, balsamic honey with a minty aroma reminiscent of the blossom itself.'}},
+  {id:7, emoji:'🌱', price:19.00, farm:'Apiario Sardo Antico',
+   cat:{it:'Aromatico',en:'Aromatic'}, name:{it:'Miele di Timo',en:'Thyme Honey'},
+   region:{it:'Sardegna',en:'Sardinia'}, unit:{it:'vasetto 250g',en:'250g jar'},
+   color:{it:'Ambra dorato intenso',en:'Deep golden amber'},
+   harvest:{it:'Maggio–Giugno',en:'May–June'},
+   crystal:{it:'Lenta',en:'Slow'},
+   flavor:{it:'Aromatico, speziato, note di macchia mediterranea',en:'Aromatic, spicy, notes of Mediterranean scrub'},
+   pairing:{it:'Formaggi di capra, verdure grigliate',en:'Goat cheese, grilled vegetables'},
+   desc:{it:'Raccolto tra i cespugli di timo selvatico della macchia mediterranea sarda, è un miele aromatico e speziato, tradizionalmente considerato un rimedio naturale contro tosse e mal di gola grazie alle proprietà balsamiche del timo.',
+         en:'Gathered among the wild thyme scrub of the Sardinian maquis, this is an aromatic, spiced honey traditionally considered a natural remedy for coughs and sore throats, thanks to thyme\'s balsamic properties.'}},
+  {id:8, emoji:'🐝', price:48.00, farm:'Wild Coast Apiaries',
+   cat:{it:'Raro',en:'Rare'}, name:{it:'Miele di Manuka',en:'Manuka Honey'},
+   region:{it:'Nuova Zelanda',en:'New Zealand'}, unit:{it:'vasetto 250g · UMF 10+',en:'250g jar · UMF 10+'},
+   color:{it:'Bruno scuro, denso',en:'Dark brown, dense'},
+   harvest:{it:'Dicembre–Gennaio (emisfero australe)',en:'December–January (Southern Hemisphere)'},
+   crystal:{it:'Naturalmente cremoso, non cristallizza',en:'Naturally creamy, doesn\'t crystallize'},
+   flavor:{it:'Intenso, terroso, leggermente medicinale',en:'Intense, earthy, slightly medicinal'},
+   pairing:{it:'Da solo a digiuno, o con zenzero e limone',en:'On its own, or with ginger and lemon'},
+   desc:{it:'Il nostro unico miele non italiano: prodotto nella macchia costiera selvatica di manuka in Nuova Zelanda, è famoso per l\'alto contenuto di metilgliossale (MGO), che gli conferisce proprietà antibatteriche uniche. Ogni lotto è certificato secondo lo standard UMF.',
+         en:'Our only non-Italian honey: produced in the wild coastal manuka scrub of New Zealand, it\'s famous for its high methylglyoxal (MGO) content, which gives it unique antibacterial properties. Every batch is UMF-certified.'}},
 ];
 const FARMERS = [
-  {emoji:'🐝', name:'Apicoltura Valle Sacra', products:6, rating:{it:'4,9',en:'4.9'},
+  {emoji:'🌰', name:'Apicoltura Valle Sacra', products:2, rating:{it:'4,9',en:'4.9'},
    loc:{it:'Canavese, Piemonte',en:'Canavese, Piedmont'},
-   desc:{it:'Tre generazioni di apicoltori nomadi. Le arnie seguono le fioriture di castagno e rododendro tra 600 e 1.800 metri.',
-         en:'Three generations of nomadic beekeepers. Their hives follow the chestnut and rhododendron blooms between 600 and 1,800 metres.'}},
-  {emoji:'🫒', name:'Frantoio Le Murge', products:4, rating:{it:'5,0',en:'5.0'},
-   loc:{it:'Andria, Puglia',en:'Andria, Puglia'},
-   desc:{it:"Olive Coratina raccolte a mano e molite entro 6 ore. Estrazione a freddo, acidità sotto lo 0,2%.",
-         en:'Coratina olives picked by hand and pressed within 6 hours. Cold extraction, acidity below 0.2%.'}},
-  {emoji:'🧀', name:'Caseificio San Pietro', products:5, rating:{it:'4,8',en:'4.8'},
-   loc:{it:'Parma, Emilia-Romagna',en:'Parma, Emilia-Romagna'},
-   desc:{it:'Latte di vacche rosse reggiane, stagionatura minima 24 mesi in cantina naturale.',
-         en:'Milk from red Reggiana cows, aged a minimum of 24 months in a natural cellar.'}},
-  {emoji:'🌸', name:"Azienda Zafferano d'Abruzzo", products:2, rating:{it:'5,0',en:'5.0'},
-   loc:{it:'Navelli, Abruzzo',en:'Navelli, Abruzzo'},
-   desc:{it:"Zafferano dell'altopiano di Navelli, raccolto all'alba e sfiorato a mano lo stesso giorno.",
-         en:'Saffron from the Navelli plateau, harvested at dawn and hand-separated the same day.'}},
+   desc:{it:'Tre generazioni di apicoltori nomadi. Le arnie seguono le fioriture di acacia e castagno tra 600 e 1.800 metri.',
+         en:'Three generations of nomadic beekeepers. Their hives follow the acacia and chestnut blooms between 600 and 1,800 metres.'}},
+  {emoji:'🌳', name:'Apiario Sardo Antico', products:2, rating:{it:'4,8',en:'4.8'},
+   loc:{it:'Ogliastra, Sardegna',en:'Ogliastra, Sardinia'},
+   desc:{it:'Arnie posizionate lungo la costa selvaggia sarda, tra corbezzoli e cespugli di timo. Produzione limitatissima e stagionale.',
+         en:'Hives placed along the wild Sardinian coast, among strawberry trees and thyme scrub. Extremely limited, seasonal production.'}},
+  {emoji:'🌸', name:'Apiario dei Colli Umbri', products:1, rating:{it:'4,7',en:'4.7'},
+   loc:{it:'Valnerina, Umbria',en:'Valnerina, Umbria'},
+   desc:{it:'Un piccolo apiario familiare tra i colli umbri, dove le api bottinano su decine di specie fiorite spontanee.',
+         en:'A small family apiary among the Umbrian hills, where the bees forage across dozens of wild flowering species.'}},
+  {emoji:'🌿', name:'Apicoltura Maremma Selvatica', products:1, rating:{it:'4,8',en:'4.8'},
+   loc:{it:'Maremma, Toscana',en:'Maremma, Tuscany'},
+   desc:{it:'Arnie mobili seguono le fioriture degli eucalipteti costieri piantati a inizio \'900 per bonificare le paludi.',
+         en:'Mobile hives follow the blooms of the coastal eucalyptus groves planted in the early 1900s to reclaim the marshland.'}},
+  {emoji:'🍃', name:'Apicoltura delle Dolomiti', products:1, rating:{it:'5,0',en:'5.0'},
+   loc:{it:'Val Pusteria, Alto Adige',en:'Val Pusteria, South Tyrol'},
+   desc:{it:'Apiario di montagna tra i tigli secolari delle vallate alpine, con una raccolta brevissima e imprevedibile.',
+         en:'A mountain apiary among centuries-old lime trees in the alpine valleys — a very short, unpredictable harvest window.'}},
+  {emoji:'🐝', name:'Wild Coast Apiaries', products:1, rating:{it:'4,9',en:'4.9'},
+   loc:{it:'Northland, Nuova Zelanda',en:'Northland, New Zealand'},
+   desc:{it:'Il nostro unico partner extra-europeo: arnie nella macchia costiera di manuka selvatico, ogni lotto certificato UMF.',
+         en:'Our only non-European partner: hives set among wild coastal manuka scrub, every batch UMF-certified.'}},
 ];
 
 /* ============ State ============ */
 let lang = (navigator.language||'it').toLowerCase().startsWith('it') ? 'it' : 'en';
 let cart = {};
 let activeCat = null;
+let currentDetailId = null;
 
 const T = () => I18N[lang];
 const money = v => '€' + v.toFixed(2).replace('.', T().dec);
@@ -269,6 +372,7 @@ function setLang(l){
   document.documentElement.lang = l;
   renderStatic(); renderChips(); renderProducts(); renderFarmers();
   if(document.getElementById('screen-cart').classList.contains('active')) renderCart();
+  if(document.getElementById('screen-detail').classList.contains('active') && currentDetailId!=null) renderDetail(currentDetailId);
 }
 
 function renderStatic(){
@@ -323,6 +427,7 @@ function renderProducts(){
           <button class="addbtn" data-id="${p.id}">${t.add}</button>
         </div>
       </div>`;
+    d.onclick=()=>openDetail(p.id);
     el.appendChild(d);
   });
   el.querySelectorAll('.addbtn').forEach(b=>{
@@ -349,7 +454,7 @@ function renderFarmers(){
         <div class="floc">${f.loc[lang]}</div>
         <p class="fdesc">${f.desc[lang]}</p>
         <div class="fstats">
-          <div class="fstat"><b>${f.products}</b> ${t.products}</div>
+          <div class="fstat"><b>${f.products}</b> ${f.products===1?t.product:t.products}</div>
           <div class="fstat">★ <b>${f.rating[lang]}</b></div>
           <div class="fstat" style="color:var(--leaf);font-weight:600">✓ ${t.verified}</div>
         </div>
@@ -357,6 +462,58 @@ function renderFarmers(){
     el.appendChild(d);
   });
 }
+
+/* ============ Honey detail page (linked via #honey-<id>) ============ */
+function openDetail(id){
+  location.hash = 'honey-'+id;
+}
+function closeDetail(){
+  if(location.hash){ history.back(); } else { switchTab('shop'); }
+}
+function renderDetail(id){
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(!p) return;
+  currentDetailId = id;
+  const t = T();
+  document.getElementById('d-name').innerHTML = p.name[lang];
+  document.getElementById('d-farm').textContent = p.farm+' · '+p.region[lang];
+  document.getElementById('d-emoji').innerHTML = `<div class="hex-wrap hex"><div class="hex-frame hex">${p.emoji}</div></div>`;
+  document.getElementById('d-price').innerHTML = `${money(p.price)}<span>${p.unit[lang]}</span>`;
+  const btn = document.getElementById('d-addbtn');
+  btn.textContent = t.add;
+  btn.classList.remove('added');
+  btn.onclick = ()=>{
+    addToCart(p.id);
+    btn.textContent = T().added; btn.classList.add('added');
+    setTimeout(()=>{btn.textContent=T().add;btn.classList.remove('added');},1200);
+  };
+  document.getElementById('d-chars').innerHTML = `
+    <div class="charcard"><div class="charlabel">${t.charColor}</div><div class="charvalue">${p.color[lang]}</div></div>
+    <div class="charcard"><div class="charlabel">${t.charHarvest}</div><div class="charvalue">${p.harvest[lang]}</div></div>
+    <div class="charcard"><div class="charlabel">${t.charCrystal}</div><div class="charvalue">${p.crystal[lang]}</div></div>
+    <div class="charcard"><div class="charlabel">${t.charFlavor}</div><div class="charvalue">${p.flavor[lang]}</div></div>`;
+  document.getElementById('d-about').innerHTML = `<h4>${t.aboutTitle}</h4><p>${p.desc[lang]}</p>`;
+  document.getElementById('d-pairing').innerHTML = `<h4>${t.pairingTitle}</h4><p>${p.pairing[lang]}</p>`;
+}
+function showDetailScreen(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-detail').classList.add('active');
+}
+function routeHash(){
+  const h = location.hash;
+  if(h.startsWith('#honey-')){
+    const id = +h.slice(7);
+    if(PRODUCTS.some(p=>p.id===id)){
+      renderDetail(id);
+      showDetailScreen();
+      return;
+    }
+  }
+  if(document.getElementById('screen-detail').classList.contains('active')){
+    switchTab('shop');
+  }
+}
+window.addEventListener('hashchange', routeHash);
 
 function addToCart(id){
   cart[id]=(cart[id]||0)+1;
@@ -427,17 +584,21 @@ async function startCheckout(){
 }
 
 /* tabs */
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x.dataset.tab===name));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  if(name==='cart') renderCart();
+}
 document.querySelectorAll('.tab').forEach(t=>{
   t.onclick=()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
-    t.classList.add('on');
-    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-    document.getElementById('screen-'+t.dataset.tab).classList.add('active');
-    if(t.dataset.tab==='cart')renderCart();
+    if(location.hash) history.pushState('', document.title, window.location.pathname+window.location.search);
+    switchTab(t.dataset.tab);
   };
 });
 
 setLang(lang);
+routeHash();
 </script>
 </body>
 </html>

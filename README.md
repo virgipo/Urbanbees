@@ -1,13 +1,18 @@
 # Urban Bees 🐝
 
-High-end marketplace connecting Italy's finest small producers directly with consumers.
+High-end marketplace connecting Italy's finest independent beekeepers directly with consumers.
 Shipping is always paid by the producer — never the buyer.
 
 ## What's here
 
 - `index.html` — the full bilingual (IT/EN) storefront. Auto-detects browser language,
-  with a manual IT/EN toggle in the header. Product catalog is a JS array shaped like
-  a database table, ready to be swapped for Supabase queries.
+  with a manual IT/EN toggle in the header. Catalog is a curated list of Italian
+  (plus one imported Manuka) honey varieties — acacia, chestnut, strawberry tree,
+  wildflower, eucalyptus, linden, thyme — shaped as a JS array ready to be swapped
+  for Supabase queries.
+- Tapping a honey card opens a shareable detail page (`#honey-<id>`) with its
+  characteristics — color, harvest window, crystallization behavior, flavor notes —
+  plus a full description and suggested pairings.
 - Checkout button is stubbed: see `startCheckout()` in `index.html` for where the
   Stripe Checkout call plugs in.
 
