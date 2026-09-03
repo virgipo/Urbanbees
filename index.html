@@ -106,8 +106,7 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 
 /* ============ Desktop / wide-viewport layout ============ */
 @media (min-width: 860px){
-  body{align-items:center;padding:40px 24px}
-  .phone{max-width:1180px;min-height:auto;border-radius:22px;box-shadow:0 30px 100px rgba(0,0,0,.55)}
+  .phone{max-width:none;border-radius:0;box-shadow:none}
   .screen{padding-bottom:110px}
   .hero{padding:52px 56px 44px}
   .brand{margin-bottom:30px}
@@ -116,10 +115,10 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
   .hero .sub{font-size:15px;max-width:520px}
   .chips{padding:26px 56px 8px}
   .eyebrow{padding:22px 56px 14px;font-size:12px}
-  .plist{padding:0 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+  .plist{max-width:1600px;margin:0 auto;padding:0 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
   .pcard{transition:transform .15s,box-shadow .15s}
   .pcard:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(28,42,31,.1)}
-  #flist{padding:0 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+  #flist{max-width:1600px;margin:0 auto;padding:0 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
   .fcard{margin:0}
   #cartbody{max-width:640px;margin:0 auto}
   #screen-detail>.dpricebar,#screen-detail>.chargrid,#screen-detail>.ddesc-block{max-width:640px;margin-left:auto;margin-right:auto}
