@@ -41,11 +41,6 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 .chips::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;padding:8px 15px;border-radius:100px;font-size:13px;font-weight:500;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;font-family:var(--body);transition:all .15s}
 .chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.trust{padding:22px 22px 4px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.trust-item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 13px}
-.trust-ico{font-size:19px;margin-bottom:7px}
-.trust-title{font-family:var(--display);font-weight:600;font-size:13px;line-height:1.25;margin-bottom:4px}
-.trust-desc{font-size:11.5px;color:var(--ink-soft);line-height:1.45}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--leaf);padding:18px 22px 10px}
 .plist{padding:0 22px;display:flex;flex-direction:column;gap:12px}
 .pcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform .15s}
@@ -123,11 +118,6 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
   .plist{max-width:1600px;margin:0 auto;padding:0 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
   .pcard{transition:transform .15s,box-shadow .15s}
   .pcard:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(28,42,31,.1)}
-  .trust{max-width:1600px;margin:0 auto;padding:26px 56px 4px;grid-template-columns:repeat(4,1fr);gap:16px}
-  .trust-item{padding:18px 16px}
-  .trust-ico{font-size:22px}
-  .trust-title{font-size:14.5px}
-  .trust-desc{font-size:12.5px}
   #flist{max-width:1600px;margin:0 auto;padding:0 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
   .fcard{margin:0}
   #cartbody{max-width:640px;margin:0 auto}
@@ -161,7 +151,6 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
       <p class="sub" id="t-sub"></p>
       <div class="ship-badge">📦 <span id="t-shipbadge"></span></div>
     </header>
-    <div class="trust" id="trust"></div>
     <div class="chips" id="chips"></div>
     <div class="eyebrow" id="t-eyebrow"></div>
     <div class="plist" id="plist"></div>
@@ -258,22 +247,6 @@ const I18N = {
     dec:'.',
   }
 };
-
-/* ============ Trust strip (brand pillars) ============ */
-const TRUST = [
-  {ico:'🍯', title:{it:'Naturalmente senza tempo',en:'Naturally timeless'},
-   desc:{it:'Il miele grezzo non scade mai — varietà come l\'Acacia restano liquide per anni, senza mai cristallizzare.',
-         en:'Raw honey never expires — varieties like our Acacia stay liquid for years without ever crystallising.'}},
-  {ico:'🌾', title:{it:'Apiari da generazioni',en:'Multi-generational apiaries'},
-   desc:{it:'Apicoltura familiare tramandata da generazioni, sugli stessi pendii dei nonni.',
-         en:'Family-run beekeeping passed down for generations, working the same hillsides their grandparents did.'}},
-  {ico:'📍', title:{it:'Un vasetto, un territorio',en:'One jar, one territory'},
-   desc:{it:'Ogni varietà è tracciabile a un singolo apiario, raccolto e fioritura — mai miscelato, mai anonimo.',
-         en:'Every variety is traceable to a single apiary, harvest and bloom — never blended, never anonymous.'}},
-  {ico:'🌿', title:{it:'Radicato nella tradizione',en:'Rooted in tradition'},
-   desc:{it:'Rituali tramandati da generazioni — dal tè del mattino all\'ultimo cucchiaino prima di dormire.',
-         en:'Rituals passed down for generations — from morning tea to the last spoonful before bed.'}},
-];
 
 /* ============ Catalog (database-shaped: swap for Supabase later) ============ */
 const PRODUCTS = [
@@ -397,7 +370,7 @@ const money = v => '€' + v.toFixed(2).replace('.', T().dec);
 function setLang(l){
   lang = l;
   document.documentElement.lang = l;
-  renderStatic(); renderTrust(); renderChips(); renderProducts(); renderFarmers();
+  renderStatic(); renderChips(); renderProducts(); renderFarmers();
   if(document.getElementById('screen-cart').classList.contains('active')) renderCart();
   if(document.getElementById('screen-detail').classList.contains('active') && currentDetailId!=null) renderDetail(currentDetailId);
 }
@@ -416,16 +389,6 @@ function renderStatic(){
   document.getElementById('t-tab-shop').textContent = t.tabShop;
   document.getElementById('t-tab-farmers').textContent = t.tabFarmers;
   document.getElementById('t-tab-cart').textContent = t.tabCart;
-}
-
-function renderTrust(){
-  const el = document.getElementById('trust');
-  el.innerHTML = TRUST.map(x=>`
-    <div class="trust-item">
-      <div class="trust-ico">${x.ico}</div>
-      <div class="trust-title">${x.title[lang]}</div>
-      <div class="trust-desc">${x.desc[lang]}</div>
-    </div>`).join('');
 }
 
 function renderChips(){
