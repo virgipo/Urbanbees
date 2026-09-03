@@ -23,8 +23,20 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 .hex-frame{width:74px;height:80px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(150deg,#fff 0%,#f3ecdd 100%)}
 .hex-wrap{width:80px;height:86px;flex-shrink:0;background:var(--honey);display:flex;align-items:center;justify-content:center}
 .hex-wrap .hex-frame{width:74px;height:80px}
-.hero{background:var(--ink);color:var(--paper);padding:28px 22px 30px;position:relative;overflow:hidden}
-.honeycomb-bg{position:absolute;right:-30px;top:-20px;opacity:.14;pointer-events:none}
+.hero{
+  color:var(--paper);padding:28px 22px 30px;position:relative;overflow:hidden;
+  background-image:
+    linear-gradient(30deg, rgba(217,142,31,.16) 12%, transparent 12.5%, transparent 87%, rgba(217,142,31,.16) 87.5%, rgba(217,142,31,.16)),
+    linear-gradient(150deg, rgba(217,142,31,.16) 12%, transparent 12.5%, transparent 87%, rgba(217,142,31,.16) 87.5%, rgba(217,142,31,.16)),
+    linear-gradient(30deg, rgba(217,142,31,.16) 12%, transparent 12.5%, transparent 87%, rgba(217,142,31,.16) 87.5%, rgba(217,142,31,.16)),
+    linear-gradient(150deg, rgba(217,142,31,.16) 12%, transparent 12.5%, transparent 87%, rgba(217,142,31,.16) 87.5%, rgba(217,142,31,.16)),
+    linear-gradient(60deg, rgba(217,142,31,.11) 25%, transparent 25.5%, transparent 75%, rgba(217,142,31,.11) 75.5%, rgba(217,142,31,.11)),
+    linear-gradient(60deg, rgba(217,142,31,.11) 25%, transparent 25.5%, transparent 75%, rgba(217,142,31,.11) 75.5%, rgba(217,142,31,.11)),
+    radial-gradient(120% 90% at 100% 115%, rgba(233,168,54,.55), transparent 60%),
+    linear-gradient(155deg, #120c05 0%, #1f1408 38%, #3c2408 68%, #6b430e 100%);
+  background-size: 56px 98px, 56px 98px, 56px 98px, 56px 98px, 56px 98px, 56px 98px, 100% 100%, 100% 100%;
+  background-position: 0 0, 0 0, 28px 49px, 28px 49px, 0 0, 28px 49px, 0 0, 0 0;
+}
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:20px}
 .brand-mark{width:34px;height:38px;background:var(--honey);display:flex;align-items:center;justify-content:center;font-size:18px}
 .brand h1{font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:.01em}
@@ -35,6 +47,17 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 .hero .tagline em{font-style:italic;color:var(--honey)}
 .hero .sub{font-size:13.5px;color:#c8cfc4;max-width:300px;line-height:1.5}
 .ship-badge{display:inline-flex;align-items:center;gap:7px;margin-top:16px;background:rgba(217,142,31,.15);border:1px solid rgba(217,142,31,.45);color:var(--honey);font-size:12px;font-weight:600;letter-spacing:.04em;padding:7px 12px;border-radius:100px;text-transform:uppercase}
+.drips{position:absolute;left:0;right:0;bottom:0;height:38px;pointer-events:none;overflow:hidden}
+.drip{position:absolute;bottom:-3px;width:7px;background:linear-gradient(180deg,var(--honey) 0%,var(--honey-deep) 100%);clip-path:polygon(0 0,100% 0,68% 78%,50% 100%,32% 78%,0 0);box-shadow:0 0 6px rgba(217,142,31,.35)}
+.drip::after{content:'';position:absolute;left:50%;bottom:-4px;width:4px;height:4px;border-radius:50%;background:var(--honey);transform:translateX(-50%)}
+.drip:nth-child(1){left:6%;height:14px}
+.drip:nth-child(2){left:17%;height:26px}
+.drip:nth-child(3){left:29%;height:10px}
+.drip:nth-child(4){left:41%;height:20px}
+.drip:nth-child(5){left:55%;height:32px}
+.drip:nth-child(6){left:68%;height:15px}
+.drip:nth-child(7){left:80%;height:24px}
+.drip:nth-child(8){left:92%;height:12px}
 .backbtn{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:var(--paper);font-family:var(--body);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .backbtn:active{background:rgba(255,255,255,.22)}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:18px 22px 6px;scrollbar-width:none}
@@ -131,14 +154,6 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 
   <div class="screen active" id="screen-shop">
     <header class="hero">
-      <svg class="honeycomb-bg" width="220" height="240" viewBox="0 0 220 240" fill="none">
-        <g stroke="#d98e1f" stroke-width="1.5">
-          <polygon points="55,10 105,10 130,52 105,94 55,94 30,52"/>
-          <polygon points="130,52 180,52 205,94 180,136 130,136 105,94"/>
-          <polygon points="55,94 105,94 130,136 105,178 55,178 30,136"/>
-          <polygon points="130,136 180,136 205,178 180,220 130,220 105,178"/>
-        </g>
-      </svg>
       <div class="brand">
         <div class="brand-mark hex">🐝</div>
         <h1>Urban Bees</h1>
@@ -150,6 +165,11 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
       <p class="tagline" id="t-tagline"></p>
       <p class="sub" id="t-sub"></p>
       <div class="ship-badge">📦 <span id="t-shipbadge"></span></div>
+      <div class="drips" aria-hidden="true">
+        <span class="drip"></span><span class="drip"></span><span class="drip"></span>
+        <span class="drip"></span><span class="drip"></span><span class="drip"></span>
+        <span class="drip"></span><span class="drip"></span>
+      </div>
     </header>
     <div class="chips" id="chips"></div>
     <div class="eyebrow" id="t-eyebrow"></div>
