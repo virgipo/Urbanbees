@@ -41,6 +41,11 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 .chips::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;padding:8px 15px;border-radius:100px;font-size:13px;font-weight:500;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;font-family:var(--body);transition:all .15s}
 .chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.trust{padding:22px 22px 4px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.trust-item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 13px}
+.trust-ico{font-size:19px;margin-bottom:7px}
+.trust-title{font-family:var(--display);font-weight:600;font-size:13px;line-height:1.25;margin-bottom:4px}
+.trust-desc{font-size:11.5px;color:var(--ink-soft);line-height:1.45}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--leaf);padding:18px 22px 10px}
 .plist{padding:0 22px;display:flex;flex-direction:column;gap:12px}
 .pcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform .15s}
@@ -118,6 +123,11 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
   .plist{max-width:1600px;margin:0 auto;padding:0 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
   .pcard{transition:transform .15s,box-shadow .15s}
   .pcard:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(28,42,31,.1)}
+  .trust{max-width:1600px;margin:0 auto;padding:26px 56px 4px;grid-template-columns:repeat(4,1fr);gap:16px}
+  .trust-item{padding:18px 16px}
+  .trust-ico{font-size:22px}
+  .trust-title{font-size:14.5px}
+  .trust-desc{font-size:12.5px}
   #flist{max-width:1600px;margin:0 auto;padding:0 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
   .fcard{margin:0}
   #cartbody{max-width:640px;margin:0 auto}
@@ -143,14 +153,15 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
         <div class="brand-mark hex">🐝</div>
         <h1>Urban Bees</h1>
         <div class="langtoggle">
-          <button id="lang-it" onclick="setLang('it')">IT</button>
           <button id="lang-en" onclick="setLang('en')">EN</button>
+          <button id="lang-it" onclick="setLang('it')">IT</button>
         </div>
       </div>
       <p class="tagline" id="t-tagline"></p>
       <p class="sub" id="t-sub"></p>
       <div class="ship-badge">📦 <span id="t-shipbadge"></span></div>
     </header>
+    <div class="trust" id="trust"></div>
     <div class="chips" id="chips"></div>
     <div class="eyebrow" id="t-eyebrow"></div>
     <div class="plist" id="plist"></div>
@@ -248,6 +259,22 @@ const I18N = {
   }
 };
 
+/* ============ Trust strip (brand pillars) ============ */
+const TRUST = [
+  {ico:'🍯', title:{it:'Naturalmente senza tempo',en:'Naturally timeless'},
+   desc:{it:'Il miele grezzo non scade mai — varietà come l\'Acacia restano liquide per anni, senza mai cristallizzare.',
+         en:'Raw honey never expires — varieties like our Acacia stay liquid for years without ever crystallising.'}},
+  {ico:'🌾', title:{it:'Apiari da generazioni',en:'Multi-generational apiaries'},
+   desc:{it:'Apicoltura familiare tramandata da generazioni, sugli stessi pendii dei nonni.',
+         en:'Family-run beekeeping passed down for generations, working the same hillsides their grandparents did.'}},
+  {ico:'📍', title:{it:'Un vasetto, un territorio',en:'One jar, one territory'},
+   desc:{it:'Ogni varietà è tracciabile a un singolo apiario, raccolto e fioritura — mai miscelato, mai anonimo.',
+         en:'Every variety is traceable to a single apiary, harvest and bloom — never blended, never anonymous.'}},
+  {ico:'🌿', title:{it:'Radicato nella tradizione',en:'Rooted in tradition'},
+   desc:{it:'Rituali tramandati da generazioni — dal tè del mattino all\'ultimo cucchiaino prima di dormire.',
+         en:'Rituals passed down for generations — from morning tea to the last spoonful before bed.'}},
+];
+
 /* ============ Catalog (database-shaped: swap for Supabase later) ============ */
 const PRODUCTS = [
   {id:1, emoji:'🌼', price:13.50, farm:'Apicoltura Valle Sacra',
@@ -297,9 +324,9 @@ const PRODUCTS = [
    harvest:{it:'Luglio–Agosto',en:'July–August'},
    crystal:{it:'Rapida, consistenza cremosa',en:'Fast, creamy texture'},
    flavor:{it:'Maltato, balsamico, retrogusto di liquirizia',en:'Malty, balsamic, liquorice aftertaste'},
-   pairing:{it:'Tisane per la gola, ricotta, torte speziate',en:'Throat-soothing teas, ricotta, spiced cakes'},
-   desc:{it:'Le arnie seguono i filari di eucalipto piantati oltre un secolo fa per prosciugare le paludi maremmane. Il miele che ne risulta è scuro, maltato, con un caratteristico retrogusto balsamico — da sempre usato nella tradizione contadina toscana contro il mal di gola.',
-         en:'Hives follow the eucalyptus rows planted more than a century ago to drain the Maremma marshland. The resulting honey is dark and malty, with a distinctive balsamic aftertaste — long used in Tuscan folk tradition to soothe sore throats.'}},
+   pairing:{it:'Tisane invernali, ricotta, torte speziate',en:'Winter herbal teas, ricotta, spiced cakes'},
+   desc:{it:'Le arnie seguono i filari di eucalipto piantati oltre un secolo fa per prosciugare le paludi maremmane. Il miele che ne risulta è scuro, maltato, con un caratteristico retrogusto balsamico — da sempre abbinato, nella tradizione contadina toscana, a un tè caldo al limone nelle sere d\'inverno.',
+         en:'Hives follow the eucalyptus rows planted more than a century ago to drain the Maremma marshland. The resulting honey is dark and malty, with a distinctive balsamic aftertaste — long paired, in Tuscan farmhouse tradition, with a warm lemon tea on cold winter evenings.'}},
   {id:6, emoji:'🍃', price:16.00, farm:'Apicoltura delle Dolomiti',
    cat:{it:'Aromatico',en:'Aromatic'}, name:{it:'Miele di Tiglio',en:'Linden (Lime) Honey'},
    region:{it:'Alto Adige',en:'South Tyrol'}, unit:{it:'vasetto 300g',en:'300g jar'},
@@ -317,9 +344,9 @@ const PRODUCTS = [
    harvest:{it:'Maggio–Giugno',en:'May–June'},
    crystal:{it:'Lenta',en:'Slow'},
    flavor:{it:'Aromatico, speziato, note di macchia mediterranea',en:'Aromatic, spicy, notes of Mediterranean scrub'},
-   pairing:{it:'Formaggi di capra, verdure grigliate',en:'Goat cheese, grilled vegetables'},
-   desc:{it:'Raccolto tra i cespugli di timo selvatico della macchia mediterranea sarda, è un miele aromatico e speziato, tradizionalmente considerato un rimedio naturale contro tosse e mal di gola grazie alle proprietà balsamiche del timo.',
-         en:'Gathered among the wild thyme scrub of the Sardinian maquis, this is an aromatic, spiced honey traditionally considered a natural remedy for coughs and sore throats, thanks to thyme\'s balsamic properties.'}},
+   pairing:{it:'Formaggi di capra, verdure grigliate, latte caldo',en:'Goat cheese, grilled vegetables, warm milk'},
+   desc:{it:'Raccolto tra i cespugli di timo selvatico della macchia mediterranea sarda, è un miele aromatico e speziato che porta con sé il profumo dell\'estate mediterranea — un cucchiaino nel latte caldo prima di dormire è un rito di famiglia.',
+         en:'Gathered among the wild thyme scrub of the Sardinian maquis, this aromatic, spiced honey carries the scent of the Mediterranean summer — a spoonful stirred into warm milk before bed is a family ritual here.'}},
   {id:8, emoji:'🐝', price:48.00, farm:'Wild Coast Apiaries',
    cat:{it:'Raro',en:'Rare'}, name:{it:'Miele di Manuka',en:'Manuka Honey'},
    region:{it:'Nuova Zelanda',en:'New Zealand'}, unit:{it:'vasetto 250g · UMF 10+',en:'250g jar · UMF 10+'},
@@ -327,9 +354,9 @@ const PRODUCTS = [
    harvest:{it:'Dicembre–Gennaio (emisfero australe)',en:'December–January (Southern Hemisphere)'},
    crystal:{it:'Naturalmente cremoso, non cristallizza',en:'Naturally creamy, doesn\'t crystallize'},
    flavor:{it:'Intenso, terroso, leggermente medicinale',en:'Intense, earthy, slightly medicinal'},
-   pairing:{it:'Da solo a digiuno, o con zenzero e limone',en:'On its own, or with ginger and lemon'},
-   desc:{it:'Il nostro unico miele non italiano: prodotto nella macchia costiera selvatica di manuka in Nuova Zelanda, è famoso per l\'alto contenuto di metilgliossale (MGO), che gli conferisce proprietà antibatteriche uniche. Ogni lotto è certificato secondo lo standard UMF.',
-         en:'Our only non-Italian honey: produced in the wild coastal manuka scrub of New Zealand, it\'s famous for its high methylglyoxal (MGO) content, which gives it unique antibacterial properties. Every batch is UMF-certified.'}},
+   pairing:{it:'Da solo a cucchiaini, o con zenzero e limone',en:'By the spoonful, or with ginger and lemon'},
+   desc:{it:'Il nostro unico miele non italiano: prodotto nella macchia costiera selvatica di manuka in Nuova Zelanda, è tra i mieli più studiati al mondo, apprezzato per la sua densità e intensità fuori dal comune. Ogni lotto è certificato secondo lo standard UMF.',
+         en:'Our only non-Italian honey: produced in the wild coastal manuka scrub of New Zealand, it\'s one of the most closely studied honeys in the world, prized for its uncommon density and intensity. Every batch is UMF-certified.'}},
 ];
 const FARMERS = [
   {emoji:'🌰', name:'Apicoltura Valle Sacra', products:2, rating:{it:'4,9',en:'4.9'},
@@ -359,7 +386,7 @@ const FARMERS = [
 ];
 
 /* ============ State ============ */
-let lang = (navigator.language||'it').toLowerCase().startsWith('it') ? 'it' : 'en';
+let lang = 'en';
 let cart = {};
 let activeCat = null;
 let currentDetailId = null;
@@ -370,7 +397,7 @@ const money = v => '€' + v.toFixed(2).replace('.', T().dec);
 function setLang(l){
   lang = l;
   document.documentElement.lang = l;
-  renderStatic(); renderChips(); renderProducts(); renderFarmers();
+  renderStatic(); renderTrust(); renderChips(); renderProducts(); renderFarmers();
   if(document.getElementById('screen-cart').classList.contains('active')) renderCart();
   if(document.getElementById('screen-detail').classList.contains('active') && currentDetailId!=null) renderDetail(currentDetailId);
 }
@@ -389,6 +416,16 @@ function renderStatic(){
   document.getElementById('t-tab-shop').textContent = t.tabShop;
   document.getElementById('t-tab-farmers').textContent = t.tabFarmers;
   document.getElementById('t-tab-cart').textContent = t.tabCart;
+}
+
+function renderTrust(){
+  const el = document.getElementById('trust');
+  el.innerHTML = TRUST.map(x=>`
+    <div class="trust-item">
+      <div class="trust-ico">${x.ico}</div>
+      <div class="trust-title">${x.title[lang]}</div>
+      <div class="trust-desc">${x.desc[lang]}</div>
+    </div>`).join('');
 }
 
 function renderChips(){
