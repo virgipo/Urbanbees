@@ -1,0 +1,12 @@
+{
+  "name": "urbanbees-checkout",
+  "version": "1.0.0",
+  "private": true,
+  "engines": { "node": ">=18" },
+  "scripts": { "start": "node index.js" },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "stripe": "^16.9.0"
+  }
+}

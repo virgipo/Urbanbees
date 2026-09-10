@@ -87,6 +87,7 @@ body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;ju
 .srow.tot{font-weight:700;font-size:17px;color:var(--paper);margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15)}
 .checkout{width:100%;margin-top:16px;background:var(--honey);color:var(--ink);border:none;border-radius:100px;padding:14px;font-family:var(--body);font-weight:700;font-size:15px;cursor:pointer}
 .checkout:active{background:var(--honey-deep);color:var(--paper)}
+.checkout:disabled{opacity:.6;cursor:default}
 .ship-note{font-size:12px;color:#9aa096;text-align:center;margin:14px 32px 0;line-height:1.5}
 .dhex-wrap{display:flex;justify-content:center;margin:-34px 0 6px}
 .dhex-wrap .hex-wrap{width:96px;height:104px}
@@ -218,7 +219,8 @@ const I18N = {
     emptyTitle:'Il carrello è vuoto',
     emptyText:'Esplora le nostre varietà di miele e scopri i sapori più rari del territorio italiano.',
     subtotal:'Subtotale', shipping:'Spedizione', shipIncluded:'Inclusa — a carico del produttore',
-    total:'Totale', checkout:'Procedi all\'ordine', checkoutToast:'Demo: checkout in arrivo!',
+    total:'Totale', checkout:'Procedi all\'ordine', checkoutLoading:'Reindirizzamento al pagamento…',
+    checkoutError:'Qualcosa è andato storto — riprova.', checkoutSuccess:'Ordine effettuato! Controlla la tua email per la conferma.',
     shipNote:'Ogni apicoltore spedisce direttamente dal proprio territorio.<br>Nessun costo di spedizione per te, mai.',
     product:'varietà', products:'varietà', verified:'Verificato',
     charColor:'Colore', charHarvest:'Raccolta', charCrystal:'Cristallizzazione', charFlavor:'Sapore',
@@ -238,7 +240,8 @@ const I18N = {
     emptyTitle:'Your basket is empty',
     emptyText:"Browse our honey varieties and discover Italy's rarest regional flavours.",
     subtotal:'Subtotal', shipping:'Shipping', shipIncluded:'Included — covered by the producer',
-    total:'Total', checkout:'Place your order', checkoutToast:'Demo: checkout coming soon!',
+    total:'Total', checkout:'Place your order', checkoutLoading:'Redirecting to payment…',
+    checkoutError:'Something went wrong — please try again.', checkoutSuccess:'Order placed! Check your email for confirmation.',
     shipNote:'Every beekeeper ships directly from their own region.<br>No shipping cost for you, ever.',
     product:'variety', products:'varieties', verified:'Verified',
     charColor:'Color', charHarvest:'Harvest', charCrystal:'Crystallization', charFlavor:'Flavor',
@@ -571,15 +574,39 @@ function chQty(id,d){
   updateBadge();renderCart();
 }
 
-/* ============ Checkout stub — wire to Stripe later ============
-   When ready: POST cart to /api/checkout (serverless function that
-   creates a Stripe Checkout Session) and redirect to session.url.
-   ============================================================== */
+/* ============ Checkout — Stripe Checkout Session via server/ ============ */
+const CHECKOUT_API = 'https://urbanbees-checkout.onrender.com/api/checkout';
+
 async function startCheckout(){
-  showToast(T().checkoutToast);
-  // const res = await fetch('/api/checkout', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cart, lang})});
-  // const {url} = await res.json();
-  // window.location.href = url;
+  const btn = document.querySelector('.checkout');
+  if (btn) { btn.disabled = true; btn.textContent = T().checkoutLoading; }
+  try {
+    const res = await fetch(CHECKOUT_API, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({cart, lang}),
+    });
+    if (!res.ok) throw new Error('checkout request failed');
+    const {url} = await res.json();
+    if (!url) throw new Error('no checkout url returned');
+    window.location.href = url;
+  } catch (err) {
+    console.error(err);
+    showToast(T().checkoutError);
+    if (btn) { btn.disabled = false; btn.textContent = T().checkout; }
+  }
+}
+
+function handleCheckoutRedirect(){
+  const params = new URLSearchParams(location.search);
+  if (params.has('success')) {
+    cart = {};
+    updateBadge();
+    showToast(T().checkoutSuccess);
+  }
+  if (params.has('success') || params.has('canceled')) {
+    history.replaceState('', document.title, location.pathname + location.hash);
+  }
 }
 
 /* tabs */
@@ -598,6 +625,7 @@ document.querySelectorAll('.tab').forEach(t=>{
 
 setLang(lang);
 routeHash();
+handleCheckoutRedirect();
 </script>
 </body>
 </html>

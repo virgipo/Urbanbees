@@ -13,46 +13,25 @@ Shipping is always paid by the producer — never the buyer.
 - Tapping a honey card opens a shareable detail page (`#honey-<id>`) with its
   characteristics — color, harvest window, crystallization behavior, flavor notes —
   plus a full description and suggested pairings.
-- Checkout button is stubbed: see `startCheckout()` in `index.html` for where the
-  Stripe Checkout call plugs in.
+- Checkout uses [Stripe Checkout](https://stripe.com/docs/payments/checkout):
+  `startCheckout()` in `index.html` posts the cart to the `server/` API, which
+  creates a Stripe Checkout Session and returns its URL for redirect. See
+  `server/README.md` for that piece.
 
-## Deploy (5 minutes)
+## Deploy
 
-1. Go to [vercel.com](https://vercel.com) → **Add New → Project** → import this repo.
-2. Framework preset: **Other** (it's a static site). Deploy.
-3. Live at `<project>.vercel.app`. Add your custom domain under
-   **Settings → Domains** once purchased.
+- **Storefront** (`index.html`) — Render Static Site, root of this repo,
+  auto-deploys on push to `main`. Publish directory `.`, no build command.
+- **Checkout API** (`server/`) — separate Render Web Service, same repo,
+  build command `cd server && npm install`, start command `cd server && npm start`.
+  Needs `STRIPE_SECRET_KEY` and `SITE_URL` env vars set in its Render dashboard.
 
 ## Roadmap
 
 | Phase | What | Tools |
 |-------|------|-------|
-| 1 | Static storefront live | Vercel (this repo) |
-| 2 | Real catalog + orders | Supabase (products, producers, orders tables) |
-| 3 | Payments | Stripe Checkout via `/api/checkout` serverless function |
+| 1 | Static storefront live | Render Static Site (this repo) |
+| 2 | Payments | Stripe Checkout via `server/` (done) |
+| 3 | Real catalog + orders | Supabase (products, producers, orders tables) |
 | 4 | Producer notifications | Stripe webhook → email/WhatsApp on paid order |
-| 5 | Multi-producer payouts | Stripe Connect Express |
-
-## Stripe wiring (when ready)
-
-Create `api/checkout.js` (Vercel serverless function):
-
-```js
-import Stripe from 'stripe';
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-export default async function handler(req, res) {
-  const { cart, lang } = req.body;
-  // look up prices server-side (never trust client prices)
-  const session = await stripe.checkout.sessions.create({
-    mode: 'payment',
-    line_items: buildLineItems(cart),
-    locale: lang,
-    success_url: `${process.env.SITE_URL}/?success=1`,
-    cancel_url: `${process.env.SITE_URL}/?canceled=1`,
-  });
-  res.json({ url: session.url });
-}
-```
-
-Set `STRIPE_SECRET_KEY` in Vercel → Settings → Environment Variables.
+| 5 | Multi-producer payouts | Stripe Connect Express

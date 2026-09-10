@@ -1,0 +1,10 @@
+[
+  {"id": 1, "name": {"it": "Miele di Acacia", "en": "Acacia Honey"}, "unit": {"it": "vasetto 400g", "en": "400g jar"}, "price": 13.50},
+  {"id": 2, "name": {"it": "Miele di Castagno", "en": "Chestnut Honey"}, "unit": {"it": "vasetto 400g", "en": "400g jar"}, "price": 15.00},
+  {"id": 3, "name": {"it": "Miele di Corbezzolo", "en": "Strawberry Tree Honey"}, "unit": {"it": "vasetto 250g", "en": "250g jar"}, "price": 26.00},
+  {"id": 4, "name": {"it": "Miele Millefiori", "en": "Wildflower Honey"}, "unit": {"it": "vasetto 500g", "en": "500g jar"}, "price": 10.50},
+  {"id": 5, "name": {"it": "Miele di Eucalipto", "en": "Eucalyptus Honey"}, "unit": {"it": "vasetto 400g", "en": "400g jar"}, "price": 12.00},
+  {"id": 6, "name": {"it": "Miele di Tiglio", "en": "Linden (Lime) Honey"}, "unit": {"it": "vasetto 300g", "en": "300g jar"}, "price": 16.00},
+  {"id": 7, "name": {"it": "Miele di Timo", "en": "Thyme Honey"}, "unit": {"it": "vasetto 250g", "en": "250g jar"}, "price": 19.00},
+  {"id": 8, "name": {"it": "Miele di Manuka", "en": "Manuka Honey"}, "unit": {"it": "vasetto 250g · UMF 10+", "en": "250g jar · UMF 10+"}, "price": 48.00}
+]
