@@ -198,7 +198,9 @@ const I18N = {
     emptyTitle:'Il carrello è vuoto',
     emptyText:'Esplora le nostre varietà di miele e scopri i sapori più rari del territorio italiano.',
     subtotal:'Subtotale', shipping:'Spedizione', shipIncluded:'Inclusa — a carico del produttore',
-    total:'Totale', checkout:'Procedi all\'ordine', checkoutToast:'Demo: checkout in arrivo!',
+    total:'Totale', checkout:'Procedi all\'ordine',
+    checkoutBusy:'Un attimo…', checkoutError:'Non siamo riusciti ad aprire il pagamento. Riprova.',
+    orderThanks:'Grazie! Ordine ricevuto.', orderCanceled:'Pagamento annullato — il carrello è intatto.',
     shipNote:'Ogni apicoltore spedisce direttamente dal proprio territorio.<br>Nessun costo di spedizione per te, mai.',
     product:'varietà', products:'varietà', verified:'Verificato',
     charColor:'Colore', charHarvest:'Raccolta', charCrystal:'Cristallizzazione', charFlavor:'Sapore',
@@ -218,7 +220,9 @@ const I18N = {
     emptyTitle:'Your basket is empty',
     emptyText:"Browse our honey varieties and discover Italy's rarest regional flavours.",
     subtotal:'Subtotal', shipping:'Shipping', shipIncluded:'Included — covered by the producer',
-    total:'Total', checkout:'Place your order', checkoutToast:'Demo: checkout coming soon!',
+    total:'Total', checkout:'Place your order',
+    checkoutBusy:'One moment…', checkoutError:'We could not open the payment page. Please try again.',
+    orderThanks:'Thank you! Your order is in.', orderCanceled:'Payment canceled — your basket is untouched.',
     shipNote:'Every beekeeper ships directly from their own region.<br>No shipping cost for you, ever.',
     product:'variety', products:'varieties', verified:'Verified',
     charColor:'Color', charHarvest:'Harvest', charCrystal:'Crystallization', charFlavor:'Flavor',
@@ -551,15 +555,48 @@ function chQty(id,d){
   updateBadge();renderCart();
 }
 
-/* ============ Checkout stub — wire to Stripe later ============
-   When ready: POST cart to /api/checkout (serverless function that
-   creates a Stripe Checkout Session) and redirect to session.url.
-   ============================================================== */
+/* ============ Checkout ============
+   Sends the basket to /api/checkout, which looks the prices up server-side
+   and hands back a Stripe Checkout URL to send the buyer to.
+   ================================== */
+let checkoutBusy = false;
 async function startCheckout(){
-  showToast(T().checkoutToast);
-  // const res = await fetch('/api/checkout', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({cart, lang})});
-  // const {url} = await res.json();
-  // window.location.href = url;
+  if(checkoutBusy) return;
+  const btn = document.querySelector('.checkout');
+  checkoutBusy = true;
+  if(btn){ btn.disabled = true; btn.textContent = T().checkoutBusy; }
+
+  try{
+    const res = await fetch('/api/checkout', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({cart, lang})
+    });
+    const data = await res.json().catch(()=>({}));
+    if(!res.ok || !data.url) throw new Error(data.error || 'checkout failed');
+    window.location.href = data.url;
+  }catch(err){
+    console.error(err);
+    showToast(T().checkoutError);
+    checkoutBusy = false;
+    if(btn){ btn.disabled = false; btn.textContent = T().checkout; }
+  }
+}
+
+/* Stripe sends the buyer back here with ?success=1 or ?canceled=1 */
+function handleCheckoutReturn(){
+  const params = new URLSearchParams(window.location.search);
+  if(!params.has('success') && !params.has('canceled')) return;
+
+  if(params.has('success')){
+    cart = {};
+    updateBadge();
+    showToast(T().orderThanks);
+  }else{
+    showToast(T().orderCanceled);
+  }
+  // Drop the query string so a refresh doesn't repeat the message.
+  history.replaceState({}, '', window.location.pathname + window.location.hash);
 }
 
 /* tabs */
@@ -578,6 +615,7 @@ document.querySelectorAll('.tab').forEach(t=>{
 
 setLang(lang);
 routeHash();
+handleCheckoutReturn();
 </script>
 </body>
 </html>

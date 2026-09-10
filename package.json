@@ -1,0 +1,13 @@
+{
+  "name": "urbanbees",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "High-end marketplace connecting Italy's finest independent beekeepers directly with consumers.",
+  "scripts": {
+    "sync-products": "node scripts/sync-products.js"
+  },
+  "dependencies": {
+    "stripe": "^17.5.0"
+  }
+}
