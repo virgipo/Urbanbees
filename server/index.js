@@ -17,8 +17,14 @@ if (!SITE_URL) {
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 const priceById = new Map(prices.map(p => [p.id, p]));
 
+// The same storefront answers on the custom domain, its www variant and the
+// Render-assigned URL, so checkout has to work from all three.
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(s => s.trim()).filter(Boolean)
+  : [SITE_URL, SITE_URL.replace('://', '://www.'), 'https://urbanbees-1fo1.onrender.com'];
+
 const app = express();
-app.use(cors({ origin: SITE_URL }));
+app.use(cors({ origin: ALLOWED_ORIGINS }));
 app.use(express.json());
 
 app.get('/health', (req, res) => res.json({ ok: true }));
@@ -27,6 +33,8 @@ app.post('/api/checkout', async (req, res) => {
   try {
     const { cart, lang } = req.body || {};
     const locale = lang === 'it' ? 'it' : 'en';
+    // Send the customer back to whichever address they started from.
+    const returnTo = ALLOWED_ORIGINS.includes(req.headers.origin) ? req.headers.origin : SITE_URL;
 
     if (!cart || typeof cart !== 'object' || Array.isArray(cart)) {
       return res.status(400).json({ error: 'Invalid cart' });
@@ -61,8 +69,8 @@ app.post('/api/checkout', async (req, res) => {
       line_items,
       locale,
       shipping_address_collection: { allowed_countries: ['IT', 'US', 'CA', 'GB', 'FR', 'DE', 'ES', 'NL', 'BE', 'AT', 'CH', 'AU'] },
-      success_url: `${SITE_URL}/?success=1`,
-      cancel_url: `${SITE_URL}/?canceled=1`,
+      success_url: `${returnTo}/?success=1`,
+      cancel_url: `${returnTo}/?canceled=1`,
     });
 
     res.json({ url: session.url });
