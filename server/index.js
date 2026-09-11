@@ -66,6 +66,11 @@ app.post('/api/checkout', async (req, res) => {
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
+      // Asked for explicitly because the Stripe account has no payment methods
+      // activated for EUR yet. Drop this line to get Stripe's dynamic set
+      // (Klarna, iDEAL…) once they're enabled in the dashboard; card wallets
+      // like Apple Pay and Google Pay show up either way.
+      payment_method_types: ['card'],
       line_items,
       locale,
       shipping_address_collection: { allowed_countries: ['IT', 'US', 'CA', 'GB', 'FR', 'DE', 'ES', 'NL', 'BE', 'AT', 'CH', 'AU'] },
