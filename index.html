@@ -12,6 +12,7 @@
   --honey:#d98e1f; --honey-deep:#b06f0e;
   --paper:#faf7f0; --card:#ffffff; --line:#e7e0d2; --leaf:#5a7a52;
   --bg:#FADD87; /* page background. --paper stays the light text colour on dark sections */
+  --hero-bg:#f7efd8;
   --display:'Fraunces',serif; --body:'Archivo',sans-serif;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -25,26 +26,21 @@ body{font-family:var(--body);background:var(--bg);color:var(--ink);display:flex;
 .hex-wrap{width:80px;height:86px;flex-shrink:0;background:var(--honey);display:flex;align-items:center;justify-content:center}
 .hex-wrap .hex-frame{width:74px;height:80px}
 .hero{
-  color:var(--paper);padding:28px 22px 30px;position:relative;overflow:hidden;
-  background-image:
-    linear-gradient(180deg, rgba(12,8,3,.78) 0%, rgba(12,8,3,.55) 30%, rgba(12,8,3,.32) 60%, rgba(12,8,3,.6) 100%),
-    url('assets/hero-elderflower.jpg');
-  background-size: 100% 100%, cover;
-  background-position: 0 0, 50% 35%;
-  background-repeat: no-repeat, no-repeat;
+  color:var(--ink);padding:28px 22px 30px;position:relative;overflow:hidden;
+  background:var(--hero-bg);
 }
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:20px}
 .brand-mark{width:34px;height:38px;background:var(--honey);display:flex;align-items:center;justify-content:center;font-size:18px}
 .brand h1{font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:.01em}
-.langtoggle{margin-left:auto;display:flex;gap:2px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:100px;padding:3px}
-.langtoggle button{background:none;border:none;color:#c8cfc4;font-family:var(--body);font-weight:700;font-size:11.5px;padding:5px 11px;border-radius:100px;cursor:pointer;letter-spacing:.04em}
+.langtoggle{margin-left:auto;display:flex;gap:2px;background:rgba(28,42,31,.05);border:1px solid rgba(28,42,31,.16);border-radius:100px;padding:3px}
+.langtoggle button{background:none;border:none;color:var(--ink-soft);font-family:var(--body);font-weight:700;font-size:11.5px;padding:5px 11px;border-radius:100px;cursor:pointer;letter-spacing:.04em}
 .langtoggle button.on{background:var(--honey);color:var(--ink)}
 .hero .tagline{font-family:var(--display);font-weight:500;font-size:30px;line-height:1.15;max-width:300px;margin-bottom:10px}
-.hero .tagline em{font-style:italic;color:var(--honey)}
-.hero .sub{font-size:13.5px;color:#c8cfc4;max-width:300px;line-height:1.5}
-.ship-badge{display:inline-flex;align-items:center;gap:7px;margin-top:16px;background:rgba(217,142,31,.15);border:1px solid rgba(217,142,31,.45);color:var(--honey);font-size:12px;font-weight:600;letter-spacing:.04em;padding:7px 12px;border-radius:100px;text-transform:uppercase}
-.backbtn{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);color:var(--paper);font-family:var(--body);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.backbtn:active{background:rgba(255,255,255,.22)}
+.hero .tagline em{font-style:italic;color:var(--honey-deep)}
+.hero .sub{font-size:13.5px;color:var(--ink-soft);max-width:300px;line-height:1.5}
+.ship-badge{display:inline-flex;align-items:center;gap:7px;margin-top:16px;background:rgba(217,142,31,.16);border:1px solid rgba(176,111,14,.5);color:var(--honey-deep);font-size:12px;font-weight:600;letter-spacing:.04em;padding:7px 12px;border-radius:100px;text-transform:uppercase}
+.backbtn{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:rgba(28,42,31,.07);border:1px solid rgba(28,42,31,.2);color:var(--ink);font-family:var(--body);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.backbtn:active{background:rgba(28,42,31,.14)}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:18px 22px 6px;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{flex-shrink:0;padding:8px 15px;border-radius:100px;font-size:13px;font-weight:500;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;font-family:var(--body);transition:all .15s}
