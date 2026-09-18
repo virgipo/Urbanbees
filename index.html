@@ -1,260 +1,852 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Urban Bees</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#1c2a1f; --ink-soft:#3c4a3e;
-  --honey:#d98e1f; --honey-deep:#b06f0e;
-  --paper:#faf7f0; --card:#ffffff; --line:#e7e0d2; --leaf:#5a7a52;
-  /* hero: pale nude ground with a honeycomb lattice. The lattice stroke is a
-     softened honey (#D4B07E) and lives inside the SVG data URI below, where it
-     can't read a variable. */
-  --hero-bg:#F2E8DD; --hero-accent:#C08A3E; --hero-accent-deep:#9A6B27;
-  --display:'Fraunces',serif; --body:'Archivo',sans-serif;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
-body{font-family:var(--body);background:#11190f;color:var(--ink);display:flex;justify-content:center;align-items:flex-start}
-.phone{width:100%;max-width:430px;min-height:100dvh;background:var(--paper);position:relative;display:flex;flex-direction:column;box-shadow:0 0 80px rgba(0,0,0,.5)}
-.screen{flex:1;overflow-y:auto;padding-bottom:96px;display:none}
-.screen.active{display:block}
-.hex{clip-path:polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0% 50%)}
-.hex-frame{width:74px;height:80px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(150deg,#fff 0%,#f3ecdd 100%)}
-.hex-wrap{width:80px;height:86px;flex-shrink:0;background:var(--honey);display:flex;align-items:center;justify-content:center}
-.hex-wrap .hex-frame{width:74px;height:80px}
-.hero{
-  color:var(--ink);padding:28px 22px 30px;position:relative;overflow:hidden;
-  background-color:var(--hero-bg);
-  background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22150%22%20height%3D%2284%22%20viewBox%3D%220%200%20150%2084%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23D4B07E%22%20stroke-width%3D%221.6%22%3E%3Cpath%20d%3D%22M-100.0%20-84.0L-50.0%20-84.0L-25.0%20-42.0L-50.0%200.0L-100.0%200.0L-125.0%20-42.0Z%22%2F%3E%3Cpath%20d%3D%22M-100.0%200.0L-50.0%200.0L-25.0%2042.0L-50.0%2084.0L-100.0%2084.0L-125.0%2042.0Z%22%2F%3E%3Cpath%20d%3D%22M-100.0%2084.0L-50.0%2084.0L-25.0%20126.0L-50.0%20168.0L-100.0%20168.0L-125.0%20126.0Z%22%2F%3E%3Cpath%20d%3D%22M-100.0%20168.0L-50.0%20168.0L-25.0%20210.0L-50.0%20252.0L-100.0%20252.0L-125.0%20210.0Z%22%2F%3E%3Cpath%20d%3D%22M-25.0%20-126.0L25.0%20-126.0L50.0%20-84.0L25.0%20-42.0L-25.0%20-42.0L-50.0%20-84.0Z%22%2F%3E%3Cpath%20d%3D%22M-25.0%20-42.0L25.0%20-42.0L50.0%200.0L25.0%2042.0L-25.0%2042.0L-50.0%200.0Z%22%2F%3E%3Cpath%20d%3D%22M-25.0%2042.0L25.0%2042.0L50.0%2084.0L25.0%20126.0L-25.0%20126.0L-50.0%2084.0Z%22%2F%3E%3Cpath%20d%3D%22M-25.0%20126.0L25.0%20126.0L50.0%20168.0L25.0%20210.0L-25.0%20210.0L-50.0%20168.0Z%22%2F%3E%3Cpath%20d%3D%22M50.0%20-84.0L100.0%20-84.0L125.0%20-42.0L100.0%200.0L50.0%200.0L25.0%20-42.0Z%22%2F%3E%3Cpath%20d%3D%22M50.0%200.0L100.0%200.0L125.0%2042.0L100.0%2084.0L50.0%2084.0L25.0%2042.0Z%22%2F%3E%3Cpath%20d%3D%22M50.0%2084.0L100.0%2084.0L125.0%20126.0L100.0%20168.0L50.0%20168.0L25.0%20126.0Z%22%2F%3E%3Cpath%20d%3D%22M50.0%20168.0L100.0%20168.0L125.0%20210.0L100.0%20252.0L50.0%20252.0L25.0%20210.0Z%22%2F%3E%3Cpath%20d%3D%22M125.0%20-126.0L175.0%20-126.0L200.0%20-84.0L175.0%20-42.0L125.0%20-42.0L100.0%20-84.0Z%22%2F%3E%3Cpath%20d%3D%22M125.0%20-42.0L175.0%20-42.0L200.0%200.0L175.0%2042.0L125.0%2042.0L100.0%200.0Z%22%2F%3E%3Cpath%20d%3D%22M125.0%2042.0L175.0%2042.0L200.0%2084.0L175.0%20126.0L125.0%20126.0L100.0%2084.0Z%22%2F%3E%3Cpath%20d%3D%22M125.0%20126.0L175.0%20126.0L200.0%20168.0L175.0%20210.0L125.0%20210.0L100.0%20168.0Z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
-  background-size:112px 63px;
-  background-repeat:repeat;
-}
-.brand{display:flex;align-items:center;gap:10px;margin-bottom:20px}
-.brand-mark{width:34px;height:38px;background:var(--honey);display:flex;align-items:center;justify-content:center;font-size:18px}
-.brand h1{font-family:var(--display);font-weight:600;font-size:22px;letter-spacing:.01em}
-.langtoggle{margin-left:auto;display:flex;gap:2px;background:rgba(28,42,31,.05);border:1px solid rgba(28,42,31,.15);border-radius:100px;padding:3px}
-.langtoggle button{background:none;border:none;color:var(--ink-soft);font-family:var(--body);font-weight:700;font-size:11.5px;padding:5px 11px;border-radius:100px;cursor:pointer;letter-spacing:.04em}
-.langtoggle button.on{background:var(--ink);color:var(--hero-bg)}
-.hero .tagline{font-family:var(--display);font-weight:500;font-size:30px;line-height:1.15;max-width:300px;margin-bottom:10px}
-.hero .tagline em{font-style:italic;color:var(--hero-accent)}
-.hero .sub{font-size:13.5px;color:var(--ink-soft);max-width:300px;line-height:1.5}
-.ship-badge{display:inline-flex;align-items:center;gap:7px;margin-top:16px;background:rgba(192,138,62,.12);border:1px solid rgba(192,138,62,.45);color:var(--hero-accent-deep);font-size:12px;font-weight:600;letter-spacing:.04em;padding:7px 12px;border-radius:100px;text-transform:uppercase}
-.backbtn{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:rgba(28,42,31,.06);border:1px solid rgba(28,42,31,.18);color:var(--ink);font-family:var(--body);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
-.backbtn:active{background:rgba(28,42,31,.13)}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:18px 22px 6px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex-shrink:0;padding:8px 15px;border-radius:100px;font-size:13px;font-weight:500;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;font-family:var(--body);transition:all .15s}
-.chip.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--leaf);padding:18px 22px 10px}
-.plist{padding:0 22px;display:flex;flex-direction:column;gap:12px}
-.pcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;gap:14px;align-items:center;cursor:pointer;transition:transform .15s}
-.pcard:active{transform:scale(.985)}
-.pinfo{flex:1;min-width:0}
-.pregion{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--honey-deep);margin-bottom:3px}
-.pname{font-family:var(--display);font-weight:600;font-size:16.5px;line-height:1.2;margin-bottom:3px}
-.pfarm{font-size:12.5px;color:#7a8276;margin-bottom:8px}
-.prow{display:flex;align-items:center;justify-content:space-between}
-.pprice{font-weight:700;font-size:15px}
-.pprice span{font-size:11.5px;font-weight:400;color:#9aa096}
-.addbtn{background:var(--ink);color:var(--paper);border:none;border-radius:100px;font-family:var(--body);font-weight:600;font-size:12.5px;padding:8px 14px;cursor:pointer;transition:background .15s}
-.addbtn:active{background:var(--honey-deep)}
-.addbtn.added{background:var(--leaf)}
-.fcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin:0 22px 12px;display:flex;gap:16px;align-items:flex-start}
-.fbody h3{font-family:var(--display);font-weight:600;font-size:17px;margin-bottom:2px}
-.floc{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--honey-deep);margin-bottom:8px}
-.fdesc{font-size:13.5px;line-height:1.5;color:var(--ink-soft)}
-.fstats{display:flex;gap:14px;margin-top:10px}
-.fstat{font-size:12px;color:#7a8276}
-.fstat b{color:var(--ink);font-weight:700}
-.cart-empty{padding:60px 32px;text-align:center}
-.cart-empty .big{font-size:44px;margin-bottom:14px}
-.cart-empty h3{font-family:var(--display);font-weight:600;font-size:20px;margin-bottom:8px}
-.cart-empty p{font-size:14px;color:#7a8276;line-height:1.5}
-.citem{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin:0 22px 10px}
-.citem .hex-frame{width:50px;height:54px;font-size:24px}
-.cinfo{flex:1}
-.cinfo .n{font-family:var(--display);font-weight:600;font-size:14.5px}
-.cinfo .f{font-size:12px;color:#7a8276}
-.qty{display:flex;align-items:center;gap:10px}
-.qty button{width:26px;height:26px;border-radius:50%;border:1px solid var(--line);background:var(--paper);font-size:15px;cursor:pointer;color:var(--ink);line-height:1}
-.qty span{font-weight:700;font-size:14px;min-width:16px;text-align:center}
-.summary{margin:16px 22px;background:var(--ink);color:var(--paper);border-radius:18px;padding:20px}
-.srow{display:flex;justify-content:space-between;font-size:14px;margin-bottom:8px;color:#c8cfc4}
-.srow.ship{color:var(--honey)}
-.srow.tot{font-weight:700;font-size:17px;color:var(--paper);margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.15)}
-.checkout{width:100%;margin-top:16px;background:var(--honey);color:var(--ink);border:none;border-radius:100px;padding:14px;font-family:var(--body);font-weight:700;font-size:15px;cursor:pointer}
-.checkout:active{background:var(--honey-deep);color:var(--paper)}
-.checkout:disabled{opacity:.6;cursor:default}
-.ship-note{font-size:12px;color:#9aa096;text-align:center;margin:14px 32px 0;line-height:1.5}
-.dhex-wrap{display:flex;justify-content:center;margin:-34px 0 6px}
-.dhex-wrap .hex-wrap{width:96px;height:104px}
-.dhex-wrap .hex-frame{width:88px;height:96px;font-size:44px}
-.dpricebar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 22px 6px;padding:14px 16px;background:var(--card);border:1px solid var(--line);border-radius:16px}
-.dprice{font-family:var(--display);font-weight:700;font-size:20px}
-.dprice span{display:block;font-size:11.5px;font-weight:400;color:#9aa096;font-family:var(--body)}
-.chargrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 22px}
-.charcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
-.charlabel{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--leaf);margin-bottom:4px}
-.charvalue{font-size:13px;font-weight:600;line-height:1.35}
-.ddesc-block{margin:0 22px 14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
-.ddesc-block h4{font-family:var(--display);font-weight:600;font-size:15px;margin-bottom:8px}
-.ddesc-block p{font-size:13.5px;line-height:1.55;color:var(--ink-soft)}
-.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(250,247,240,.92);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 0 max(14px, env(safe-area-inset-bottom));z-index:50}
-.tab{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;font-family:var(--body);font-size:11px;font-weight:600;color:#9aa096;position:relative;width:80px}
-.tab .ico{font-size:21px;filter:grayscale(1);opacity:.55;transition:all .15s}
-.tab.on{color:var(--ink)}
-.tab.on .ico{filter:none;opacity:1}
-.badge{position:absolute;top:-4px;right:18px;background:var(--honey);color:var(--ink);font-size:10px;font-weight:700;min-width:17px;height:17px;border-radius:100px;display:flex;align-items:center;justify-content:center;padding:0 4px}
-.toast{position:fixed;bottom:92px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);font-size:13px;font-weight:600;padding:10px 18px;border-radius:100px;opacity:0;pointer-events:none;transition:all .25s;z-index:60;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+  /* Erewhon's system, Urban Bees' hue */
+  --bg:#FCFBF9;
+  --surface:#FFFFFF;
+  --tint:#F1EADF;
+  --tint-deep:#E7DCCB;
+  --ink:#212121;
+  --ink-2:#6E6A64;
+  --ink-3:#9A958D;
+  --line:#E4E0D9;
+  --line-2:#CFC9BF;
+  --btn:#E8E7E3;
+  --btn-hover:#DEDCD6;
+  --accent:#A8681B;
+  --deep:#1F2A1E;
 
-/* ============ Desktop / wide-viewport layout ============ */
-@media (min-width: 860px){
-  .phone{max-width:none;border-radius:0;box-shadow:none}
-  .screen{padding-bottom:110px}
-  .hero{padding:52px 56px 44px}
-  .brand{margin-bottom:30px}
-  .brand h1{font-size:26px}
-  .hero .tagline{font-size:42px;max-width:620px}
-  .hero .sub{font-size:15px;max-width:520px}
-  .chips{padding:26px 56px 8px}
-  .eyebrow{padding:22px 56px 14px;font-size:12px}
-  .plist{max-width:1600px;margin:0 auto;padding:0 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-  .pcard{transition:transform .15s,box-shadow .15s}
-  .pcard:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(28,42,31,.1)}
-  #flist{max-width:1600px;margin:0 auto;padding:0 56px;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
-  .fcard{margin:0}
-  #cartbody{max-width:640px;margin:0 auto}
-  #screen-detail>.dpricebar,#screen-detail>.chargrid,#screen-detail>.ddesc-block{max-width:640px;margin-left:auto;margin-right:auto}
-  .tabbar{max-width:480px;bottom:24px;border-radius:100px;border:1px solid var(--line)}
+  --font:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --r:3px;
+  --u:4px;
+  --pad:clamp(20px,5vw,64px);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  letter-spacing:-.005em;
+}
+img{max-width:100%}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+a{color:inherit;text-decoration:none}
+
+.u-label{
+  font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);
+}
+
+/* ---------- header: one dark bar, three zones ---------- */
+.site-header{
+  position:sticky;top:0;z-index:70;
+  background:var(--deep);color:#F2EFE9;
+}
+.header-inner{
+  max-width:1520px;margin:0 auto;padding:0 var(--pad);
+  height:80px;display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;gap:20px;
+}
+.nav-left{display:flex;align-items:center;gap:30px}
+.nav-right{justify-self:end;display:flex;align-items:center;gap:22px}
+.wordmark{
+  justify-self:center;color:#FFFFFF;
+  font-size:19px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  white-space:nowrap;
+}
+.navlink{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  color:rgba(242,239,233,.74);padding:4px 0;
+  border-bottom:1px solid transparent;transition:color .15s,border-color .15s;
+}
+.navlink:hover,.navlink.on{color:#FFFFFF}
+.navlink.on{border-bottom-color:rgba(255,255,255,.65)}
+.navlink svg{width:9px;height:9px;flex:none;transition:transform .18s}
+
+/* dropdown */
+.has-menu{position:relative}
+.has-menu:hover .navlink svg,.has-menu.open .navlink svg{transform:rotate(180deg)}
+.dropdown{
+  position:absolute;top:100%;left:-18px;min-width:228px;
+  background:var(--deep);border:1px solid rgba(255,255,255,.14);border-top:none;
+  border-radius:0 0 var(--r) var(--r);
+  padding:8px 0;opacity:0;visibility:hidden;transform:translateY(-4px);
+  transition:opacity .16s,transform .16s,visibility .16s;
+}
+.has-menu:hover .dropdown,
+.has-menu:focus-within .dropdown,
+.has-menu.open .dropdown{opacity:1;visibility:visible;transform:translateY(0)}
+.dropdown button{
+  display:block;width:100%;text-align:left;padding:11px 20px;
+  font-size:12px;font-weight:500;letter-spacing:.04em;
+  color:rgba(242,239,233,.78);transition:color .14s,background .14s;
+}
+.dropdown button:hover{color:#FFFFFF;background:rgba(255,255,255,.07)}
+
+.lang{display:flex;align-items:center;gap:6px}
+.lang button{
+  font-size:11px;font-weight:600;letter-spacing:.08em;
+  color:rgba(242,239,233,.55);padding:3px 2px;transition:color .15s;
+}
+.lang button.on{color:#FFFFFF}
+.lang .sep{color:rgba(242,239,233,.3);font-size:11px}
+.cart-btn{
+  font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;color:rgba(242,239,233,.86);transition:color .15s;
+}
+.cart-btn:hover{color:#FFFFFF}
+.cart-count{
+  min-width:19px;height:19px;padding:0 5px;border-radius:100px;
+  background:#FFFFFF;color:var(--deep);
+  font-size:10.5px;font-weight:700;letter-spacing:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.cart-count[hidden]{display:none}
+
+/* mobile menu */
+.menu-btn{display:none;font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:rgba(242,239,233,.86)}
+.mobile-nav{display:none;border-top:1px solid rgba(255,255,255,.14);padding:6px 0 14px}
+.mobile-nav.open{display:block}
+.mobile-nav button{
+  display:block;width:100%;text-align:left;
+  padding:12px var(--pad);font-size:12.5px;font-weight:600;
+  letter-spacing:.1em;text-transform:uppercase;color:rgba(242,239,233,.8);
+}
+.mobile-nav .m-group{
+  display:block;padding:14px var(--pad) 2px;
+  font-size:11px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  color:rgba(242,239,233,.42);
+}
+.mobile-nav button.sub{
+  text-transform:none;letter-spacing:.03em;font-weight:500;
+  padding-left:calc(var(--pad) + 18px);color:rgba(242,239,233,.62);font-size:13px;
+}
+
+/* ---------- views ---------- */
+.view{display:none}
+.view.active{display:block}
+.shell{max-width:1520px;margin:0 auto;padding:0 var(--pad)}
+
+/* ---------- hero ---------- */
+.hero{
+  padding:clamp(56px,9vw,104px) 0 clamp(40px,6vw,72px);
+  border-bottom:1px solid var(--line);
+}
+.hero .u-label{display:block;margin-bottom:22px}
+.hero h1{
+  font-size:clamp(30px,4.4vw,46px);
+  font-weight:600;line-height:1.1;letter-spacing:-.028em;
+  max-width:19ch;margin-bottom:20px;text-wrap:balance;
+}
+.hero p{
+  font-size:15.5px;color:var(--ink-2);max-width:56ch;line-height:1.6;
+}
+.hero-meta{
+  display:flex;flex-wrap:wrap;gap:0 34px;margin-top:34px;
+  padding-top:22px;border-top:1px solid var(--line);max-width:760px;
+}
+.hero-meta div{padding:6px 0}
+.hero-meta b{display:block;font-size:12.5px;font-weight:600;letter-spacing:.02em}
+.hero-meta span{font-size:12px;color:var(--ink-3)}
+
+/* ---------- shop layout: sidebar + grid ---------- */
+.shop-layout{
+  display:grid;grid-template-columns:232px minmax(0,1fr);
+  gap:0 56px;align-items:start;padding-top:40px;
+}
+.facet-bar{display:none}
+.shop-layout.rail-closed{grid-template-columns:38px minmax(0,1fr);gap:0 26px}
+.shop-layout.rail-closed .facets-body{display:none}
+.shop-layout.rail-closed .facets-head h2,
+.shop-layout.rail-closed .facets-clear{display:none}
+.shop-layout.rail-closed .facets-head{padding-bottom:0;border-bottom:0}
+.shop-layout.rail-closed .rail-toggle .chev{transform:rotate(180deg)}
+.shop-layout.rail-closed .rail-toggle{
+  width:32px;height:32px;margin-left:0;
+  border:1px solid var(--line-2);background:var(--bg);color:var(--ink-2);
+}
+.shop-layout.rail-closed .rail-toggle:hover{background:var(--tint);color:var(--ink);border-color:var(--ink-3)}
+
+.rail-toggle{
+  width:26px;height:26px;margin-left:-5px;flex:none;position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:50%;color:var(--ink-3);
+  transition:background .15s,color .15s;
+}
+.rail-toggle:hover{background:var(--tint);color:var(--ink)}
+.rail-toggle .chev{width:11px;height:11px;transition:transform .22s}
+.rail-dot{
+  position:absolute;top:1px;right:1px;width:6px;height:6px;border-radius:50%;
+  background:var(--accent);
+}
+.rail-dot[hidden]{display:none}
+
+.facets{position:sticky;top:104px;padding-bottom:60px}
+.facets-head{
+  display:flex;align-items:center;gap:9px;
+  padding-bottom:6px;
+}
+.facets-head h2{margin-right:auto}
+.facets-head h2{
+  font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+}
+.facets-clear{
+  font-size:11.5px;color:var(--ink-3);text-decoration:underline;
+  text-underline-offset:3px;transition:color .15s;
+}
+.facets-clear:hover{color:var(--ink)}
+.facets-clear[hidden]{display:none}
+
+.facet{border-top:1px solid var(--line)}
+.facet-head{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:16px 0 14px;text-align:left;
+  font-size:12.5px;font-weight:600;letter-spacing:.01em;color:var(--ink);
+}
+.facet-head .chev{width:9px;height:9px;flex:none;transition:transform .2s;color:var(--ink-3)}
+.facet.closed .chev{transform:rotate(-90deg)}
+.facet-body{display:flex;flex-direction:column;gap:2px;padding-bottom:16px}
+.facet.closed .facet-body{display:none}
+
+.opt{
+  display:flex;align-items:center;gap:10px;cursor:pointer;
+  padding:5px 0;font-size:13.5px;color:var(--ink-2);line-height:1.45;
+  transition:color .15s;
+}
+.opt:hover{color:var(--ink)}
+.opt input{position:absolute;opacity:0;width:0;height:0}
+.opt .box{
+  width:15px;height:15px;flex:none;border:1px solid var(--line-2);border-radius:2px;
+  background:transparent;position:relative;transition:background .15s,border-color .15s;
+}
+.opt .box::after{
+  content:'';position:absolute;left:4px;top:.5px;width:4px;height:8px;
+  border:solid #FFF;border-width:0 1.6px 1.6px 0;transform:rotate(43deg) scale(0);
+  transition:transform .15s;
+}
+.opt input:checked + .box{background:var(--deep);border-color:var(--deep)}
+.opt input:checked + .box::after{transform:rotate(43deg) scale(1)}
+.opt input:focus-visible + .box{outline:2px solid var(--accent);outline-offset:2px}
+.opt .n{margin-left:auto;font-size:11.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.opt.off{opacity:.38;cursor:not-allowed}
+.opt.off:hover{color:var(--ink-2)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:0 0 4px}
+.chips:empty{display:none}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:5px 10px;border:1px solid var(--line-2);border-radius:100px;
+  font-size:12px;color:var(--ink-2);transition:border-color .15s,color .15s;
+}
+.chip:hover{border-color:var(--ink-2);color:var(--ink)}
+.chip .x{font-size:13px;line-height:1;color:var(--ink-3)}
+.chips-clear{
+  align-self:center;margin-left:4px;padding:5px 2px;
+  font-size:12px;color:var(--ink-3);text-decoration:underline;text-underline-offset:3px;
+  transition:color .15s;
+}
+.chips-clear:hover{color:var(--ink)}
+
+.empty-state{padding:56px 0 90px;max-width:420px}
+.empty-state p{font-size:14.5px;color:var(--ink-2);margin-bottom:16px}
+
+/* ---------- product grid ---------- */
+.grid-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  padding:18px 0 22px;
+}
+.grid-head h2{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.grid-head span{font-size:12px;color:var(--ink-3)}
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(212px,1fr));
+  gap:40px 24px;padding-bottom:84px;
+}
+.grid[hidden]{display:none}
+.empty-state[hidden]{display:none}
+.card{display:flex;flex-direction:column;cursor:pointer}
+.tile{
+  aspect-ratio:1/1;background:var(--tint);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;
+  font-size:64px;line-height:1;
+  transition:background .2s;
+}
+.card:hover .tile{background:var(--tint-deep)}
+.card-region{margin-top:14px}
+.card-name{
+  font-size:15px;font-weight:600;line-height:1.3;margin-top:7px;letter-spacing:-.012em;
+}
+.card-farm{font-size:12.5px;color:var(--ink-3);margin-top:3px}
+.card-foot{
+  display:flex;align-items:baseline;gap:7px;margin-top:10px;
+}
+.card-price{font-size:14.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.card-unit{font-size:12px;color:var(--ink-3)}
+.btn{
+  width:100%;margin-top:14px;
+  background:var(--btn);color:var(--ink);
+  border-radius:var(--r);padding:11px 14px;
+  font-size:11px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
+  transition:background .15s;
+}
+.btn:hover{background:var(--btn-hover)}
+.btn.added{background:var(--deep);color:#F2EFE9}
+.btn-outline{
+  background:transparent;border:1px solid var(--ink);
+}
+.btn-outline:hover{background:var(--btn)}
+.btn-solid{background:var(--deep);color:#F2EFE9}
+.btn-solid:hover{background:#2A3829}
+.btn:disabled{opacity:.5;cursor:default}
+
+/* ---------- detail ---------- */
+.back{
+  display:inline-flex;align-items:center;gap:9px;padding:26px 0 0;
+  font-size:11.5px;font-weight:600;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--ink-2);
+}
+.back:hover{color:var(--ink)}
+.detail{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:clamp(28px,5vw,72px);padding:34px 0 80px;align-items:start;
+}
+.detail-tile{
+  aspect-ratio:1/1;background:var(--tint);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;font-size:clamp(90px,14vw,160px);
+}
+.detail-info h1{
+  font-size:clamp(26px,3.4vw,36px);font-weight:600;line-height:1.12;
+  letter-spacing:-.026em;margin:12px 0 10px;text-wrap:balance;
+}
+.detail-farm{font-size:14px;color:var(--ink-2)}
+.detail-buy{
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+  margin:26px 0;padding:22px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+}
+.detail-price{font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.detail-price span{display:block;font-size:12px;font-weight:400;color:var(--ink-3);letter-spacing:0;margin-top:2px}
+.detail-buy .btn{width:auto;margin:0;min-width:190px;padding:13px 26px}
+.specs{display:grid;grid-template-columns:repeat(2,1fr);gap:0}
+.spec{padding:16px 0;border-bottom:1px solid var(--line)}
+.spec:nth-child(odd){padding-right:18px}
+.spec dt{margin-bottom:5px}
+.spec dd{font-size:13.5px;font-weight:500;line-height:1.4}
+.prose{padding:26px 0 0}
+.prose h3{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+.prose p{font-size:14.5px;line-height:1.65;color:var(--ink-2);max-width:60ch}
+.prose + .prose{margin-top:26px;padding-top:26px;border-top:1px solid var(--line)}
+
+/* ---------- producers ---------- */
+.producers{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:44px 32px;padding:44px 0 84px;
+}
+.producer-tile{
+  aspect-ratio:3/2;background:var(--tint);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;font-size:58px;
+}
+.producer h3{font-size:15.5px;font-weight:600;margin-top:16px;letter-spacing:-.012em}
+.producer .loc{margin-top:5px}
+.producer p{font-size:13.5px;line-height:1.6;color:var(--ink-2);margin-top:10px}
+.producer-stats{
+  display:flex;gap:18px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);
+  font-size:12px;color:var(--ink-3);
+}
+.producer-stats b{color:var(--ink);font-weight:600}
+
+/* ---------- cart ---------- */
+.cart-wrap{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:clamp(28px,5vw,64px);padding:34px 0 84px;align-items:start}
+.cart-line{
+  display:grid;grid-template-columns:76px 1fr auto;gap:18px;align-items:center;
+  padding:18px 0;border-bottom:1px solid var(--line);
+}
+.cart-line:first-child{border-top:1px solid var(--line)}
+.cart-tile{
+  aspect-ratio:1/1;background:var(--tint);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+}
+.cart-name{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.cart-sub{font-size:12.5px;color:var(--ink-3);margin-top:2px}
+.qty{display:flex;align-items:center;gap:2px;border:1px solid var(--line-2);border-radius:var(--r)}
+.qty button{width:32px;height:32px;font-size:15px;color:var(--ink-2);transition:color .15s}
+.qty button:hover{color:var(--ink)}
+.qty span{min-width:26px;text-align:center;font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.summary{background:var(--tint);border-radius:var(--r);padding:26px}
+.summary h3{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:18px}
+.srow{display:flex;justify-content:space-between;gap:14px;font-size:14px;padding:7px 0;color:var(--ink-2)}
+.srow span:last-child{font-variant-numeric:tabular-nums;color:var(--ink)}
+.srow.free span:last-child{color:var(--accent);font-weight:600}
+.srow.total{
+  margin-top:12px;padding-top:16px;border-top:1px solid var(--line-2);
+  font-size:17px;font-weight:600;color:var(--ink);
+}
+.summary .btn{margin-top:20px;padding:14px}
+.summary-note{font-size:11.5px;line-height:1.55;color:var(--ink-3);margin-top:14px;text-align:center}
+.empty{padding:76px 0;text-align:center;border-top:1px solid var(--line)}
+.empty h3{font-size:18px;font-weight:600;margin-bottom:10px;letter-spacing:-.015em}
+.empty p{font-size:14px;color:var(--ink-2);max-width:42ch;margin:0 auto 22px}
+.empty .btn{width:auto;display:inline-block;padding:13px 34px}
+
+/* ---------- page head (producers / cart) ---------- */
+.page-head{padding:clamp(44px,6vw,72px) 0 0}
+.page-head h1{font-size:clamp(26px,3.6vw,38px);font-weight:600;letter-spacing:-.026em;line-height:1.12;margin:14px 0 12px}
+.page-head p{font-size:15px;color:var(--ink-2);max-width:56ch}
+
+/* ---------- editorial pages ---------- */
+.editorial{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:0 56px;padding:44px 0 84px;max-width:1180px;
+}
+.ed-block{padding:26px 0;border-top:1px solid var(--line)}
+.ed-block h3{font-size:16px;font-weight:600;letter-spacing:-.015em;margin-bottom:9px}
+.ed-block p{font-size:14.5px;line-height:1.68;color:var(--ink-2);max-width:54ch}
+.blog-soon{
+  padding:64px 0 96px;border-top:1px solid var(--line);margin-top:40px;
+}
+.blog-soon p{font-size:15px;color:var(--ink-2);max-width:52ch;line-height:1.7}
+
+/* ---------- footer ---------- */
+.site-footer{border-top:1px solid var(--line);background:var(--bg)}
+.footer-inner{
+  max-width:1520px;margin:0 auto;padding:56px var(--pad) 0;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:36px;
+}
+.footer-col h4{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px}
+.footer-col p,.footer-col li{font-size:13.5px;color:var(--ink-2);line-height:1.7}
+.footer-col ul{list-style:none}
+.foot-link{font-size:13.5px;color:var(--ink-2);line-height:1.7;text-align:left;transition:color .15s}
+.foot-link:hover{color:var(--ink)}
+.footer-brand .wordmark{font-size:15px;margin-bottom:12px;display:block;color:var(--ink);justify-self:start}
+.footer-bottom{
+  max-width:1520px;margin:0 auto;padding:30px var(--pad) 34px;margin-top:40px;
+  border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:space-between;
+  font-size:11.5px;color:var(--ink-3);
+}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(14px);
+  background:var(--deep);color:#F2EFE9;border-radius:var(--r);
+  padding:13px 22px;font-size:12.5px;font-weight:500;letter-spacing:.02em;
+  opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:90;
+  max-width:calc(100vw - 32px);text-align:center;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+@media (max-width:860px){
+  .detail,.cart-wrap{grid-template-columns:1fr}
+  .nav-left .navlink,.nav-left .has-menu{display:none}
+  .menu-btn{display:inline-flex}
+  .header-inner{height:62px;gap:10px}
+  .shop-layout,.shop-layout.rail-closed{grid-template-columns:1fr;gap:0;padding-top:0}
+  .shop-layout.rail-closed .facets-body,
+  .shop-layout.rail-closed .facets-clear{display:block}
+  .rail-toggle{display:none}
+  .facet-bar{
+    display:flex;align-items:center;gap:8px;width:100%;
+    margin-top:30px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);
+  }
+  .facet-bar-n{
+    display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;
+    padding:0 5px;border-radius:100px;background:var(--deep);color:#FFF;
+    font-size:10.5px;letter-spacing:0;
+  }
+  .facet-bar-n[hidden]{display:none}
+  .facets{display:none;position:static;padding:8px 0 20px}
+  .facets-head h2{display:none}
+  .facets-head{justify-content:flex-end;padding:10px 0 0}
+  .facets.open{display:block}
+  .facets-done{width:100%;margin-top:18px}
+  .facets-done[hidden]{display:none}
+  .chips{padding-top:18px}
+  .wordmark{font-size:15px;letter-spacing:.18em}
+  .hero-meta{gap:0 22px}
+}
+@media (max-width:560px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:28px 14px}
+  .tile{font-size:44px}
+  .specs{grid-template-columns:1fr}
+  .spec:nth-child(odd){padding-right:0}
+  .cart-line{grid-template-columns:60px 1fr;row-gap:12px}
+  .cart-line .qty{grid-column:2;justify-self:start}
+  .wordmark{font-size:13.5px;letter-spacing:.1em}
+  .nav-right{gap:14px}
+  .header-inner{gap:8px;padding:0 16px}
 }
 </style>
 </head>
 <body>
-<div class="phone">
 
-  <div class="screen active" id="screen-shop">
-    <header class="hero">
-      <div class="brand">
-        <div class="brand-mark hex">🐝</div>
-        <h1>Urban Bees</h1>
-        <div class="langtoggle">
-          <button id="lang-en" onclick="setLang('en')">EN</button>
-          <button id="lang-it" onclick="setLang('it')">IT</button>
+<header class="site-header">
+  <div class="header-inner">
+    <div class="nav-left">
+      <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="mobile-nav">
+        <span id="t-menu"></span>
+      </button>
+      <button class="navlink" data-nav="shop" id="t-nav-shop"></button>
+      <div class="has-menu" id="about-menu">
+        <button class="navlink" id="about-trigger" aria-expanded="false" aria-haspopup="true">
+          <span id="t-nav-about"></span>
+          <svg viewBox="0 0 10 10" fill="none" aria-hidden="true">
+            <path d="M1 3.5 L5 7 L9 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="dropdown" id="about-dropdown">
+          <button data-nav="producers" id="t-menu-beekeepers"></button>
+          <button data-nav="why" id="t-menu-why"></button>
+          <button data-nav="promise" id="t-menu-promise"></button>
         </div>
       </div>
-      <p class="tagline" id="t-tagline"></p>
-      <p class="sub" id="t-sub"></p>
-      <div class="ship-badge">📦 <span id="t-shipbadge"></span></div>
-    </header>
-    <div class="chips" id="chips"></div>
-    <div class="eyebrow" id="t-eyebrow"></div>
-    <div class="plist" id="plist"></div>
-  </div>
-
-  <div class="screen" id="screen-detail">
-    <header class="hero" style="padding-bottom:56px">
-      <div class="brand">
-        <button class="backbtn" onclick="closeDetail()" aria-label="Back">←</button>
-        <div class="brand-mark hex">🐝</div><h1>Urban Bees</h1>
-      </div>
-      <p class="tagline" style="font-size:24px" id="d-name"></p>
-      <p class="sub" id="d-farm"></p>
-    </header>
-    <div class="dhex-wrap" id="d-emoji"></div>
-    <div class="dpricebar">
-      <div class="dprice" id="d-price"></div>
-      <button class="addbtn" id="d-addbtn"></button>
+      <button class="navlink" data-nav="blog" id="t-nav-blog"></button>
     </div>
-    <div class="chargrid" id="d-chars"></div>
-    <div class="ddesc-block" id="d-about"></div>
-    <div class="ddesc-block" id="d-pairing"></div>
+
+    <button class="wordmark" data-nav="shop">Urban Bees</button>
+
+    <div class="nav-right">
+      <div class="lang">
+        <button id="lang-en" onclick="setLang('en')">EN</button>
+        <span class="sep">/</span>
+        <button id="lang-it" onclick="setLang('it')">IT</button>
+      </div>
+      <button class="cart-btn" data-nav="cart">
+        <span id="t-nav-cart"></span>
+        <span class="cart-count" id="cart-count" hidden>0</span>
+      </button>
+    </div>
   </div>
 
-  <div class="screen" id="screen-farmers">
-    <header class="hero" style="padding-bottom:24px">
-      <div class="brand"><div class="brand-mark hex">🐝</div><h1>Urban Bees</h1></div>
-      <p class="tagline" style="font-size:26px" id="t-farmers-title"></p>
-      <p class="sub" id="t-farmers-sub"></p>
-    </header>
-    <div style="height:18px"></div>
-    <div id="flist"></div>
-  </div>
-
-  <div class="screen" id="screen-cart">
-    <header class="hero" style="padding-bottom:24px">
-      <div class="brand"><div class="brand-mark hex">🐝</div><h1>Urban Bees</h1></div>
-      <p class="tagline" style="font-size:26px" id="t-cart-title"></p>
-    </header>
-    <div style="height:18px"></div>
-    <div id="cartbody"></div>
-  </div>
-
-  <nav class="tabbar">
-    <button class="tab on" data-tab="shop"><span class="ico">🍯</span><span id="t-tab-shop"></span></button>
-    <button class="tab" data-tab="farmers"><span class="ico">🐝</span><span id="t-tab-farmers"></span></button>
-    <button class="tab" data-tab="cart"><span class="ico">🧺</span><span id="t-tab-cart"></span><span class="badge" id="badge" style="display:none">0</span></button>
+  <nav class="mobile-nav" id="mobile-nav">
+    <button data-nav="shop" id="t-m-shop"></button>
+    <span class="m-group" id="t-m-about"></span>
+    <button data-nav="producers" class="sub" id="t-m-beekeepers"></button>
+    <button data-nav="why" class="sub" id="t-m-why"></button>
+    <button data-nav="promise" class="sub" id="t-m-promise"></button>
+    <button data-nav="blog" id="t-m-blog"></button>
   </nav>
+</header>
 
-  <div class="toast" id="toast"></div>
-</div>
+<main>
+
+  <!-- ============ shop ============ -->
+  <section class="view active" id="view-shop">
+    <div class="shell">
+      <div class="hero">
+        <span class="u-label" id="t-hero-label"></span>
+        <h1 id="t-hero-title"></h1>
+        <p id="t-hero-sub"></p>
+        <div class="hero-meta" id="hero-meta"></div>
+      </div>
+      <button class="facet-bar" id="facet-bar" aria-expanded="false" aria-controls="facets">
+        <span id="t-facet-bar"></span>
+        <span class="facet-bar-n" id="facet-bar-n" hidden>0</span>
+      </button>
+
+      <div class="shop-layout">
+        <aside class="facets" id="facets">
+          <div class="facets-head">
+            <button class="rail-toggle" id="rail-toggle" aria-expanded="true" aria-controls="facet-list">
+              <svg class="chev" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                <path d="M6.5 1 3 5l3.5 4" stroke="currentColor" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="rail-dot" id="rail-dot" hidden></span>
+            </button>
+            <h2 id="t-facets-title"></h2>
+            <button class="facets-clear" id="facets-clear" hidden></button>
+          </div>
+          <div class="facets-body" id="facets-body">
+            <div id="facet-list"></div>
+            <button class="btn facets-done" id="facets-done" hidden></button>
+          </div>
+        </aside>
+
+        <div>
+          <div class="chips" id="chips"></div>
+          <div class="grid-head">
+            <h2 id="t-grid-title"></h2>
+            <span id="t-grid-count"></span>
+          </div>
+          <div class="grid" id="grid"></div>
+          <div class="empty-state" id="empty-state" hidden>
+            <p id="t-no-results"></p>
+            <button class="btn btn-outline" id="empty-clear"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ detail ============ -->
+  <section class="view" id="view-detail">
+    <div class="shell">
+      <button class="back" onclick="closeDetail()"><span aria-hidden="true">←</span><span id="t-back"></span></button>
+      <div class="detail">
+        <div class="detail-tile" id="d-tile"></div>
+        <div class="detail-info">
+          <span class="u-label" id="d-region"></span>
+          <h1 id="d-name"></h1>
+          <p class="detail-farm" id="d-farm"></p>
+          <div class="detail-buy">
+            <div class="detail-price" id="d-price"></div>
+            <button class="btn btn-solid" id="d-add"></button>
+          </div>
+          <dl class="specs" id="d-specs"></dl>
+          <div class="prose" id="d-about"></div>
+          <div class="prose" id="d-pairing"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ producers ============ -->
+  <section class="view" id="view-producers">
+    <div class="shell">
+      <div class="page-head">
+        <span class="u-label" id="t-prod-label"></span>
+        <h1 id="t-prod-title"></h1>
+        <p id="t-prod-sub"></p>
+      </div>
+      <div class="producers" id="producers"></div>
+    </div>
+  </section>
+
+  <!-- ============ cart ============ -->
+  <section class="view" id="view-cart">
+    <div class="shell">
+      <div class="page-head">
+        <span class="u-label" id="t-cart-label"></span>
+        <h1 id="t-cart-title"></h1>
+      </div>
+      <div id="cart-body"></div>
+    </div>
+  </section>
+
+  <!-- ============ editorial pages ============ -->
+  <section class="view" id="view-why">
+    <div class="shell">
+      <div class="page-head">
+        <span class="u-label" id="t-why-label"></span>
+        <h1 id="t-why-title"></h1>
+        <p id="t-why-sub"></p>
+      </div>
+      <div class="editorial" id="why-body"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-promise">
+    <div class="shell">
+      <div class="page-head">
+        <span class="u-label" id="t-promise-label"></span>
+        <h1 id="t-promise-title"></h1>
+        <p id="t-promise-sub"></p>
+      </div>
+      <div class="editorial" id="promise-body"></div>
+    </div>
+  </section>
+
+  <section class="view" id="view-blog">
+    <div class="shell">
+      <div class="page-head">
+        <span class="u-label" id="t-blog-label"></span>
+        <h1 id="t-blog-title"></h1>
+        <p id="t-blog-sub"></p>
+      </div>
+      <div class="blog-soon" id="blog-body"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-col footer-brand">
+      <span class="wordmark">Urban Bees</span>
+      <p id="t-foot-blurb"></p>
+    </div>
+    <div class="footer-col">
+      <h4 id="t-foot-shop-h"></h4>
+      <ul id="foot-cats"></ul>
+    </div>
+    <div class="footer-col">
+      <h4 id="t-foot-about-h"></h4>
+      <ul>
+        <li id="t-foot-producers"></li>
+        <li id="t-foot-shipping"></li>
+        <li id="t-foot-contact"></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span id="t-foot-rights"></span>
+    <span id="t-foot-ship-note"></span>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
 
 <script>
 /* ============ i18n ============ */
 const I18N = {
   it: {
-    tagline:'Il miele più autentico d\'Italia, <em>direttamente a casa tua.</em>',
-    sub:'Varietà rare di apicoltori indipendenti. Niente intermediari, niente scaffali — ogni vasetto racconta un territorio e una fioritura.',
-    shipbadge:'Spedizione sempre inclusa',
-    eyebrow:'Le nostre varietà di miele',
-    farmersTitle:'I nostri <em>apicoltori</em>',
-    farmersSub:'Ogni apiario è visitato e verificato. Conosci chi produce il miele che porti in tavola.',
-    cartTitle:'Il tuo <em>carrello</em>',
-    tabShop:'Scopri', tabFarmers:'Apicoltori', tabCart:'Carrello',
-    all:'Tutti', add:'Aggiungi', added:'Aggiunto ✓', toastAdd:'Aggiunto al carrello',
+    navShop:'Shop', navAbout:'Chi siamo', navBlog:'Blog', navCart:'Carrello', menu:'Menu',
+    menuBeekeepers:'I nostri apicoltori', menuWhy:'Perché il miele?', menuPromise:'La nostra promessa',
+    whyLabel:'Cultura del miele', whyTitle:'Perché il miele?',
+    whySub:'Non tutti i mieli sono la stessa cosa. Ecco cosa distingue un monoflora da apicoltore da quello del supermercato.',
+    whyBlocks:[
+      ['Un fiore, un sapore','Un miele monoflora nasce quando le api bottinano in prevalenza su una sola fioritura. Acacia, castagno, tiglio, timo: stessa ape, stessa tecnica, risultati completamente diversi nel colore, nella densità e nel gusto.'],
+      ['Il territorio si sente','Lo stesso fiore, su suoli e altitudini diverse, dà mieli diversi. È lo stesso principio del vino: il castagno del Canavese non è quello dell’Appennino.'],
+      ['Grezzo significa vivo','Il miele non filtrato e non pastorizzato conserva pollini ed enzimi. È anche il motivo per cui alcuni cristallizzano e altri no: è un comportamento naturale, non un difetto.'],
+      ['Non scade','Il miele puro è uno dei pochissimi alimenti che non deperisce. Alcune varietà, come l’acacia, restano liquide per anni senza mai cristallizzare.'],
+      ['La stagione decide','Ogni fioritura dura poche settimane e alcune sono imprevedibili. Il tiglio di montagna a volte non si raccoglie affatto: per questo certe varietà esistono solo in quantità limitate.'],
+      ['Chi lo produce conta','Un apicoltore che sposta poche arnie dietro una fioritura fa un mestiere diverso da chi miscela partite di provenienza ignota. La differenza si legge in etichetta, se l’etichetta è onesta.'],
+    ],
+    promiseLabel:'Il nostro impegno', promiseTitle:'La nostra promessa',
+    promiseSub:'Cinque regole che ci siamo dati, e che valgono per ogni vasetto che spediamo.',
+    promiseBlocks:[
+      ['Origine singola','Ogni vasetto è riconducibile a un solo apiario e a una sola raccolta. Mai miscelato, mai anonimo.'],
+      ['Apiari visitati','Lavoriamo solo con apicoltori che abbiamo incontrato di persona e di cui conosciamo le arnie e i metodi.'],
+      ['Grezzo e non filtrato','Nulla aggiunto, nulla tolto. Il miele arriva come esce dal favo, con le sue caratteristiche naturali.'],
+      ['Spedizione inclusa','Sempre, in ogni ordine. Il costo lo assorbe il produttore: tu paghi il miele, non il trasporto.'],
+      ['Quantità limitate','Vendiamo quello che la stagione ha dato. Quando una varietà finisce, si aspetta la fioritura successiva.'],
+    ],
+    blogLabel:'Diario', blogTitle:'Blog',
+    blogSub:'Racconti dagli apiari, stagioni di raccolta e note sulle varietà.',
+    blogSoon:'Le prime storie stanno arrivando: visite agli apiari, il calendario delle fioriture e come si assaggia un miele. Torna presto.',
+    heroLabel:'Apicoltori indipendenti · Italia',
+    heroTitle:'Il miele più autentico d\'Italia, direttamente a casa tua.',
+    heroSub:'Varietà rare da apiari visitati uno per uno. Niente intermediari, niente scaffali: ogni vasetto racconta un territorio e una fioritura.',
+    metaOrigin:'Origine singola', metaOriginSub:'Un vasetto, un apiario',
+    metaRaw:'Grezzo e non filtrato', metaRawSub:'Nulla aggiunto, nulla tolto',
+    metaShip:'Spedizione inclusa', metaShipSub:'A carico del produttore',
+    metaSeason:'Raccolti stagionali', metaSeasonSub:'Quantità limitate',
+    filtersTitle:'Filtra', filtersClear:'Azzera tutto', filtersApply:'Mostra i risultati',
+    filtersHide:'Nascondi i filtri', filtersShow:'Mostra i filtri',
+    fOrigin:'Provenienza', fTaste:'Gusto', fFarm:'Apicoltore',
+    tastes:{
+      floral:'Delicato e floreale', bold:'Deciso e tannico', bitter:'Amaro e tostato',
+      balsamic:'Balsamico e fresco', herbal:'Erbaceo e speziato', earthy:'Terroso e intenso',
+    },
+    noResults:'Nessun miele corrisponde a questi filtri.',
+    noResultsCta:'Azzera i filtri',
+    gridTitle:'Le nostre varietà',
+    countOne:'varietà', countMany:'varietà',
+    all:'Tutti',
+    add:'Aggiungi', added:'Aggiunto', toastAdd:'Aggiunto al carrello',
+    back:'Torna ai mieli',
+    prodLabel:'La filiera',
+    prodTitle:'I nostri apicoltori',
+    prodSub:'Ogni apiario è visitato e verificato. Conosci chi produce il miele che porti in tavola.',
+    varieties:'varietà', verified:'Verificato',
+    cartLabel:'Ordine', cartTitle:'Il tuo carrello',
     emptyTitle:'Il carrello è vuoto',
-    emptyText:'Esplora le nostre varietà di miele e scopri i sapori più rari del territorio italiano.',
-    subtotal:'Subtotale', shipping:'Spedizione', shipIncluded:'Inclusa — a carico del produttore',
-    total:'Totale', checkout:'Procedi all\'ordine', checkoutLoading:'Reindirizzamento al pagamento…',
-    checkoutError:'Qualcosa è andato storto — riprova.', checkoutSuccess:'Ordine effettuato! Controlla la tua email per la conferma.',
-    shipNote:'Ogni apicoltore spedisce direttamente dal proprio territorio.<br>Nessun costo di spedizione per te, mai.',
-    product:'varietà', products:'varietà', verified:'Verificato',
+    emptyText:'Esplora le nostre varietà e scopri i sapori più rari del territorio italiano.',
+    emptyCta:'Vedi i mieli',
+    summaryTitle:'Riepilogo',
+    subtotal:'Subtotale', shipping:'Spedizione', shipIncluded:'Inclusa',
+    total:'Totale', checkout:'Procedi al pagamento',
+    checkoutLoading:'Reindirizzamento…',
+    checkoutError:'Qualcosa è andato storto — riprova.',
+    checkoutSuccess:'Ordine effettuato. Controlla la tua email per la conferma.',
+    summaryNote:'Ogni apicoltore spedisce dal proprio territorio. Nessun costo di spedizione, mai.',
     charColor:'Colore', charHarvest:'Raccolta', charCrystal:'Cristallizzazione', charFlavor:'Sapore',
-    aboutTitle:'Il miele', pairingTitle:'Abbinamenti consigliati',
+    aboutTitle:'Il miele', pairingTitle:'Abbinamenti',
+    footBlurb:'Mieli monoflora da apicoltori indipendenti italiani, selezionati uno a uno.',
+    footShopH:'Mieli', footAboutH:'Urban Bees',
+    footProducers:'Gli apicoltori', footShipping:'Spedizioni', footContact:'Contatti',
+    footRights:'© 2026 Urban Bees', footShipNote:'Spedizione inclusa in ogni ordine',
     dec:',',
   },
   en: {
-    tagline:'The most authentic honey from Italy, <em>straight to your door.</em>',
-    sub:'Rare varieties from independent beekeepers. No middlemen, no shelves — every jar tells the story of a territory and a bloom.',
-    shipbadge:'Shipping always included',
-    eyebrow:'Our honey varieties',
-    farmersTitle:'Our <em>beekeepers</em>',
-    farmersSub:'Every apiary is visited and verified. Meet the people behind the honey on your table.',
-    cartTitle:'Your <em>basket</em>',
-    tabShop:'Discover', tabFarmers:'Beekeepers', tabCart:'Basket',
-    all:'All', add:'Add', added:'Added ✓', toastAdd:'Added to basket',
-    emptyTitle:'Your basket is empty',
-    emptyText:"Browse our honey varieties and discover Italy's rarest regional flavours.",
-    subtotal:'Subtotal', shipping:'Shipping', shipIncluded:'Included — covered by the producer',
-    total:'Total', checkout:'Place your order', checkoutLoading:'Redirecting to payment…',
-    checkoutError:'Something went wrong — please try again.', checkoutSuccess:'Order placed! Check your email for confirmation.',
-    shipNote:'Every beekeeper ships directly from their own region.<br>No shipping cost for you, ever.',
-    product:'variety', products:'varieties', verified:'Verified',
-    charColor:'Color', charHarvest:'Harvest', charCrystal:'Crystallization', charFlavor:'Flavor',
-    aboutTitle:'About this honey', pairingTitle:'Suggested pairings',
+    navShop:'Shop', navAbout:'About', navBlog:'Blog', navCart:'Cart', menu:'Menu',
+    menuBeekeepers:'Our beekeepers', menuWhy:'Why honey?', menuPromise:'Our promise',
+    whyLabel:'Honey culture', whyTitle:'Why honey?',
+    whySub:'Not all honey is the same thing. Here is what separates a beekeeper\u2019s single-flower honey from the supermarket jar.',
+    whyBlocks:[
+      ['One flower, one flavour','A single-flower honey happens when bees forage mostly on one bloom. Acacia, chestnut, linden, thyme: same bee, same craft, completely different colour, density and taste.'],
+      ['You can taste the territory','The same flower, on different soils and altitudes, gives a different honey. It works like wine: chestnut from Canavese is not chestnut from the Apennines.'],
+      ['Raw means alive','Unfiltered, unpasteurised honey keeps its pollen and enzymes. It is also why some jars crystallise and others never do \u2014 that is natural behaviour, not a fault.'],
+      ['It does not expire','Pure honey is one of the very few foods that never spoils. Some varieties, like acacia, stay liquid for years without ever crystallising.'],
+      ['The season decides','Every bloom lasts a few weeks and some are unpredictable. Mountain linden sometimes cannot be harvested at all \u2014 which is why certain varieties exist only in small quantities.'],
+      ['The hands behind it matter','A beekeeper moving a few hives to follow a bloom is doing a different job from someone blending lots of unknown origin. The difference shows on the label, if the label is honest.'],
+    ],
+    promiseLabel:'Our commitment', promiseTitle:'Our promise',
+    promiseSub:'Five rules we hold ourselves to, on every jar we ship.',
+    promiseBlocks:[
+      ['Single origin','Every jar traces back to one apiary and one harvest. Never blended, never anonymous.'],
+      ['Apiaries we have visited','We only work with beekeepers we have met in person, whose hives and methods we know.'],
+      ['Raw and unfiltered','Nothing added, nothing removed. The honey reaches you as it leaves the comb.'],
+      ['Shipping included','Always, on every order. The producer absorbs the cost: you pay for honey, not for transport.'],
+      ['Limited quantities','We sell what the season gave. When a variety runs out, we wait for the next bloom.'],
+    ],
+    blogLabel:'Journal', blogTitle:'Blog',
+    blogSub:'Stories from the apiaries, harvest seasons and notes on the varieties.',
+    blogSoon:'The first stories are on their way: visits to the apiaries, the bloom calendar, and how to taste a honey properly. Check back soon.',
+    heroLabel:'Independent beekeepers · Italy',
+    heroTitle:'The most authentic honey from Italy, straight to your door.',
+    heroSub:'Rare varieties from apiaries visited one by one. No middlemen, no shelves — every jar tells the story of a territory and a bloom.',
+    metaOrigin:'Single origin', metaOriginSub:'One jar, one apiary',
+    metaRaw:'Raw and unfiltered', metaRawSub:'Nothing added, nothing removed',
+    metaShip:'Shipping included', metaShipSub:'Covered by the producer',
+    metaSeason:'Seasonal harvests', metaSeasonSub:'Limited quantities',
+    filtersTitle:'Filter', filtersClear:'Clear all', filtersApply:'Show results',
+    filtersHide:'Hide filters', filtersShow:'Show filters',
+    fOrigin:'Origin', fTaste:'Taste', fFarm:'Beekeeper',
+    tastes:{
+      floral:'Delicate & floral', bold:'Bold & tannic', bitter:'Bitter & roasted',
+      balsamic:'Balsamic & fresh', herbal:'Herbal & spiced', earthy:'Earthy & intense',
+    },
+    noResults:'No honey matches these filters.',
+    noResultsCta:'Clear the filters',
+    gridTitle:'Our varieties',
+    countOne:'variety', countMany:'varieties',
+    all:'All',
+    add:'Add to cart', added:'Added', toastAdd:'Added to cart',
+    back:'Back to honeys',
+    prodLabel:'The supply chain',
+    prodTitle:'Our beekeepers',
+    prodSub:'Every apiary is visited and verified. Meet the people behind the honey on your table.',
+    varieties:'varieties', verified:'Verified',
+    cartLabel:'Order', cartTitle:'Your cart',
+    emptyTitle:'Your cart is empty',
+    emptyText:"Browse our varieties and discover Italy's rarest regional flavours.",
+    emptyCta:'See the honeys',
+    summaryTitle:'Summary',
+    subtotal:'Subtotal', shipping:'Shipping', shipIncluded:'Included',
+    total:'Total', checkout:'Proceed to payment',
+    checkoutLoading:'Redirecting…',
+    checkoutError:'Something went wrong — please try again.',
+    checkoutSuccess:'Order placed. Check your email for confirmation.',
+    summaryNote:'Every beekeeper ships from their own region. No shipping cost, ever.',
+    charColor:'Colour', charHarvest:'Harvest', charCrystal:'Crystallisation', charFlavor:'Flavour',
+    aboutTitle:'About this honey', pairingTitle:'Pairings',
+    footBlurb:'Single-flower honeys from independent Italian beekeepers, selected one by one.',
+    footShopH:'Honeys', footAboutH:'Urban Bees',
+    footProducers:'The beekeepers', footShipping:'Shipping', footContact:'Contact',
+    footRights:'© 2026 Urban Bees', footShipNote:'Shipping included on every order',
     dec:'.',
   }
 };
 
-/* ============ Catalog (database-shaped: swap for Supabase later) ============ */
 const PRODUCTS = [
   {id:1, emoji:'🌼', price:13.50, farm:'Apicoltura Valle Sacra',
+   tastes:['floral'],
    cat:{it:'Delicato',en:'Delicate'}, name:{it:'Miele di Acacia',en:'Acacia Honey'},
    region:{it:'Piemonte',en:'Piedmont'}, unit:{it:'vasetto 400g',en:'400g jar'},
    color:{it:'Ambra chiarissimo, quasi trasparente',en:'Very pale amber, almost transparent'},
@@ -265,6 +857,7 @@ const PRODUCTS = [
    desc:{it:'Raccolto dalle fioriture di robinia lungo i pendii del Canavese, è il miele più delicato del nostro catalogo: quasi incolore, non copre mai il sapore di ciò che accompagna. Grazie all\'alto contenuto di fruttosio resta liquido per anni, senza mai cristallizzare.',
          en:'Harvested from black locust blossoms along the Canavese hillsides, it\'s the most delicate honey in our catalogue — nearly colourless and it never overpowers what it\'s paired with. Thanks to its high fructose content, it stays liquid for years without crystallising.'}},
   {id:2, emoji:'🌰', price:15.00, farm:'Apicoltura Valle Sacra',
+   tastes:['bold'],
    cat:{it:'Deciso',en:'Bold'}, name:{it:'Miele di Castagno',en:'Chestnut Honey'},
    region:{it:'Piemonte',en:'Piedmont'}, unit:{it:'vasetto 400g',en:'400g jar'},
    color:{it:'Ambra scuro con riflessi rossastri',en:'Dark amber with reddish highlights'},
@@ -275,6 +868,7 @@ const PRODUCTS = [
    desc:{it:'Prodotto sugli stessi crinali dell\'acacia ma un mese più tardi, quando fioriscono i castagneti secolari del Canavese. È il miele più identitario della cucina italiana: intenso e tannico, capace di reggere il confronto con un formaggio stagionato o una fetta di pane nero.',
          en:'Produced on the same ridges as the acacia, a month later, when the centuries-old chestnut groves of Canavese bloom. It\'s the most iconic honey in Italian cuisine — bold and tannic, robust enough to stand up to an aged cheese or a slice of dark bread.'}},
   {id:3, emoji:'🌳', price:26.00, farm:'Apiario Sardo Antico',
+   tastes:['bitter','earthy'],
    cat:{it:'Amaro',en:'Bitter'}, name:{it:'Miele di Corbezzolo',en:'Strawberry Tree Honey'},
    region:{it:'Sardegna',en:'Sardinia'}, unit:{it:'vasetto 250g',en:'250g jar'},
    color:{it:'Bruno scuro, quasi grigiastro',en:'Dark brown, almost grey'},
@@ -285,6 +879,7 @@ const PRODUCTS = [
    desc:{it:'Una delle rarità assolute dell\'apicoltura mondiale: il corbezzolo fiorisce in piena autunno, quando quasi nessun\'altra pianta è attiva, e le api ne raccolgono pochissimo. Il risultato è un miele amaro e intenso, con note di caffè tostato e liquirizia, che in Sardegna si mangia tradizionalmente col pane carasau.',
          en:'One of the true rarities of world beekeeping: the strawberry tree blooms in deep autumn, when almost nothing else is flowering, so bees gather very little of it. The result is a bitter, intense honey with notes of roasted coffee and liquorice, traditionally eaten in Sardinia with carasau bread.'}},
   {id:4, emoji:'🌸', price:10.50, farm:'Apiario dei Colli Umbri',
+   tastes:['floral'],
    cat:{it:'Delicato',en:'Delicate'}, name:{it:'Miele Millefiori',en:'Wildflower Honey'},
    region:{it:'Umbria',en:'Umbria'}, unit:{it:'vasetto 500g',en:'500g jar'},
    color:{it:'Ambra dorato, variabile per stagione',en:'Golden amber, varies by season'},
@@ -295,6 +890,7 @@ const PRODUCTS = [
    desc:{it:'Il miele più antico e versatile: nasce quando le api bottinano su decine di specie diverse nello stesso raggio di volo, senza una fioritura dominante. Ogni vasetto è leggermente diverso dal precedente — un\'istantanea della campagna umbra in quella particolare settimana.',
          en:'The oldest and most versatile honey: it comes from bees foraging across dozens of different species within the same flight range, with no single dominant bloom. Every jar is slightly different from the last — a snapshot of the Umbrian countryside in that particular week.'}},
   {id:5, emoji:'🌿', price:12.00, farm:'Apicoltura Maremma Selvatica',
+   tastes:['bold','balsamic'],
    cat:{it:'Deciso',en:'Bold'}, name:{it:'Miele di Eucalipto',en:'Eucalyptus Honey'},
    region:{it:'Toscana',en:'Tuscany'}, unit:{it:'vasetto 400g',en:'400g jar'},
    color:{it:'Ambra scuro opaco',en:'Dark, opaque amber'},
@@ -305,6 +901,7 @@ const PRODUCTS = [
    desc:{it:'Le arnie seguono i filari di eucalipto piantati oltre un secolo fa per prosciugare le paludi maremmane. Il miele che ne risulta è scuro, maltato, con un caratteristico retrogusto balsamico — da sempre abbinato, nella tradizione contadina toscana, a un tè caldo al limone nelle sere d\'inverno.',
          en:'Hives follow the eucalyptus rows planted more than a century ago to drain the Maremma marshland. The resulting honey is dark and malty, with a distinctive balsamic aftertaste — long paired, in Tuscan farmhouse tradition, with a warm lemon tea on cold winter evenings.'}},
   {id:6, emoji:'🍃', price:16.00, farm:'Apicoltura delle Dolomiti',
+   tastes:['balsamic'],
    cat:{it:'Aromatico',en:'Aromatic'}, name:{it:'Miele di Tiglio',en:'Linden (Lime) Honey'},
    region:{it:'Alto Adige',en:'South Tyrol'}, unit:{it:'vasetto 300g',en:'300g jar'},
    color:{it:'Ambra chiaro con riflessi verdognoli',en:'Light amber with greenish tints'},
@@ -315,6 +912,7 @@ const PRODUCTS = [
    desc:{it:'I tigli secolari della Val Pusteria fioriscono per una finestra brevissima e imprevedibile, spesso meno di due settimane. Chi riesce a raccoglierlo ottiene un miele fresco e balsamico, con un aroma mentolato che ricorda il fiore stesso.',
          en:'The centuries-old lime trees of Val Pusteria bloom for a very short, unpredictable window — often less than two weeks. Beekeepers who manage to harvest it get a fresh, balsamic honey with a minty aroma reminiscent of the blossom itself.'}},
   {id:7, emoji:'🌱', price:19.00, farm:'Apiario Sardo Antico',
+   tastes:['herbal'],
    cat:{it:'Aromatico',en:'Aromatic'}, name:{it:'Miele di Timo',en:'Thyme Honey'},
    region:{it:'Sardegna',en:'Sardinia'}, unit:{it:'vasetto 250g',en:'250g jar'},
    color:{it:'Ambra dorato intenso',en:'Deep golden amber'},
@@ -325,6 +923,7 @@ const PRODUCTS = [
    desc:{it:'Raccolto tra i cespugli di timo selvatico della macchia mediterranea sarda, è un miele aromatico e speziato che porta con sé il profumo dell\'estate mediterranea — un cucchiaino nel latte caldo prima di dormire è un rito di famiglia.',
          en:'Gathered among the wild thyme scrub of the Sardinian maquis, this aromatic, spiced honey carries the scent of the Mediterranean summer — a spoonful stirred into warm milk before bed is a family ritual here.'}},
   {id:8, emoji:'🐝', price:48.00, farm:'Wild Coast Apiaries',
+   tastes:['earthy'],
    cat:{it:'Raro',en:'Rare'}, name:{it:'Miele di Manuka',en:'Manuka Honey'},
    region:{it:'Nuova Zelanda',en:'New Zealand'}, unit:{it:'vasetto 250g · UMF 10+',en:'250g jar · UMF 10+'},
    color:{it:'Bruno scuro, denso',en:'Dark brown, dense'},
@@ -362,225 +961,451 @@ const FARMERS = [
          en:'Our only non-European partner: hives set among wild coastal manuka scrub, every batch UMF-certified.'}},
 ];
 
-/* ============ State ============ */
+/* ============ state ============ */
 let lang = 'en';
 let cart = {};
-let activeCat = null;
+const FACET_GROUPS = ['origin', 'taste', 'farm'];
+let picked = { origin:new Set(), taste:new Set(), farm:new Set() };
+let openFacets = new Set(FACET_GROUPS);
+let railOpen = true;
 let currentDetailId = null;
 
 const T = () => I18N[lang];
 const money = v => '€' + v.toFixed(2).replace('.', T().dec);
+const el = id => document.getElementById(id);
+const setText = (id, v) => { const n = el(id); if (n) n.textContent = v; };
 
 function setLang(l){
   lang = l;
   document.documentElement.lang = l;
-  renderStatic(); renderChips(); renderProducts(); renderFarmers();
-  if(document.getElementById('screen-cart').classList.contains('active')) renderCart();
-  if(document.getElementById('screen-detail').classList.contains('active') && currentDetailId!=null) renderDetail(currentDetailId);
+  renderChrome(); renderFilters(); renderGrid(); renderProducers();
+  if (el('view-cart').classList.contains('active')) renderCart();
+  if (el('view-detail').classList.contains('active') && currentDetailId != null) renderDetail(currentDetailId);
 }
 
-function renderStatic(){
+/* ============ chrome: header, hero, footer ============ */
+function renderChrome(){
   const t = T();
-  document.getElementById('lang-it').classList.toggle('on', lang==='it');
-  document.getElementById('lang-en').classList.toggle('on', lang==='en');
-  document.getElementById('t-tagline').innerHTML = t.tagline;
-  document.getElementById('t-sub').textContent = t.sub;
-  document.getElementById('t-shipbadge').textContent = t.shipbadge;
-  document.getElementById('t-eyebrow').textContent = t.eyebrow;
-  document.getElementById('t-farmers-title').innerHTML = t.farmersTitle;
-  document.getElementById('t-farmers-sub').textContent = t.farmersSub;
-  document.getElementById('t-cart-title').innerHTML = t.cartTitle;
-  document.getElementById('t-tab-shop').textContent = t.tabShop;
-  document.getElementById('t-tab-farmers').textContent = t.tabFarmers;
-  document.getElementById('t-tab-cart').textContent = t.tabCart;
-}
+  el('lang-en').classList.toggle('on', lang === 'en');
+  el('lang-it').classList.toggle('on', lang === 'it');
 
-function renderChips(){
-  const t = T();
-  if(activeCat===null || activeCat==='__all__') activeCat='__all__';
-  const cats = [...new Set(PRODUCTS.map(p=>p.cat[lang]))];
-  const el = document.getElementById('chips');
-  el.innerHTML='';
-  const mk = (label, key)=>{
-    const b=document.createElement('button');
-    b.className='chip'+(key===activeCat?' on':'');
-    b.textContent=label;
-    b.onclick=()=>{activeCat=key;renderChips();renderProducts();};
-    el.appendChild(b);
-  };
-  mk(t.all,'__all__');
-  cats.forEach(c=>mk(c,c));
-  if(activeCat!=='__all__' && !cats.includes(activeCat)){activeCat='__all__';renderChips();}
-}
+  setText('t-menu', t.menu);
+  setText('t-nav-shop', t.navShop);
+  setText('t-nav-about', t.navAbout);
+  setText('t-nav-blog', t.navBlog);
+  setText('t-nav-cart', t.navCart);
+  setText('t-menu-beekeepers', t.menuBeekeepers);
+  setText('t-menu-why', t.menuWhy);
+  setText('t-menu-promise', t.menuPromise);
+  setText('t-m-shop', t.navShop);
+  setText('t-m-about', t.navAbout);
+  setText('t-m-beekeepers', t.menuBeekeepers);
+  setText('t-m-why', t.menuWhy);
+  setText('t-m-promise', t.menuPromise);
+  setText('t-m-blog', t.navBlog);
 
-function renderProducts(){
-  const t = T();
-  const el=document.getElementById('plist');
-  el.innerHTML='';
-  PRODUCTS.filter(p=>activeCat==='__all__'||p.cat[lang]===activeCat).forEach(p=>{
-    const d=document.createElement('div');
-    d.className='pcard';
-    d.innerHTML=`
-      <div class="hex-wrap hex"><div class="hex-frame hex">${p.emoji}</div></div>
-      <div class="pinfo">
-        <div class="pregion">${p.region[lang]}</div>
-        <div class="pname">${p.name[lang]}</div>
-        <div class="pfarm">${p.farm}</div>
-        <div class="prow">
-          <div class="pprice">${money(p.price)} <span>/ ${p.unit[lang]}</span></div>
-          <button class="addbtn" data-id="${p.id}">${t.add}</button>
-        </div>
-      </div>`;
-    d.onclick=()=>openDetail(p.id);
-    el.appendChild(d);
+  setText('t-hero-label', t.heroLabel);
+  setText('t-hero-title', t.heroTitle);
+  setText('t-hero-sub', t.heroSub);
+
+  el('hero-meta').innerHTML = [
+    [t.metaOrigin, t.metaOriginSub],
+    [t.metaRaw, t.metaRawSub],
+    [t.metaShip, t.metaShipSub],
+    [t.metaSeason, t.metaSeasonSub],
+  ].map(([a, b]) => `<div><b>${a}</b><span>${b}</span></div>`).join('');
+
+  setText('t-grid-title', t.gridTitle);
+  setText('t-back', t.back);
+
+  setText('t-prod-label', t.prodLabel);
+  setText('t-prod-title', t.prodTitle);
+  setText('t-prod-sub', t.prodSub);
+
+  setText('t-cart-label', t.cartLabel);
+  setText('t-cart-title', t.cartTitle);
+
+  setText('t-foot-blurb', t.footBlurb);
+  setText('t-foot-shop-h', t.footShopH);
+  setText('t-foot-about-h', t.footAboutH);
+  setText('t-foot-producers', t.footProducers);
+  setText('t-foot-shipping', t.footShipping);
+  setText('t-foot-contact', t.footContact);
+  setText('t-foot-rights', t.footRights);
+  setText('t-foot-ship-note', t.footShipNote);
+
+  renderEditorial('why', t.whyLabel, t.whyTitle, t.whySub, t.whyBlocks);
+  renderEditorial('promise', t.promiseLabel, t.promiseTitle, t.promiseSub, t.promiseBlocks);
+  setText('t-blog-label', t.blogLabel);
+  setText('t-blog-title', t.blogTitle);
+  setText('t-blog-sub', t.blogSub);
+  el('blog-body').innerHTML = `<p>${t.blogSoon}</p>`;
+
+  const fc = el('foot-cats');
+  fc.innerHTML = '';
+  optionsOf('taste').forEach(key => {
+    const li = document.createElement('li');
+    const a = document.createElement('button');
+    a.className = 'foot-link';
+    a.textContent = labelOf('taste', key);
+    a.onclick = () => {
+      clearFilters();
+      togglePick('taste', key);
+      showView('shop');
+    };
+    li.appendChild(a);
+    fc.appendChild(li);
   });
-  el.querySelectorAll('.addbtn').forEach(b=>{
-    b.onclick=(e)=>{
+}
+
+/* ============ editorial pages ============ */
+function renderEditorial(key, label, title, sub, blocks){
+  setText('t-' + key + '-label', label);
+  setText('t-' + key + '-title', title);
+  setText('t-' + key + '-sub', sub);
+  el(key + '-body').innerHTML = blocks
+    .map(([h, p]) => `<article class="ed-block"><h3>${h}</h3><p>${p}</p></article>`)
+    .join('');
+}
+
+/* ============ filters ============ */
+/* Each product's value(s) for a given facet group, as language-neutral keys. */
+function valuesOf(p, group){
+  if (group === 'origin') return [p.region.en];
+  if (group === 'farm')   return [p.farm];
+  return p.tastes;
+}
+
+/* Label shown for a key, in the current language. */
+function labelOf(group, key){
+  const t = T();
+  if (group === 'origin'){
+    const p = PRODUCTS.find(x => x.region.en === key);
+    return p ? p.region[lang] : key;
+  }
+  if (group === 'farm') return key;
+  return t.tastes[key] || key;
+}
+
+/* Options of a group, in the order they first appear in the catalogue. */
+function optionsOf(group){
+  const out = [];
+  PRODUCTS.forEach(p => valuesOf(p, group).forEach(v => { if (!out.includes(v)) out.push(v); }));
+  return out;
+}
+
+/* A product passes a group when nothing is picked there, or it matches one pick (OR). */
+function matchesGroup(p, group){
+  const sel = picked[group];
+  if (!sel.size) return true;
+  return valuesOf(p, group).some(v => sel.has(v));
+}
+
+/* Products passing every group except the one named — used for the option counts,
+   so each number tells you what you'd get by ticking that box. */
+function poolExcluding(group){
+  return PRODUCTS.filter(p => FACET_GROUPS.every(g => g === group || matchesGroup(p, g)));
+}
+
+function activeCount(){
+  return FACET_GROUPS.reduce((n, g) => n + picked[g].size, 0);
+}
+
+function clearFilters(){
+  FACET_GROUPS.forEach(g => picked[g].clear());
+  renderFilters(); renderGrid();
+}
+
+function togglePick(group, key){
+  const sel = picked[group];
+  sel.has(key) ? sel.delete(key) : sel.add(key);
+  renderFilters(); renderGrid();
+}
+
+function renderFilters(){
+  const t = T();
+  const titles = { origin:t.fOrigin, taste:t.fTaste, farm:t.fFarm };
+
+  setText('t-facets-title', t.filtersTitle);
+  setText('t-facet-bar', t.filtersTitle);
+  setText('facets-clear', t.filtersClear);
+  setText('facets-done', t.filtersApply);
+  setText('empty-clear', t.noResultsCta);
+  setText('t-no-results', t.noResults);
+
+  const n = activeCount();
+  el('facets-clear').hidden = n === 0;
+
+  const toggle = el('rail-toggle');
+  toggle.setAttribute('aria-expanded', String(railOpen));
+  toggle.setAttribute('aria-label', railOpen ? t.filtersHide : t.filtersShow);
+  toggle.title = railOpen ? t.filtersHide : t.filtersShow;
+  el('rail-dot').hidden = railOpen || n === 0;
+  const bar = el('facet-bar-n');
+  bar.hidden = n === 0;
+  bar.textContent = n;
+
+  /* facet groups */
+  const list = el('facet-list');
+  list.innerHTML = '';
+  FACET_GROUPS.forEach(group => {
+    const counts = {};
+    poolExcluding(group).forEach(p => valuesOf(p, group).forEach(v => counts[v] = (counts[v] || 0) + 1));
+
+    const wrap = document.createElement('section');
+    wrap.className = 'facet' + (openFacets.has(group) ? '' : ' closed');
+
+    const head = document.createElement('button');
+    head.className = 'facet-head';
+    head.setAttribute('aria-expanded', String(openFacets.has(group)));
+    head.innerHTML = `<span>${titles[group]}</span>
+      <svg class="chev" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+        <path d="M1 3.5 5 7l4-3.5" stroke="currentColor" stroke-width="1.4"
+              stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    head.onclick = () => {
+      openFacets.has(group) ? openFacets.delete(group) : openFacets.add(group);
+      renderFilters();
+    };
+    wrap.appendChild(head);
+
+    const body = document.createElement('div');
+    body.className = 'facet-body';
+    optionsOf(group).forEach(key => {
+      const count = counts[key] || 0;
+      const on = picked[group].has(key);
+      const row = document.createElement('label');
+      row.className = 'opt' + (count === 0 && !on ? ' off' : '');
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = on;
+      cb.disabled = count === 0 && !on;
+      cb.onchange = () => togglePick(group, key);
+
+      const box = document.createElement('span');
+      box.className = 'box';
+      const txt = document.createElement('span');
+      txt.textContent = labelOf(group, key);
+      const num = document.createElement('span');
+      num.className = 'n';
+      num.textContent = count;
+
+      row.append(cb, box, txt, num);
+      body.appendChild(row);
+    });
+    wrap.appendChild(body);
+    list.appendChild(wrap);
+  });
+
+  /* active-filter chips */
+  const chips = el('chips');
+  chips.innerHTML = '';
+  FACET_GROUPS.forEach(group => {
+    picked[group].forEach(key => {
+      const c = document.createElement('button');
+      c.className = 'chip';
+      c.innerHTML = `<span></span><span class="x" aria-hidden="true">&times;</span>`;
+      c.firstChild.textContent = labelOf(group, key);
+      c.setAttribute('aria-label', `${t.filtersClear}: ${labelOf(group, key)}`);
+      c.onclick = () => togglePick(group, key);
+      chips.appendChild(c);
+    });
+  });
+  if (n){
+    const clear = document.createElement('button');
+    clear.className = 'chips-clear';
+    clear.textContent = t.filtersClear;
+    clear.onclick = clearFilters;
+    chips.appendChild(clear);
+  }
+}
+
+/* ============ product grid ============ */
+function visibleProducts(){
+  return PRODUCTS.filter(p => FACET_GROUPS.every(g => matchesGroup(p, g)));
+}
+
+function renderGrid(){
+  const t = T();
+  const list = visibleProducts();
+  setText('t-grid-count', list.length + ' ' + (list.length === 1 ? t.countOne : t.countMany));
+
+  el('empty-state').hidden = list.length > 0;
+  el('grid').hidden = list.length === 0;
+
+  const box = el('grid');
+  box.innerHTML = '';
+  list.forEach(p => {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="tile">${p.emoji}</div>
+      <span class="u-label card-region">${p.region[lang]}</span>
+      <h3 class="card-name">${p.name[lang]}</h3>
+      <p class="card-farm">${p.farm}</p>
+      <div class="card-foot">
+        <span class="card-price">${money(p.price)}</span>
+        <span class="card-unit">${p.unit[lang]}</span>
+      </div>
+      <button class="btn" data-id="${p.id}">${t.add}</button>`;
+    card.onclick = () => openDetail(p.id);
+    box.appendChild(card);
+  });
+
+  box.querySelectorAll('.btn').forEach(b => {
+    b.onclick = e => {
       e.stopPropagation();
       addToCart(+b.dataset.id);
-      b.textContent=T().added;b.classList.add('added');
-      setTimeout(()=>{b.textContent=T().add;b.classList.remove('added');},1200);
+      flashAdded(b);
     };
   });
 }
 
-function renderFarmers(){
+function flashAdded(btn){
   const t = T();
-  const el=document.getElementById('flist');
-  el.innerHTML='';
-  FARMERS.forEach(f=>{
-    const d=document.createElement('div');
-    d.className='fcard';
-    d.innerHTML=`
-      <div class="hex-wrap hex" style="width:64px;height:70px"><div class="hex-frame hex" style="width:58px;height:64px;font-size:28px">${f.emoji}</div></div>
-      <div class="fbody">
-        <h3>${f.name}</h3>
-        <div class="floc">${f.loc[lang]}</div>
-        <p class="fdesc">${f.desc[lang]}</p>
-        <div class="fstats">
-          <div class="fstat"><b>${f.products}</b> ${f.products===1?t.product:t.products}</div>
-          <div class="fstat">★ <b>${f.rating[lang]}</b></div>
-          <div class="fstat" style="color:var(--leaf);font-weight:600">✓ ${t.verified}</div>
-        </div>
-      </div>`;
-    el.appendChild(d);
-  });
+  btn.textContent = t.added;
+  btn.classList.add('added');
+  setTimeout(() => { btn.textContent = T().add; btn.classList.remove('added'); }, 1300);
 }
 
-/* ============ Honey detail page (linked via #honey-<id>) ============ */
-function openDetail(id){
-  location.hash = 'honey-'+id;
+/* ============ producers ============ */
+function renderProducers(){
+  const t = T();
+  el('producers').innerHTML = FARMERS.map(f => `
+    <article class="producer">
+      <div class="producer-tile">${f.emoji}</div>
+      <h3>${f.name}</h3>
+      <span class="u-label loc">${f.loc[lang]}</span>
+      <p>${f.desc[lang]}</p>
+      <div class="producer-stats">
+        <span><b>${f.products}</b> ${t.varieties}</span>
+        <span>★ <b>${f.rating[lang]}</b></span>
+        <span><b>✓</b> ${t.verified}</span>
+      </div>
+    </article>`).join('');
 }
+
+/* ============ detail ============ */
+function openDetail(id){ location.hash = 'honey-' + id; }
 function closeDetail(){
-  if(location.hash){ history.back(); } else { switchTab('shop'); }
+  if (location.hash) history.back();
+  else showView('shop');
 }
+
 function renderDetail(id){
-  const p = PRODUCTS.find(x=>x.id===id);
-  if(!p) return;
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
   currentDetailId = id;
   const t = T();
-  document.getElementById('d-name').innerHTML = p.name[lang];
-  document.getElementById('d-farm').textContent = p.farm+' · '+p.region[lang];
-  document.getElementById('d-emoji').innerHTML = `<div class="hex-wrap hex"><div class="hex-frame hex">${p.emoji}</div></div>`;
-  document.getElementById('d-price').innerHTML = `${money(p.price)}<span>${p.unit[lang]}</span>`;
-  const btn = document.getElementById('d-addbtn');
-  btn.textContent = t.add;
-  btn.classList.remove('added');
-  btn.onclick = ()=>{
-    addToCart(p.id);
-    btn.textContent = T().added; btn.classList.add('added');
-    setTimeout(()=>{btn.textContent=T().add;btn.classList.remove('added');},1200);
-  };
-  document.getElementById('d-chars').innerHTML = `
-    <div class="charcard"><div class="charlabel">${t.charColor}</div><div class="charvalue">${p.color[lang]}</div></div>
-    <div class="charcard"><div class="charlabel">${t.charHarvest}</div><div class="charvalue">${p.harvest[lang]}</div></div>
-    <div class="charcard"><div class="charlabel">${t.charCrystal}</div><div class="charvalue">${p.crystal[lang]}</div></div>
-    <div class="charcard"><div class="charlabel">${t.charFlavor}</div><div class="charvalue">${p.flavor[lang]}</div></div>`;
-  document.getElementById('d-about').innerHTML = `<h4>${t.aboutTitle}</h4><p>${p.desc[lang]}</p>`;
-  document.getElementById('d-pairing').innerHTML = `<h4>${t.pairingTitle}</h4><p>${p.pairing[lang]}</p>`;
-}
-function showDetailScreen(){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-detail').classList.add('active');
-}
-function routeHash(){
-  const h = location.hash;
-  if(h.startsWith('#honey-')){
-    const id = +h.slice(7);
-    if(PRODUCTS.some(p=>p.id===id)){
-      renderDetail(id);
-      showDetailScreen();
-      return;
-    }
-  }
-  if(document.getElementById('screen-detail').classList.contains('active')){
-    switchTab('shop');
-  }
-}
-window.addEventListener('hashchange', routeHash);
 
+  el('d-tile').textContent = p.emoji;
+  setText('d-region', p.region[lang]);
+  setText('d-name', p.name[lang]);
+  setText('d-farm', p.farm);
+  el('d-price').innerHTML = `${money(p.price)}<span>${p.unit[lang]}</span>`;
+
+  const add = el('d-add');
+  add.textContent = t.add;
+  add.classList.remove('added');
+  add.onclick = () => { addToCart(p.id); flashAdded(add); };
+
+  el('d-specs').innerHTML = [
+    [t.charColor, p.color[lang]],
+    [t.charHarvest, p.harvest[lang]],
+    [t.charCrystal, p.crystal[lang]],
+    [t.charFlavor, p.flavor[lang]],
+  ].map(([k, v]) => `<div class="spec"><dt class="u-label">${k}</dt><dd>${v}</dd></div>`).join('');
+
+  el('d-about').innerHTML = `<h3>${t.aboutTitle}</h3><p>${p.desc[lang]}</p>`;
+  el('d-pairing').innerHTML = `<h3>${t.pairingTitle}</h3><p>${p.pairing[lang]}</p>`;
+}
+
+/* ============ cart ============ */
 function addToCart(id){
-  cart[id]=(cart[id]||0)+1;
-  updateBadge();
+  cart[id] = (cart[id] || 0) + 1;
+  updateCount();
   showToast(T().toastAdd);
 }
-function updateBadge(){
-  const n=Object.values(cart).reduce((a,b)=>a+b,0);
-  const b=document.getElementById('badge');
-  b.style.display=n?'flex':'none';
-  b.textContent=n;
+
+function chQty(id, d){
+  cart[id] += d;
+  if (cart[id] <= 0) delete cart[id];
+  updateCount();
+  renderCart();
 }
-let toastTimer;
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),1400);
+
+function updateCount(){
+  const n = Object.values(cart).reduce((a, b) => a + b, 0);
+  const c = el('cart-count');
+  c.textContent = n;
+  c.hidden = n === 0;
 }
 
 function renderCart(){
   const t = T();
-  const el=document.getElementById('cartbody');
-  const ids=Object.keys(cart);
-  if(!ids.length){
-    el.innerHTML=`<div class="cart-empty"><div class="big">🧺</div><h3>${t.emptyTitle}</h3><p>${t.emptyText}</p></div>`;
+  const ids = Object.keys(cart);
+  const box = el('cart-body');
+
+  if (!ids.length){
+    box.innerHTML = `
+      <div class="empty">
+        <h3>${t.emptyTitle}</h3>
+        <p>${t.emptyText}</p>
+        <button class="btn btn-outline" data-nav="shop">${t.emptyCta}</button>
+      </div>`;
+    bindNav(box);
     return;
   }
-  let html='', subtotal=0;
-  ids.forEach(id=>{
-    const p=PRODUCTS.find(x=>x.id==id);
-    const q=cart[id];
-    subtotal+=p.price*q;
-    html+=`<div class="citem">
-      <div class="hex-frame hex">${p.emoji}</div>
-      <div class="cinfo"><div class="n">${p.name[lang]}</div><div class="f">${p.farm} · ${money(p.price)}</div></div>
-      <div class="qty">
-        <button onclick="chQty(${id},-1)" aria-label="−">−</button><span>${q}</span>
-        <button onclick="chQty(${id},1)" aria-label="+">+</button>
-      </div>
+
+  let subtotal = 0;
+  const lines = ids.map(id => {
+    const p = PRODUCTS.find(x => x.id == id);
+    const q = cart[id];
+    subtotal += p.price * q;
+    return `
+      <div class="cart-line">
+        <div class="cart-tile">${p.emoji}</div>
+        <div>
+          <div class="cart-name">${p.name[lang]}</div>
+          <div class="cart-sub">${p.farm} · ${money(p.price)}</div>
+        </div>
+        <div class="qty">
+          <button onclick="chQty(${id},-1)" aria-label="−">−</button>
+          <span>${q}</span>
+          <button onclick="chQty(${id},1)" aria-label="+">+</button>
+        </div>
+      </div>`;
+  }).join('');
+
+  box.innerHTML = `
+    <div class="cart-wrap">
+      <div>${lines}</div>
+      <aside class="summary">
+        <h3>${t.summaryTitle}</h3>
+        <div class="srow"><span>${t.subtotal}</span><span>${money(subtotal)}</span></div>
+        <div class="srow free"><span>${t.shipping}</span><span>${t.shipIncluded}</span></div>
+        <div class="srow total"><span>${t.total}</span><span>${money(subtotal)}</span></div>
+        <button class="btn btn-solid" onclick="startCheckout()">${t.checkout}</button>
+        <p class="summary-note">${t.summaryNote}</p>
+      </aside>
     </div>`;
-  });
-  html+=`<div class="summary">
-    <div class="srow"><span>${t.subtotal}</span><span>${money(subtotal)}</span></div>
-    <div class="srow ship"><span>${t.shipping}</span><span>${t.shipIncluded}</span></div>
-    <div class="srow tot"><span>${t.total}</span><span>${money(subtotal)}</span></div>
-    <button class="checkout" onclick="startCheckout()">${t.checkout}</button>
-  </div>
-  <p class="ship-note">${t.shipNote}</p>`;
-  el.innerHTML=html;
-}
-function chQty(id,d){
-  cart[id]+=d;
-  if(cart[id]<=0)delete cart[id];
-  updateBadge();renderCart();
 }
 
-/* ============ Checkout — Stripe Checkout Session via server/ ============ */
+/* ============ toast ============ */
+let toastTimer;
+function showToast(msg){
+  const n = el('toast');
+  n.textContent = msg;
+  n.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => n.classList.remove('show'), 1600);
+}
+
+/* ============ checkout — Stripe Checkout Session via server/ ============ */
 const CHECKOUT_API = 'https://urbanbees-checkout.onrender.com/api/checkout';
 
 async function startCheckout(){
-  const btn = document.querySelector('.checkout');
+  const btn = document.querySelector('.summary .btn');
   if (btn) { btn.disabled = true; btn.textContent = T().checkoutLoading; }
   try {
     const res = await fetch(CHECKOUT_API, {
@@ -603,7 +1428,7 @@ function handleCheckoutRedirect(){
   const params = new URLSearchParams(location.search);
   if (params.has('success')) {
     cart = {};
-    updateBadge();
+    updateCount();
     showToast(T().checkoutSuccess);
   }
   if (params.has('success') || params.has('canceled')) {
@@ -611,20 +1436,95 @@ function handleCheckoutRedirect(){
   }
 }
 
-/* tabs */
-function switchTab(name){
-  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x.dataset.tab===name));
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-'+name).classList.add('active');
-  if(name==='cart') renderCart();
+/* ============ navigation ============ */
+function showView(name){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  el('view-' + name).classList.add('active');
+  const aboutViews = ['producers', 'why', 'promise'];
+  document.querySelectorAll('.nav-left [data-nav]').forEach(b =>
+    b.classList.toggle('on', b.dataset.nav === name));
+  el('about-trigger').classList.toggle('on', aboutViews.includes(name));
+  closeMenus();
+  if (name === 'cart') renderCart();
+  window.scrollTo(0, 0);
 }
-document.querySelectorAll('.tab').forEach(t=>{
-  t.onclick=()=>{
-    if(location.hash) history.pushState('', document.title, window.location.pathname+window.location.search);
-    switchTab(t.dataset.tab);
-  };
-});
 
+function bindNav(scope){
+  scope.querySelectorAll('[data-nav]').forEach(b => {
+    b.onclick = () => {
+      if (location.hash) history.pushState('', document.title, location.pathname + location.search);
+      showView(b.dataset.nav);
+    };
+  });
+}
+
+function routeHash(){
+  const h = location.hash;
+  if (h.startsWith('#honey-')){
+    const id = +h.slice(7);
+    if (PRODUCTS.some(p => p.id === id)){
+      renderDetail(id);
+      showView('detail');
+      return;
+    }
+  }
+  if (el('view-detail').classList.contains('active')) showView('shop');
+}
+window.addEventListener('hashchange', routeHash);
+
+/* ============ menus ============ */
+const aboutMenu = el('about-menu');
+const mobileNav = el('mobile-nav');
+const menuBtn = el('menu-btn');
+
+function closeMenus(){
+  aboutMenu.classList.remove('open');
+  el('about-trigger').setAttribute('aria-expanded', 'false');
+  mobileNav.classList.remove('open');
+  menuBtn.setAttribute('aria-expanded', 'false');
+}
+
+el('about-trigger').onclick = e => {
+  e.stopPropagation();
+  const open = aboutMenu.classList.toggle('open');
+  el('about-trigger').setAttribute('aria-expanded', String(open));
+};
+
+menuBtn.onclick = e => {
+  e.stopPropagation();
+  const open = mobileNav.classList.toggle('open');
+  menuBtn.setAttribute('aria-expanded', String(open));
+};
+
+document.addEventListener('click', closeMenus);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenus(); });
+
+/* ============ filter drawer (mobile) ============ */
+const facetBar = el('facet-bar');
+const facetsBox = el('facets');
+
+function toggleFacets(open){
+  facetsBox.classList.toggle('open', open);
+  facetBar.setAttribute('aria-expanded', String(open));
+  el('facets-done').hidden = !open;
+}
+
+facetBar.onclick = () => toggleFacets(!facetsBox.classList.contains('open'));
+
+el('rail-toggle').onclick = () => {
+  railOpen = !railOpen;
+  document.querySelector('.shop-layout').classList.toggle('rail-closed', !railOpen);
+  renderFilters();
+};
+el('facets-done').onclick = () => {
+  toggleFacets(false);
+  el('facet-bar').scrollIntoView({ block:'start' });
+};
+el('facets-clear').onclick = clearFilters;
+el('empty-clear').onclick = () => { clearFilters(); toggleFacets(false); };
+
+/* ============ boot ============ */
+bindNav(document);
 setLang(lang);
 routeHash();
 handleCheckoutRedirect();
