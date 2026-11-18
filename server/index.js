@@ -73,7 +73,9 @@ app.post('/api/checkout', async (req, res) => {
       payment_method_types: ['card'],
       line_items,
       locale,
-      shipping_address_collection: { allowed_countries: ['IT', 'US', 'CA', 'GB', 'FR', 'DE', 'ES', 'NL', 'BE', 'AT', 'CH', 'AU'] },
+      // Italy only for now: the business is not yet set up to charge another
+      // country's VAT, and honey is restricted at several non-EU borders.
+      shipping_address_collection: { allowed_countries: ['IT'] },
       success_url: `${returnTo}/?success=1`,
       cancel_url: `${returnTo}/?canceled=1`,
     });
