@@ -414,6 +414,34 @@ a{color:inherit;text-decoration:none}
 }
 .summary .btn{margin-top:20px;padding:14px}
 .summary-note{font-size:11.5px;line-height:1.55;color:var(--ink-3);margin-top:14px;text-align:center}
+.summary .pay-alt{margin-top:10px}
+.summary .pay-alt[hidden]{display:none}
+
+/* bank-transfer form */
+.tform{max-width:620px}
+.tform .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tform .grid .wide{grid-column:1/-1}
+@media (max-width:560px){.tform .grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.field input,.field textarea{
+  font-family:var(--font);font-size:15px;color:var(--ink);background:var(--surface);
+  border:1px solid var(--line-2);border-radius:var(--r);padding:11px 13px;width:100%;
+}
+.field input:focus,.field textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.field textarea{resize:vertical;min-height:84px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.tform .btn{margin-top:4px}
+.form-err{color:#9C2B26;font-size:14px;margin-top:12px}
+.form-err[hidden]{display:none}
+
+/* bank details, after the order is placed */
+.bank{background:var(--tint);border-radius:var(--r);padding:24px;margin:22px 0}
+.bank dl{display:grid;grid-template-columns:auto 1fr;gap:12px 22px;margin:0}
+.bank dt{font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);align-self:center}
+.bank dd{margin:0;font-size:16px}
+.bank .mono{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:15px;letter-spacing:.02em}
+.bank .ref{font-weight:700;font-size:19px}
 .empty{padding:76px 0;text-align:center;border-top:1px solid var(--line)}
 .empty h3{font-size:18px;font-weight:600;margin-bottom:10px;letter-spacing:-.015em}
 .empty p{font-size:14px;color:var(--ink-2);max-width:42ch;margin:0 auto 22px}
@@ -429,6 +457,12 @@ a{color:inherit;text-decoration:none}
   display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
   gap:0 56px;padding:44px 0 84px;max-width:1180px;
 }
+/* A plain stacked heading: the editorial grid would spread these into columns. */
+.page-head{padding:44px 0 30px;max-width:620px}
+.page-head h1{font-size:clamp(26px,3.6vw,36px);font-weight:600;letter-spacing:-.025em;line-height:1.12;margin:14px 0 12px}
+.page-head p{font-size:15.5px;line-height:1.62;color:var(--ink-2)}
+.tform{padding-bottom:84px}
+
 .ed-block{padding:26px 0;border-top:1px solid var(--line)}
 .ed-block h3{font-size:16px;font-weight:600;letter-spacing:-.015em;margin-bottom:9px}
 .ed-block p{font-size:14.5px;line-height:1.68;color:var(--ink-2);max-width:54ch}
@@ -649,6 +683,18 @@ a{color:inherit;text-decoration:none}
     </div>
   </section>
 
+  <!-- ============ bank transfer ============ -->
+  <section class="view" id="view-transfer">
+    <div class="shell">
+      <div class="page-head">
+        <span class="u-label" id="t-tr-label"></span>
+        <h1 id="t-tr-title"></h1>
+        <p id="t-tr-sub"></p>
+      </div>
+      <div class="tform" id="transfer-body"></div>
+    </div>
+  </section>
+
   <!-- ============ cart ============ -->
   <section class="view" id="view-cart">
     <div class="shell">
@@ -777,6 +823,23 @@ const I18N = {
     emptyTitle:'Il carrello è vuoto',
     emptyText:'Esplora le nostre varietà e scopri i sapori più rari del territorio italiano.',
     emptyCta:'Vedi i mieli',
+    payCard:'Paga con carta o PayPal', payTransfer:'Paga con bonifico bancario',
+    trLabel:'Pagamento', trTitle:'Paga con bonifico',
+    trSub:'Compila i tuoi dati: ti mandiamo subito per email l\'IBAN e il codice da scrivere nella causale. Spediamo appena il bonifico arriva.',
+    fName:'Nome e cognome', fEmail:'Email', fPhone:'Telefono (facoltativo)',
+    fAddress:'Indirizzo', fZip:'CAP', fCity:'Città', fProvince:'Provincia',
+    fNote:'Note per la consegna (facoltativo)',
+    trSubmit:'Conferma ordine', trSending:'Invio in corso…',
+    trBack:'Torna al carrello',
+    trErrRequired:'Compila tutti i campi obbligatori.',
+    trErrEmail:'Controlla l\'indirizzo email.',
+    trErrGeneric:'Qualcosa è andato storto — riprova fra poco.',
+    trOkTitle:'Ordine registrato',
+    trOkSub:'Ti abbiamo mandato questi dati anche per email. Spediamo appena il bonifico arriva.',
+    trHolder:'Intestatario', trIban:'IBAN', trBank:'Banca',
+    trAmount:'Importo', trRef:'Causale',
+    trRefWarn:'Scrivi la causale esattamente così: è come riconosciamo il tuo ordine.',
+    trDone:'Torna al negozio',
     summaryTitle:'Riepilogo',
     subtotal:'Subtotale', shipping:'Spedizione', shipIncluded:'Inclusa',
     total:'Totale', checkout:'Procedi al pagamento',
@@ -843,6 +906,23 @@ const I18N = {
     emptyTitle:'Your cart is empty',
     emptyText:"Browse our varieties and discover Italy's rarest regional flavours.",
     emptyCta:'See the honeys',
+    payCard:'Pay by card or PayPal', payTransfer:'Pay by bank transfer',
+    trLabel:'Payment', trTitle:'Pay by bank transfer',
+    trSub:'Fill in your details and we will email you the IBAN and the reference to quote. We ship as soon as the transfer arrives.',
+    fName:'Full name', fEmail:'Email', fPhone:'Phone (optional)',
+    fAddress:'Address', fZip:'Postcode', fCity:'City', fProvince:'Province',
+    fNote:'Delivery notes (optional)',
+    trSubmit:'Confirm order', trSending:'Sending…',
+    trBack:'Back to cart',
+    trErrRequired:'Please fill in all required fields.',
+    trErrEmail:'Please check your email address.',
+    trErrGeneric:'Something went wrong — please try again shortly.',
+    trOkTitle:'Order recorded',
+    trOkSub:'We have emailed you these details too. We ship as soon as the transfer arrives.',
+    trHolder:'Account holder', trIban:'IBAN', trBank:'Bank',
+    trAmount:'Amount', trRef:'Reference',
+    trRefWarn:'Please quote the reference exactly: it is how we match your payment to your order.',
+    trDone:'Back to the shop',
     summaryTitle:'Summary',
     subtotal:'Subtotal', shipping:'Shipping', shipIncluded:'Included',
     total:'Total', checkout:'Proceed to payment',
@@ -1397,10 +1477,15 @@ function renderCart(){
         <div class="srow"><span>${t.subtotal}</span><span>${money(subtotal)}</span></div>
         <div class="srow free"><span>${t.shipping}</span><span>${t.shipIncluded}</span></div>
         <div class="srow total"><span>${t.total}</span><span>${money(subtotal)}</span></div>
-        <button class="btn btn-solid" onclick="startCheckout()">${t.checkout}</button>
+        <button class="btn btn-solid" onclick="startCheckout()">${t.payCard}</button>
+        <button class="btn btn-outline pay-alt" id="pay-transfer" onclick="showTransferForm()" hidden>${t.payTransfer}</button>
         <p class="summary-note">${t.summaryNote}</p>
       </aside>
     </div>`;
+
+  // The summary is redrawn every time the cart changes, so the transfer button
+  // has to be re-checked against what the server can actually take.
+  el('pay-transfer').hidden = !PAY.bankTransfer;
 }
 
 /* ============ toast ============ */
@@ -1446,6 +1531,126 @@ function handleCheckoutRedirect(){
   if (params.has('success') || params.has('canceled')) {
     history.replaceState('', document.title, location.pathname + location.hash);
   }
+}
+
+
+/* ============ bank transfer ============ */
+/* Which payment methods the server is actually able to take. Asked once, so a
+   half-configured option never reaches a customer. */
+let PAY = { card: true, paypal: false, bankTransfer: false };
+
+async function loadPaymentConfig(){
+  try {
+    const r = await fetch(CHECKOUT_API.replace('/api/checkout', '/api/config'));
+    if (r.ok) PAY = await r.json();
+  } catch (e) { /* keep the card-only default */ }
+  const b = el('pay-transfer');
+  if (b) b.hidden = !PAY.bankTransfer;
+}
+
+function cartTotal(){
+  return Object.keys(cart).reduce((n, id) => {
+    const p = PRODUCTS.find(x => x.id === +id);
+    return p ? n + p.price * cart[id] : n;
+  }, 0);
+}
+
+function showTransferForm(){
+  const t = T();
+  setText('t-tr-label', t.trLabel);
+  setText('t-tr-title', t.trTitle);
+  setText('t-tr-sub', t.trSub);
+
+  const f = (id, label, opts = {}) => `
+    <div class="field${opts.wide ? ' wide' : ''}">
+      <label for="f-${id}">${label}</label>
+      ${opts.area
+        ? `<textarea id="f-${id}"></textarea>`
+        : `<input id="f-${id}" type="${opts.type || 'text'}" autocomplete="${opts.ac || 'on'}">`}
+    </div>`;
+
+  el('transfer-body').innerHTML = `
+    <form id="transfer-form" novalidate>
+      <div class="grid">
+        ${f('name',    t.fName,    { wide:true, ac:'name' })}
+        ${f('email',   t.fEmail,   { type:'email', ac:'email' })}
+        ${f('phone',   t.fPhone,   { type:'tel', ac:'tel' })}
+        ${f('address', t.fAddress, { wide:true, ac:'street-address' })}
+        ${f('zip',     t.fZip,     { ac:'postal-code' })}
+        ${f('city',    t.fCity,    { ac:'address-level2' })}
+        ${f('province',t.fProvince,{ ac:'address-level1' })}
+        <div class="hp"><label for="f-company">Company</label><input id="f-company" tabindex="-1" autocomplete="off"></div>
+        ${f('note',    t.fNote,    { wide:true, area:true })}
+      </div>
+      <p class="form-err" id="transfer-err" hidden></p>
+      <button class="btn btn-solid" type="submit" id="transfer-submit">${t.trSubmit}</button>
+      <button class="btn btn-outline" type="button" onclick="showView('cart')">${t.trBack}</button>
+    </form>`;
+
+  el('transfer-form').onsubmit = submitTransfer;
+  showView('transfer');
+}
+
+async function submitTransfer(e){
+  e.preventDefault();
+  const t = T();
+  const v = id => (el('f-' + id).value || '').trim();
+  const err = el('transfer-err');
+  const btn = el('transfer-submit');
+
+  const customer = {
+    name: v('name'), email: v('email'), phone: v('phone'),
+    address: v('address'), zip: v('zip'), city: v('city'),
+    province: v('province'), note: v('note'),
+  };
+
+  const fail = msg => { err.textContent = msg; err.hidden = false; };
+  err.hidden = true;
+
+  if (!customer.name || !customer.email || !customer.address || !customer.zip || !customer.city) {
+    return fail(t.trErrRequired);
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(customer.email)) return fail(t.trErrEmail);
+
+  btn.disabled = true;
+  btn.textContent = t.trSending;
+  try {
+    const r = await fetch(CHECKOUT_API.replace('/api/checkout', '/api/order/bank-transfer'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cart, lang, customer, company: v('company') }),
+    });
+    if (!r.ok) throw new Error('order failed');
+    const data = await r.json();
+    showTransferDone(data);
+    cart = {};
+    updateCount();
+  } catch (e2) {
+    console.error(e2);
+    fail(t.trErrGeneric);
+    btn.disabled = false;
+    btn.textContent = t.trSubmit;
+  }
+}
+
+function showTransferDone(d){
+  const t = T();
+  setText('t-tr-label', t.trLabel);
+  setText('t-tr-title', t.trOkTitle);
+  setText('t-tr-sub', t.trOkSub);
+  el('transfer-body').innerHTML = `
+    <div class="bank">
+      <dl>
+        <dt>${t.trHolder}</dt><dd>${d.holder || ''}</dd>
+        <dt>${t.trIban}</dt><dd class="mono">${d.iban || ''}</dd>
+        ${d.bank ? `<dt>${t.trBank}</dt><dd>${d.bank}</dd>` : ''}
+        <dt>${t.trAmount}</dt><dd>${money(d.total)}</dd>
+        <dt>${t.trRef}</dt><dd class="mono ref">${d.reference}</dd>
+      </dl>
+    </div>
+    <p>${t.trRefWarn}</p>
+    <button class="btn btn-outline" onclick="showView('shop')">${t.trDone}</button>`;
+  window.scrollTo(0, 0);
 }
 
 /* ============ navigation ============ */
@@ -1540,6 +1745,7 @@ bindNav(document);
 setLang(lang);
 routeHash();
 handleCheckoutRedirect();
+loadPaymentConfig();
 </script>
 </body>
 </html>
