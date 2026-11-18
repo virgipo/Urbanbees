@@ -436,7 +436,7 @@ a{color:inherit;text-decoration:none}
 .footer-col h4{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-bottom:14px}
 .footer-col p,.footer-col li{font-size:13.5px;color:var(--ink-2);line-height:1.7}
 .footer-col ul{list-style:none}
-.foot-link{font-size:13.5px;color:var(--ink-2);line-height:1.7;text-align:left;transition:color .15s}
+.foot-link{font-size:13.5px;color:var(--ink-2);line-height:1.7;text-align:left;text-decoration:none;transition:color .15s}
 .foot-link:hover{color:var(--ink)}
 .footer-brand .wordmark{font-size:15px;margin-bottom:12px;display:block;color:var(--ink);justify-self:start}
 .footer-bottom{
@@ -702,6 +702,7 @@ a{color:inherit;text-decoration:none}
         <li id="t-foot-producers"></li>
         <li id="t-foot-shipping"></li>
         <li id="t-foot-contact"></li>
+        <li><a class="foot-link" href="privacy.html" id="t-foot-privacy"></a></li>
       </ul>
     </div>
   </div>
@@ -778,6 +779,7 @@ const I18N = {
     footBlurb:'Mieli monoflora da apicoltori indipendenti italiani, selezionati uno a uno.',
     footShopH:'Mieli', footAboutH:'Urban Bees',
     footProducers:'Gli apicoltori', footShipping:'Spedizioni', footContact:'Contatti',
+    footPrivacy:'Privacy',
     footRights:'© 2026 Urban Bees', footShipNote:'Spedizione inclusa in ogni ordine',
     dec:',',
   },
@@ -843,6 +845,7 @@ const I18N = {
     footBlurb:'Single-flower honeys from independent Italian beekeepers, selected one by one.',
     footShopH:'Honeys', footAboutH:'Urban Bees',
     footProducers:'The beekeepers', footShipping:'Shipping', footContact:'Contact',
+    footPrivacy:'Privacy',
     footRights:'© 2026 Urban Bees', footShipNote:'Shipping included on every order',
     dec:'.',
   }
@@ -1028,6 +1031,8 @@ function renderChrome(){
   setText('t-foot-producers', t.footProducers);
   setText('t-foot-shipping', t.footShipping);
   setText('t-foot-contact', t.footContact);
+  setText('t-foot-privacy', t.footPrivacy);
+  el('t-foot-privacy').href = lang === 'en' ? 'privacy.html?lang=en' : 'privacy.html';
   setText('t-foot-rights', t.footRights);
   setText('t-foot-ship-note', t.footShipNote);
 

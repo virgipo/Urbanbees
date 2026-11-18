@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy Policy — Urban Bees</title>
+<meta name="robots" content="index,follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FCFBF9; --surface:#FFFFFF; --tint:#F1EADF;
+    --ink:#212121; --ink-2:#6E6A64; --ink-3:#9A958D;
+    --line:#E4E0D9; --line-2:#CFC9BF;
+    --accent:#A8681B; --deep:#1F2A1E;
+    --font:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
+    --pad:clamp(20px,5vw,64px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--font);
+    font-size:16px;line-height:1.68;-webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent)}
+
+  /* header, same bar as the shop */
+  .site-header{background:var(--deep);position:sticky;top:0;z-index:50}
+  .header-inner{
+    max-width:1520px;margin:0 auto;padding:0 var(--pad);height:80px;
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;
+  }
+  .back{
+    font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+    color:rgba(242,239,233,.74);text-decoration:none;
+  }
+  .back:hover{color:#fff}
+  .wordmark{
+    justify-self:center;color:#fff;font-size:19px;font-weight:700;
+    letter-spacing:.22em;text-transform:uppercase;white-space:nowrap;text-decoration:none;
+  }
+  .lang{justify-self:end;display:flex;align-items:center;gap:7px}
+  .lang button{
+    background:none;border:0;cursor:pointer;font-family:inherit;
+    font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+    color:rgba(242,239,233,.55);padding:4px 0;
+  }
+  .lang button.on{color:#fff}
+  .lang .sep{color:rgba(242,239,233,.3);font-size:11px}
+  @media (max-width:860px){
+    .header-inner{height:62px;gap:10px}
+    .wordmark{font-size:15px;letter-spacing:.16em}
+    .back{font-size:10.5px}
+  }
+
+  .doc{max-width:760px;margin:0 auto;padding:0 var(--pad);padding-block:clamp(44px,7vw,80px) 96px}
+  .u-label{
+    display:block;font-size:11px;font-weight:600;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-3);margin-bottom:14px;
+  }
+  h1{font-size:clamp(30px,5vw,42px);font-weight:600;letter-spacing:-.025em;line-height:1.1;margin-bottom:14px}
+  .updated{font-size:13.5px;color:var(--ink-3);margin-bottom:34px}
+  .lede{font-size:18px;color:var(--ink-2);margin-bottom:8px}
+
+  h2{
+    font-size:19px;font-weight:600;letter-spacing:-.012em;
+    margin:40px 0 12px;padding-top:26px;border-top:1px solid var(--line);
+  }
+  h3{font-size:15px;font-weight:600;margin:22px 0 8px}
+  p{margin-bottom:14px;color:var(--ink-2)}
+  p strong,li strong{color:var(--ink);font-weight:600}
+  ul{margin:0 0 16px;padding-left:20px}
+  li{margin-bottom:8px;color:var(--ink-2)}
+  li::marker{color:var(--ink-3)}
+
+  .box{background:var(--tint);padding:20px 22px;margin:20px 0;border-radius:3px}
+  .box p:last-child{margin-bottom:0}
+  .fill{border-left:3px solid var(--accent)}
+
+  .tw{overflow-x:auto;margin:18px 0;border:1px solid var(--line);background:var(--surface)}
+  table{border-collapse:collapse;width:100%;min-width:480px}
+  th,td{text-align:left;padding:11px 15px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+  th{
+    font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-3);background:var(--tint);
+  }
+  td{color:var(--ink-2)}
+  tr:last-child td{border-bottom:0}
+
+  .foot{
+    border-top:1px solid var(--line);margin-top:48px;padding-top:22px;
+    font-size:13px;color:var(--ink-3);
+  }
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="back" href="/" id="t-back">← Torna al negozio</a>
+    <a class="wordmark" href="/">Urban Bees</a>
+    <div class="lang">
+      <button id="b-it" class="on" onclick="setLang('it')">IT</button>
+      <span class="sep">/</span>
+      <button id="b-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= ITALIANO ================= -->
+<main class="doc" id="doc-it">
+  <span class="u-label">Informativa</span>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Ultimo aggiornamento: 18 novembre 2026</p>
+
+  <p class="lede">
+    Questa pagina spiega quali dati personali raccogliamo quando visiti urbanbees.it
+    o fai un ordine, perché lo facciamo e quali diritti hai. È scritta ai sensi del
+    Regolamento UE 2016/679 (GDPR).
+  </p>
+
+  <div class="box">
+    <p>
+      <strong>In breve:</strong> questo sito non usa cookie, non ha strumenti di
+      statistica né pixel pubblicitari, e non ti profila. I dati del tuo ordine —
+      nome, indirizzo, email e pagamento — li raccoglie direttamente Stripe sulla
+      sua pagina di pagamento, non questo sito.
+    </p>
+  </div>
+
+  <h2>1. Chi tratta i tuoi dati</h2>
+  <div class="box fill">
+    <p>
+      <strong>Titolare del trattamento:</strong> [NOME E COGNOME O RAGIONE SOCIALE]<br>
+      <strong>Sede:</strong> [INDIRIZZO COMPLETO]<br>
+      <strong>Partita IVA:</strong> [P.IVA]<br>
+      <strong>Email per questioni privacy:</strong> [EMAIL]
+    </p>
+  </div>
+  <p>
+    Non abbiamo nominato un Responsabile della protezione dei dati (DPO), perché
+    non ricorrono i casi previsti dall'articolo 37 del GDPR.
+  </p>
+
+  <h2>2. Cosa NON facciamo</h2>
+  <p>Lo diciamo prima del resto perché è la parte più breve ed è vera:</p>
+  <ul>
+    <li>Non usiamo <strong>cookie</strong>, di nessun tipo, nostri o di terzi</li>
+    <li>Non usiamo <strong>Google Analytics</strong> né altri strumenti di statistica</li>
+    <li>Non usiamo <strong>pixel pubblicitari</strong> di Meta, TikTok o altri</li>
+    <li>Non facciamo <strong>profilazione</strong> né decisioni automatizzate</li>
+    <li>Non c'è <strong>registrazione utente</strong>: non esistono account né password</li>
+    <li>Non c'è una <strong>newsletter</strong>, quindi non raccogliamo email per il marketing</li>
+    <li>Non <strong>vendiamo né cediamo</strong> i tuoi dati a nessuno</li>
+  </ul>
+  <p>
+    Il carrello vive solo nella memoria del tuo browser finché la pagina è aperta:
+    non viene salvato da nessuna parte e sparisce se ricarichi.
+  </p>
+
+  <h2>3. Quando navighi il sito</h2>
+
+  <h3>Dati tecnici di connessione</h3>
+  <p>
+    Il sito è ospitato su <strong>Render</strong>. Come ogni server web, Render
+    registra automaticamente dati tecnici: indirizzo IP, data e ora della richiesta,
+    pagina richiesta, tipo di browser. Servono a far funzionare il sito e a
+    proteggerlo da abusi.
+  </p>
+  <p>
+    <strong>Base giuridica:</strong> legittimo interesse (art. 6.1.f GDPR) a erogare
+    e mettere in sicurezza il servizio.
+  </p>
+
+  <h3>Caratteri tipografici di Google</h3>
+  <p>
+    Le pagine caricano i caratteri da <strong>Google Fonts</strong>. Per farlo il tuo
+    browser si collega ai server di Google, che in quel momento ricevono il tuo
+    <strong>indirizzo IP</strong>. Google è un soggetto autonomo e può trasferire
+    questi dati negli Stati Uniti.
+  </p>
+  <p>
+    <strong>Base giuridica:</strong> legittimo interesse (art. 6.1.f GDPR) alla
+    corretta resa grafica del sito. Puoi impedire questa connessione bloccando i
+    caratteri esterni nelle impostazioni del browser o con un'estensione.
+  </p>
+
+  <h2>4. Quando fai un ordine</h2>
+  <p>
+    Quando premi "Procedi al pagamento", il tuo browser invia al nostro server
+    <strong>soltanto i codici dei prodotti e le quantità</strong> che hai scelto, più
+    la lingua del sito. Nessun dato personale.
+  </p>
+  <p>
+    Il nostro server crea una sessione di pagamento e ti reindirizza alla pagina
+    sicura di <strong>Stripe</strong>. Da lì in poi sei su Stripe, non su urbanbees.it.
+  </p>
+  <p>I dati che inserisci su Stripe sono:</p>
+  <ul>
+    <li>Nome e cognome</li>
+    <li>Indirizzo email</li>
+    <li>Indirizzo di spedizione</li>
+    <li>Dati della carta o dello strumento di pagamento</li>
+  </ul>
+  <p>
+    <strong>I dati della carta non transitano mai dai nostri sistemi</strong> e noi non
+    li vediamo né li conserviamo. Dopo l'acquisto riceviamo da Stripe i dati che ci
+    servono per spedire e per la contabilità: nome, email, indirizzo, prodotti e
+    importo.
+  </p>
+  <p>
+    <strong>Basi giuridiche:</strong> esecuzione del contratto di vendita
+    (art. 6.1.b GDPR) e obblighi di legge fiscali e contabili (art. 6.1.c GDPR).
+  </p>
+
+  <h2>5. Quando spediamo</h2>
+  <p>
+    Comunichiamo nome, indirizzo e un recapito al <strong>corriere</strong> incaricato
+    e, quando il vasetto parte direttamente dall'apiario, all'<strong>apicoltore</strong>
+    che effettua la spedizione. Solo quanto serve per consegnarti il pacco.
+  </p>
+
+  <h2>6. A chi comunichiamo i dati</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Soggetto</th><th>Cosa fa</th><th>Dove</th></tr></thead>
+      <tbody>
+        <tr><td>Render</td><td>Hosting del sito e del servizio di pagamento</td><td>UE / USA</td></tr>
+        <tr><td>Stripe</td><td>Incasso dei pagamenti</td><td>Irlanda / USA</td></tr>
+        <tr><td>Google</td><td>Caratteri tipografici (solo indirizzo IP)</td><td>Irlanda / USA</td></tr>
+        <tr><td>Corriere</td><td>Consegna del pacco</td><td>UE</td></tr>
+        <tr><td>Apicoltori</td><td>Spedizione diretta, quando prevista</td><td>Italia</td></tr>
+        <tr><td>Commercialista</td><td>Adempimenti fiscali</td><td>Italia</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Fornitori e autorità a parte, i tuoi dati non vanno a nessun altro. Possiamo
+    comunicarli all'autorità giudiziaria se la legge lo impone.
+  </p>
+
+  <h2>7. Trasferimenti fuori dall'Unione europea</h2>
+  <p>
+    Alcuni fornitori possono trattare dati negli <strong>Stati Uniti</strong>. Questi
+    trasferimenti avvengono sulla base delle garanzie previste dal Capo V del GDPR:
+    le Clausole Contrattuali Standard approvate dalla Commissione europea e, dove
+    applicabile, l'adesione del fornitore al Data Privacy Framework UE-USA.
+  </p>
+
+  <h2>8. Per quanto tempo conserviamo i dati</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Dato</th><th>Per quanto</th></tr></thead>
+      <tbody>
+        <tr><td>Log tecnici del server</td><td>Il tempo necessario alla sicurezza, in genere pochi giorni</td></tr>
+        <tr><td>Dati dell'ordine e documenti fiscali</td><td>10 anni, come impone l'art. 2220 del Codice civile</td></tr>
+        <tr><td>Corrispondenza via email</td><td>Finché serve a gestire la richiesta</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>9. I tuoi diritti</h2>
+  <p>Puoi in ogni momento chiederci di:</p>
+  <ul>
+    <li><strong>Accedere</strong> ai tuoi dati e averne copia (art. 15)</li>
+    <li><strong>Correggerli</strong> se sono sbagliati o incompleti (art. 16)</li>
+    <li><strong>Cancellarli</strong>, nei limiti degli obblighi fiscali (art. 17)</li>
+    <li><strong>Limitarne</strong> il trattamento (art. 18)</li>
+    <li><strong>Riceverli</strong> in un formato leggibile da computer (art. 20)</li>
+    <li><strong>Opporti</strong> ai trattamenti basati sul legittimo interesse (art. 21)</li>
+  </ul>
+  <p>
+    Scrivi a <strong>[EMAIL]</strong>: rispondiamo entro un mese. Se ritieni che
+    trattiamo i tuoi dati in modo scorretto puoi rivolgerti al
+    <strong>Garante per la protezione dei dati personali</strong>
+    (<a href="https://www.garanteprivacy.it" rel="noopener">garanteprivacy.it</a>)
+    o all'autorità del tuo Paese di residenza.
+  </p>
+
+  <h2>10. Modifiche</h2>
+  <p>
+    Se cambieremo questa informativa aggiorneremo la data in cima alla pagina. Quando
+    le modifiche saranno rilevanti lo segnaleremo sul sito.
+  </p>
+
+  <p class="foot">Urban Bees · urbanbees.it</p>
+</main>
+
+<!-- ================= ENGLISH ================= -->
+<main class="doc" id="doc-en" hidden>
+  <span class="u-label">Notice</span>
+  <h1>Privacy Policy</h1>
+  <p class="updated">Last updated: 18 November 2026</p>
+
+  <p class="lede">
+    This page explains what personal data we collect when you visit urbanbees.it or
+    place an order, why we collect it, and what rights you have. It is written under
+    Regulation (EU) 2016/679 (GDPR).
+  </p>
+
+  <div class="box">
+    <p>
+      <strong>In short:</strong> this site uses no cookies, no analytics, and no
+      advertising pixels, and it does not profile you. Your order details — name,
+      address, email and payment — are collected directly by Stripe on its own
+      payment page, not by this site.
+    </p>
+  </div>
+
+  <h2>1. Who processes your data</h2>
+  <div class="box fill">
+    <p>
+      <strong>Data controller:</strong> [FULL NAME OR COMPANY NAME]<br>
+      <strong>Address:</strong> [FULL ADDRESS]<br>
+      <strong>VAT number:</strong> [VAT NUMBER]<br>
+      <strong>Privacy contact:</strong> [EMAIL]
+    </p>
+  </div>
+  <p>
+    We have not appointed a Data Protection Officer, as none of the conditions in
+    Article 37 GDPR apply.
+  </p>
+
+  <h2>2. What we do NOT do</h2>
+  <p>We put this first because it is the shortest part, and it is true:</p>
+  <ul>
+    <li>We use no <strong>cookies</strong> of any kind, first or third party</li>
+    <li>We use no <strong>Google Analytics</strong> or other analytics tools</li>
+    <li>We use no <strong>advertising pixels</strong> from Meta, TikTok or anyone else</li>
+    <li>We carry out no <strong>profiling</strong> and no automated decision-making</li>
+    <li>There is no <strong>user registration</strong>: no accounts, no passwords</li>
+    <li>There is no <strong>newsletter</strong>, so we collect no marketing emails</li>
+    <li>We never <strong>sell or share</strong> your data</li>
+  </ul>
+  <p>
+    Your cart lives only in your browser's memory while the page is open. It is never
+    stored anywhere and disappears if you reload.
+  </p>
+
+  <h2>3. When you browse the site</h2>
+
+  <h3>Technical connection data</h3>
+  <p>
+    The site is hosted on <strong>Render</strong>. Like any web server, Render
+    automatically records technical data: IP address, date and time of the request,
+    the page requested, browser type. This keeps the site running and protects it
+    from abuse.
+  </p>
+  <p>
+    <strong>Legal basis:</strong> legitimate interest (Art. 6(1)(f) GDPR) in
+    delivering and securing the service.
+  </p>
+
+  <h3>Google Fonts</h3>
+  <p>
+    Our pages load typefaces from <strong>Google Fonts</strong>. To do so your browser
+    connects to Google's servers, which at that moment receive your
+    <strong>IP address</strong>. Google is an independent controller and may transfer
+    this data to the United States.
+  </p>
+  <p>
+    <strong>Legal basis:</strong> legitimate interest (Art. 6(1)(f) GDPR) in rendering
+    the site correctly. You can prevent this connection by blocking external fonts in
+    your browser settings or with an extension.
+  </p>
+
+  <h2>4. When you place an order</h2>
+  <p>
+    When you press "Proceed to payment", your browser sends our server
+    <strong>only the product codes and quantities</strong> you chose, plus the site
+    language. No personal data.
+  </p>
+  <p>
+    Our server creates a payment session and redirects you to <strong>Stripe</strong>'s
+    secure page. From that point you are on Stripe, not on urbanbees.it.
+  </p>
+  <p>The data you enter on Stripe is:</p>
+  <ul>
+    <li>Your name</li>
+    <li>Your email address</li>
+    <li>Your shipping address</li>
+    <li>Your card or payment method details</li>
+  </ul>
+  <p>
+    <strong>Card details never pass through our systems</strong> — we neither see nor
+    store them. After the purchase, Stripe passes us what we need to ship and to keep
+    our books: name, email, address, items and amount.
+  </p>
+  <p>
+    <strong>Legal bases:</strong> performance of the sales contract (Art. 6(1)(b) GDPR)
+    and compliance with tax and accounting obligations (Art. 6(1)(c) GDPR).
+  </p>
+
+  <h2>5. When we ship</h2>
+  <p>
+    We pass your name, address and a contact detail to the <strong>courier</strong>,
+    and, where the jar ships directly from the apiary, to the
+    <strong>beekeeper</strong> who sends it. Only what is needed to deliver your parcel.
+  </p>
+
+  <h2>6. Who we share data with</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Recipient</th><th>What they do</th><th>Where</th></tr></thead>
+      <tbody>
+        <tr><td>Render</td><td>Hosting for the site and the payment service</td><td>EU / USA</td></tr>
+        <tr><td>Stripe</td><td>Payment processing</td><td>Ireland / USA</td></tr>
+        <tr><td>Google</td><td>Typefaces (IP address only)</td><td>Ireland / USA</td></tr>
+        <tr><td>Courier</td><td>Parcel delivery</td><td>EU</td></tr>
+        <tr><td>Beekeepers</td><td>Direct shipping, where applicable</td><td>Italy</td></tr>
+        <tr><td>Accountant</td><td>Tax compliance</td><td>Italy</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Apart from these providers and the authorities, your data goes nowhere else. We
+    may disclose it to judicial authorities where the law requires it.
+  </p>
+
+  <h2>7. Transfers outside the European Union</h2>
+  <p>
+    Some providers may process data in the <strong>United States</strong>. Those
+    transfers rely on the safeguards in Chapter V GDPR: the Standard Contractual
+    Clauses approved by the European Commission and, where applicable, the provider's
+    certification under the EU–US Data Privacy Framework.
+  </p>
+
+  <h2>8. How long we keep data</h2>
+  <div class="tw">
+    <table>
+      <thead><tr><th>Data</th><th>Retention</th></tr></thead>
+      <tbody>
+        <tr><td>Server technical logs</td><td>As long as security requires, typically a few days</td></tr>
+        <tr><td>Order data and tax documents</td><td>10 years, as required by Art. 2220 of the Italian Civil Code</td></tr>
+        <tr><td>Email correspondence</td><td>As long as needed to handle your request</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>9. Your rights</h2>
+  <p>At any time you may ask us to:</p>
+  <ul>
+    <li><strong>Access</strong> your data and receive a copy (Art. 15)</li>
+    <li><strong>Correct</strong> it if it is wrong or incomplete (Art. 16)</li>
+    <li><strong>Erase</strong> it, within the limits of our tax obligations (Art. 17)</li>
+    <li><strong>Restrict</strong> its processing (Art. 18)</li>
+    <li><strong>Receive</strong> it in a machine-readable format (Art. 20)</li>
+    <li><strong>Object</strong> to processing based on legitimate interest (Art. 21)</li>
+  </ul>
+  <p>
+    Write to <strong>[EMAIL]</strong> and we will reply within one month. If you believe
+    we handle your data improperly, you may lodge a complaint with the Italian data
+    protection authority, the
+    <strong>Garante per la protezione dei dati personali</strong>
+    (<a href="https://www.garanteprivacy.it" rel="noopener">garanteprivacy.it</a>),
+    or with the authority in your country of residence.
+  </p>
+
+  <h2>10. Changes</h2>
+  <p>
+    If we change this notice we will update the date at the top of the page. Where the
+    changes are significant we will say so on the site.
+  </p>
+
+  <p class="foot">Urban Bees · urbanbees.it</p>
+</main>
+
+<script>
+  function setLang(l){
+    document.getElementById('doc-it').hidden = l !== 'it';
+    document.getElementById('doc-en').hidden = l !== 'en';
+    document.getElementById('b-it').classList.toggle('on', l === 'it');
+    document.getElementById('b-en').classList.toggle('on', l === 'en');
+    document.documentElement.lang = l;
+    document.getElementById('t-back').textContent =
+      l === 'it' ? '← Torna al negozio' : '← Back to the shop';
+    try { history.replaceState('', '', l === 'en' ? '?lang=en' : location.pathname); } catch(e){}
+  }
+  // Open in the language the visitor arrived with.
+  (function(){
+    var p = new URLSearchParams(location.search).get('lang');
+    if (p === 'en' || (!p && !(navigator.language || '').toLowerCase().startsWith('it'))) setLang('en');
+  })();
+</script>
+</body>
+</html>
