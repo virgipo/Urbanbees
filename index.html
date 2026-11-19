@@ -33,7 +33,7 @@
   --btn-hover:#DEDCD6;
   --accent:#A8681B;
   --deep:#1F2A1E;
-  --gold:#E3B468;
+  --sage:#E4EADE;
 
   --font:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
   --r:3px;
@@ -111,7 +111,7 @@ a{color:inherit;text-decoration:none}
 /* language: the name of the language you are reading, and a way to change it */
 .lang-menu .dropdown{left:auto;right:-14px;min-width:150px}
 .lang-menu .dropdown button.on{color:#FFFFFF;background:rgba(255,255,255,.07)}
-.lang-menu .dropdown button.on::before{content:'·';margin-right:7px;color:var(--gold)}
+.lang-menu .dropdown button.on::before{content:'·';margin-right:7px;color:var(--sage)}
 .lang-menu .dropdown button:not(.on)::before{content:'';margin-right:12px}
 .cart-btn{
   font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
@@ -155,8 +155,8 @@ a{color:inherit;text-decoration:none}
    through the rest. It advances on its own slowly and stops the moment the
    reader's pointer or keyboard lands on it. */
 .announce{
-  background:var(--gold);color:var(--deep);
-  border-bottom:1px solid rgba(31,42,30,.14);
+  background:var(--sage);color:var(--deep);
+  border-bottom:1px solid rgba(31,42,30,.10);
 }
 .announce-inner{
   max-width:1520px;margin:0 auto;padding:0 10px;
@@ -169,8 +169,17 @@ a{color:inherit;text-decoration:none}
 .announce-msg{
   font-size:12px;font-weight:600;letter-spacing:.075em;
   padding:4px 2px;line-height:1.35;color:var(--deep);
+  display:inline-flex;align-items:center;gap:9px;
   transition:opacity .34s ease,transform .34s ease;
 }
+.announce-msg .arr{
+  width:13px;height:13px;flex:none;
+  transition:transform .18s ease;
+}
+.announce-slot:hover .announce-msg .arr{transform:translateX(3px)}
+/* With a single message there is nothing to step through, so the arrows go. */
+.announce.single .announce-inner{grid-template-columns:1fr}
+.announce.single .announce-arrow{display:none}
 .announce-msg.out{opacity:0;transform:translateY(-5px)}
 .announce-arrow{
   width:34px;height:34px;border-radius:50%;
@@ -652,9 +661,9 @@ a{color:inherit;text-decoration:none}
         <path d="M6.5 1 2.5 5l4 4" stroke="currentColor" stroke-width="1.5"
               stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
-    <div class="announce-slot" aria-live="polite">
+    <button class="announce-slot" id="ann-link" aria-live="polite">
       <span class="announce-msg" id="ann-text"></span>
-    </div>
+    </button>
     <button class="announce-arrow" id="ann-next">
       <svg viewBox="0 0 10 10" fill="none" aria-hidden="true">
         <path d="M3.5 1l4 4-4 4" stroke="currentColor" stroke-width="1.5"
@@ -989,13 +998,7 @@ const I18N = {
       ['Scrivici','<span class="js-mail"></span>'],
     ],
     annPrev:'Messaggio precedente', annNext:'Messaggio successivo',
-    ticker:[
-      'Miele in favo, come lo fanno le api',
-      'Spedizione inclusa in ogni ordine',
-      'Apicoltori italiani indipendenti',
-      'Grezzo, non filtrato, non pastorizzato',
-      'Quantità limitate, raccolto per raccolto',
-    ],
+    ticker:['Scopri il miele in favo'],
     heroLabel:'Apicoltori indipendenti · Italia',
     heroTitle:'Il miele più autentico d\'Italia, direttamente a casa tua.',
     heroSub:'Miele in favo da apiari visitati uno per uno. Niente estrazione, niente filtri: il miele arriva nelle celle di cera come le api l\'hanno lasciato.',
@@ -1108,13 +1111,7 @@ const I18N = {
       ['Write to us','<span class="js-mail"></span>'],
     ],
     annPrev:'Previous message', annNext:'Next message',
-    ticker:[
-      'Honey in the comb, as the bees make it',
-      'Shipping included on every order',
-      'Independent Italian beekeepers',
-      'Raw, unfiltered, unpasteurised',
-      'Limited quantities, harvest by harvest',
-    ],
+    ticker:['Discover honey in the comb'],
     heroLabel:'Independent beekeepers · Italy',
     heroTitle:'The most authentic honey from Italy, straight to your door.',
     heroSub:'Honey in the comb from apiaries visited one by one. No extraction, no filters: it reaches you in the wax cells the bees left it in.',
@@ -1816,12 +1813,17 @@ function annShow(i, animate){
   const items = T().ticker;
   annIndex = (i + items.length) % items.length;
   const node = el('ann-text');
-  if (!animate) { node.textContent = items[annIndex]; return; }
+  const paint = () => {
+    node.innerHTML = '';
+    node.appendChild(document.createTextNode(items[annIndex]));
+    node.insertAdjacentHTML('beforeend',
+      `<svg class="arr" viewBox="0 0 14 10" fill="none" aria-hidden="true">
+         <path d="M1 5h11.5M8.6 1.2 12.8 5 8.6 8.8" stroke="currentColor"
+               stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`);
+  };
+  if (!animate) { paint(); return; }
   node.classList.add('out');
-  setTimeout(() => {
-    node.textContent = items[annIndex];
-    node.classList.remove('out');
-  }, 340);
+  setTimeout(() => { paint(); node.classList.remove('out'); }, 340);
 }
 
 function annStep(d){ annShow(annIndex + d, true); annStart(); }
@@ -1834,7 +1836,8 @@ let annHeld = false;
 
 function annStart(){
   clearInterval(annTimer);
-  if (annStill || annHeld) return; // asked not to be moved, or being read
+  if (annStill || annHeld) return;      // asked not to be moved, or being read
+  if (T().ticker.length < 2) return;    // nothing to step to
   annTimer = setInterval(() => annShow(annIndex + 1, true), ANN_EVERY);
 }
 
@@ -1845,10 +1848,16 @@ function renderTicker(){
   annShow(annIndex, false);
   el('ann-prev').setAttribute('aria-label', t.annPrev);
   el('ann-next').setAttribute('aria-label', t.annNext);
+  document.querySelector('.announce').classList.toggle('single', t.ticker.length < 2);
+  annStart();
 }
 
 function initAnnounce(){
   const bar = document.querySelector('.announce');
+  el('ann-link').onclick = () => {
+    showView('shop');
+    el('facet-bar').scrollIntoView({ behavior: annStill ? 'auto' : 'smooth', block:'start' });
+  };
   el('ann-prev').onclick = () => annStep(-1);
   el('ann-next').onclick = () => annStep(1);
   bar.addEventListener('mouseenter', () => annHold(true));
