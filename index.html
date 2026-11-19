@@ -583,7 +583,9 @@ a{color:inherit;text-decoration:none}
   display:block;aspect-ratio:4/3;background:var(--tint);
   border-radius:var(--r);overflow:hidden;margin-bottom:16px;
 }
-.post-card .shot img{width:100%;height:100%;object-fit:cover;object-position:center 42%;display:block;transition:transform .5s ease}
+/* The photographs are now framed on their subject, so the card crops from the
+   middle rather than hunting for it. */
+.post-card .shot img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;transition:transform .5s ease}
 /* Not every entry has a photograph. Rather than let a text card collapse to
    half the height of its neighbour, it gets a combed panel of the same shape. */
 .post-card .shot.blank{display:flex;align-items:center;justify-content:center;background:var(--tint)}
