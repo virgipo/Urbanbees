@@ -537,6 +537,44 @@ a{color:inherit;text-decoration:none}
 .ed-block{padding:26px 0;border-top:1px solid var(--line)}
 .ed-block h3{font-size:16px;font-weight:600;letter-spacing:-.015em;margin-bottom:9px}
 .ed-block p{font-size:14.5px;line-height:1.68;color:var(--ink-2);max-width:54ch}
+/* ---------- mission ---------- */
+.mission{max-width:760px;padding-bottom:20px}
+.mission .lede{
+  font-size:clamp(19px,2.4vw,23px);line-height:1.55;color:var(--ink);
+  letter-spacing:-.012em;margin-bottom:38px;
+}
+.mission section{margin-bottom:36px}
+.mission h2{
+  font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:14px;
+}
+.mission p{font-size:15.5px;line-height:1.75;color:var(--ink);margin-bottom:14px}
+.mission p:last-child{margin-bottom:0}
+.mission b{font-weight:600}
+
+.rules{border-top:1px solid var(--line);margin-top:52px;padding-top:42px}
+.rules-head h2{
+  font-size:clamp(23px,3vw,30px);font-weight:600;letter-spacing:-.02em;
+  text-transform:none;color:var(--ink);margin-bottom:10px;
+}
+.rules-head p{font-size:15px;color:var(--ink-2);line-height:1.7;margin-bottom:30px;max-width:56ch}
+.rule-list{display:grid;gap:0;padding-bottom:70px}
+.rule{
+  display:grid;grid-template-columns:40px 1fr;gap:0 18px;
+  padding:22px 0;border-bottom:1px solid var(--line);align-items:start;
+}
+.rule:first-child{border-top:1px solid var(--line)}
+.rule .n{
+  font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--ink-3);
+  padding-top:3px;font-variant-numeric:tabular-nums;
+}
+.rule h3{font-size:16px;font-weight:600;letter-spacing:-.01em;margin-bottom:5px}
+.rule p{font-size:14.5px;line-height:1.7;color:var(--ink-2);max-width:62ch}
+@media (max-width:620px){
+  .rule{grid-template-columns:28px 1fr;gap:0 12px}
+  .mission p{font-size:15px}
+}
+
 /* ---------- journal ---------- */
 .post-list{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
@@ -577,10 +615,14 @@ a{color:inherit;text-decoration:none}
   max-width:100%;max-height:560px;width:auto;
 }
 .entry figcaption{font-size:12px;color:var(--ink-3);margin-top:12px;line-height:1.6;text-align:center}
+/* Section headings here are full questions ("Ma la cera si può mangiare?"),
+   so they are set as real subheadings rather than small uppercase labels,
+   which would stretch a question across two shouting lines. */
 .entry h2{
-  font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--ink-3);margin:38px 0 14px;
+  font-size:20px;font-weight:600;letter-spacing:-.015em;line-height:1.3;
+  color:var(--ink);margin:40px 0 14px;
 }
+.entry ol li b{display:inline-block;margin-bottom:2px}
 .entry p{font-size:15.5px;line-height:1.75;color:var(--ink);margin-bottom:16px}
 .entry ul,.entry ol{margin:0 0 16px;padding-left:0;list-style:none}
 .entry ul li{font-size:15.5px;line-height:1.7;padding:7px 0 7px 20px;position:relative;border-bottom:1px solid var(--line)}
@@ -764,7 +806,7 @@ a{color:inherit;text-decoration:none}
         <div class="dropdown" id="about-dropdown">
           <button data-nav="producers" id="t-menu-beekeepers"></button>
           <button data-nav="why" id="t-menu-why"></button>
-          <button data-nav="promise" id="t-menu-promise"></button>
+          <button data-nav="about" id="t-menu-mission"></button>
         </div>
       </div>
       <button class="navlink" data-nav="blog" id="t-nav-blog"></button>
@@ -797,7 +839,7 @@ a{color:inherit;text-decoration:none}
     <span class="m-group" id="t-m-about"></span>
     <button data-nav="producers" class="sub" id="t-m-beekeepers"></button>
     <button data-nav="why" class="sub" id="t-m-why"></button>
-    <button data-nav="promise" class="sub" id="t-m-promise"></button>
+    <button data-nav="about" class="sub" id="t-m-mission"></button>
     <button data-nav="blog" id="t-m-blog"></button>
   </nav>
 </header>
@@ -946,14 +988,20 @@ a{color:inherit;text-decoration:none}
     </div>
   </section>
 
-  <section class="view" id="view-promise">
+  <section class="view" id="view-about">
     <div class="shell">
       <div class="page-head">
-        <span class="u-label" id="t-promise-label"></span>
-        <h1 id="t-promise-title"></h1>
-        <p id="t-promise-sub"></p>
+        <span class="u-label" id="t-about-label"></span>
+        <h1 id="t-about-title"></h1>
       </div>
-      <div class="editorial" id="promise-body"></div>
+      <div class="mission" id="about-body"></div>
+      <div class="rules">
+        <div class="rules-head">
+          <h2 id="t-rules-title"></h2>
+          <p id="t-rules-sub"></p>
+        </div>
+        <div class="rule-list" id="rules-body"></div>
+      </div>
     </div>
   </section>
 
@@ -1040,7 +1088,7 @@ a{color:inherit;text-decoration:none}
 const I18N = {
   it: {
     navShop:'Shop', navAbout:'Chi siamo', navBlog:'Blog', navCart:'Carrello', menu:'Menu',
-    menuBeekeepers:'I nostri apicoltori', menuWhy:'Perché il miele?', menuPromise:'La nostra promessa',
+    menuBeekeepers:'I nostri apicoltori', menuWhy:'Perché il miele?',
     whyLabel:'Cultura del miele', whyTitle:'Perché il miele?',
     whySub:'Non tutti i mieli sono la stessa cosa. Ecco cosa distingue un monoflora da apicoltore da quello del supermercato.',
     whyBlocks:[
@@ -1051,14 +1099,31 @@ const I18N = {
       ['La stagione decide','Ogni fioritura dura poche settimane e alcune sono imprevedibili. Il tiglio di montagna a volte non si raccoglie affatto: per questo certe varietà esistono solo in quantità limitate.'],
       ['Chi lo produce conta','Un apicoltore che sposta poche arnie dietro una fioritura fa un mestiere diverso da chi miscela partite di provenienza ignota. La differenza si legge in etichetta, se l’etichetta è onesta.'],
     ],
-    promiseLabel:'Il nostro impegno', promiseTitle:'La nostra promessa',
-    promiseSub:'Cinque regole che ci siamo dati, e che valgono per ogni vasetto che spediamo.',
-    promiseBlocks:[
-      ['Origine singola','Ogni vasetto è riconducibile a un solo apiario e a una sola raccolta. Mai miscelato, mai anonimo.'],
-      ['Apiari visitati','Lavoriamo solo con apicoltori che abbiamo incontrato di persona e di cui conosciamo le arnie e i metodi.'],
-      ['Grezzo e non filtrato','Nulla aggiunto, nulla tolto. Il miele arriva come esce dal favo, con le sue caratteristiche naturali.'],
-      ['Spedizione inclusa','Sempre, in ogni ordine. Il costo lo assorbe il produttore: tu paghi il miele, non il trasporto.'],
-      ['Quantità limitate','Vendiamo quello che la stagione ha dato. Quando una varietà finisce, si aspetta la fioritura successiva.'],
+    menuMission:'La nostra missione',
+    misLabel:'Perché esistiamo', misTitle:'La nostra missione',
+    misLede:'Portare il miele italiano a casa delle persone così come le api lo hanno fatto: nel favo, intero, senza che nessuno lo abbia aperto prima.',
+    misBlocks:[
+      ['Come è cominciata', [
+        'Urban Bees nasce a Milano da una cosa che ci ha sempre dato fastidio: il miele che si trova quasi ovunque è costruito per non sorprendere. È una miscela — di apiari diversi, di raccolti diversi, spesso di paesi diversi — filtrata e portata a temperatura perché il vasetto di marzo sia identico a quello di ottobre.',
+        'Il miele di un apicoltore fa l\'esatto contrario. Cambia con la fioritura, con il terreno e con l\'annata. Certe annate è bellissimo, certe altre non esiste affatto. Ci sembra un difetto solo finché non lo si assaggia.',
+      ]],
+      ['Perché proprio il favo', [
+        'Quasi tutto il miele in commercio viene estratto: il favo si apre, si centrifuga e si restituisce vuoto alle api, che lo riempiono di nuovo. È efficiente, ed è per questo che è la norma.',
+        'Noi abbiamo scelto di vendere il favo intero. Vuol dire che la cera parte insieme al miele, e che le api dovranno ricostruirla da zero al raccolto successivo. Rende meno, costa di più e si fa in quantità piccole. In cambio il miele non viene mai estratto, mai filtrato, mai scaldato: arriva nelle celle in cui è nato, ancora sigillate.',
+        'È anche il motivo per cui ci interessa raccontarlo. Il favo in Italia è poco conosciuto, e si capisce in un assaggio molto più che in una pagina.',
+      ]],
+      ['Cosa siamo, e cosa non siamo ancora', [
+        'Non siamo apicoltori. Compriamo da piccoli apicoltori italiani e rivendiamo il loro miele <b>con il loro nome sopra</b>, perché chi lo ha prodotto è l\'informazione più importante dell\'etichetta — e nasconderla sarebbe il primo passo verso il vasetto anonimo da cui vogliamo stare lontani.',
+        'Il primo è l\'<b>Apicoltura Cazzola</b>, ad Altedo di Malalbergo, in provincia di Bologna. Gli altri arriveranno uno alla volta: preferiamo pochi nomi che sappiamo raccontare a un catalogo pieno di varietà di cui non sappiamo niente.',
+      ]],
+    ],
+    rulesTitle:'La nostra promessa',
+    rulesSub:'Quattro impegni che valgono per ogni favo che spediamo. Sono pochi perché vogliamo poterli mantenere tutti.',
+    rulesBlocks:[
+      ['Un\'origine sola','Ogni confezione viene da un solo apiario e da una sola raccolta. Mai miscelata, mai anonima.'],
+      ['Il nome di chi lo ha fatto','L\'apicoltore resta sul prodotto, con il suo nome e il suo marchio. Noi lo portiamo a casa tua, non ce lo intestiamo.'],
+      ['Grezzo e non filtrato','Nulla aggiunto, nulla tolto, niente calore. Il miele arriva come le api lo hanno lasciato, cera compresa.'],
+      ['Quantità limitate','Vendiamo quello che la stagione ha dato. Quando una varietà finisce, si aspetta la fioritura dopo: non la rimpiazziamo con qualcos\'altro.'],
     ],
     blogLabel:'Diario', blogTitle:'Blog',
     blogSub:'Ricette, racconti dagli apiari e note sulle varietà.',
@@ -1154,7 +1219,7 @@ const I18N = {
   },
   en: {
     navShop:'Shop', navAbout:'About', navBlog:'Blog', navCart:'Cart', menu:'Menu',
-    menuBeekeepers:'Our beekeepers', menuWhy:'Why honey?', menuPromise:'Our promise',
+    menuBeekeepers:'Our beekeepers', menuWhy:'Why honey?',
     whyLabel:'Honey culture', whyTitle:'Why honey?',
     whySub:'Not all honey is the same thing. Here is what separates a beekeeper\u2019s single-flower honey from the supermarket jar.',
     whyBlocks:[
@@ -1165,14 +1230,31 @@ const I18N = {
       ['The season decides','Every bloom lasts a few weeks and some are unpredictable. Mountain linden sometimes cannot be harvested at all \u2014 which is why certain varieties exist only in small quantities.'],
       ['The hands behind it matter','A beekeeper moving a few hives to follow a bloom is doing a different job from someone blending lots of unknown origin. The difference shows on the label, if the label is honest.'],
     ],
-    promiseLabel:'Our commitment', promiseTitle:'Our promise',
-    promiseSub:'Five rules we hold ourselves to, on every jar we ship.',
-    promiseBlocks:[
-      ['Single origin','Every jar traces back to one apiary and one harvest. Never blended, never anonymous.'],
-      ['Apiaries we have visited','We only work with beekeepers we have met in person, whose hives and methods we know.'],
-      ['Raw and unfiltered','Nothing added, nothing removed. The honey reaches you as it leaves the comb.'],
-      ['Shipping included','Always, on every order. The producer absorbs the cost: you pay for honey, not for transport.'],
-      ['Limited quantities','We sell what the season gave. When a variety runs out, we wait for the next bloom.'],
+    menuMission:'Our mission',
+    misLabel:'Why we exist', misTitle:'Our mission',
+    misLede:'To bring Italian honey to people\'s homes exactly as the bees made it: in the comb, whole, with nobody having opened it first.',
+    misBlocks:[
+      ['How it started', [
+        'Urban Bees began in Milan, out of something that always bothered us: the honey you find almost everywhere is built not to surprise you. It is a blend — of different apiaries, different harvests, often different countries — filtered and brought to temperature so that March\'s jar is identical to October\'s.',
+        'A beekeeper\'s honey does the exact opposite. It changes with the bloom, with the soil and with the year. Some years it is wonderful, some years it does not exist at all. That looks like a flaw right up until you taste it.',
+      ]],
+      ['Why the comb', [
+        'Almost all honey on sale is extracted: the comb is opened, spun, and handed back empty to the bees, who fill it again. It is efficient, which is why it is the norm.',
+        'We chose to sell the comb whole. That means the wax leaves with the honey, and the bees have to rebuild it from nothing for the next harvest. It yields less, costs more and is made in small quantities. In exchange the honey is never extracted, never filtered, never warmed: it arrives in the cells where it was made, still sealed.',
+        'It is also why we want to talk about it. Comb honey is still little known in Italy, and one mouthful explains it far better than a page does.',
+      ]],
+      ['What we are, and what we are not yet', [
+        'We are not beekeepers. We buy from small Italian beekeepers and sell their honey <b>under their own name</b>, because who made it is the most important thing on the label — and hiding it would be the first step towards the anonymous jar we want to stay away from.',
+        'The first is <b>Apicoltura Cazzola</b>, at Altedo di Malalbergo, in the province of Bologna. The others will come one at a time: we would rather have a few names we can tell you about than a catalogue full of varieties we know nothing about.',
+      ]],
+    ],
+    rulesTitle:'Our promise',
+    rulesSub:'Four commitments that hold for every comb we ship. There are few of them because we want to be able to keep all of them.',
+    rulesBlocks:[
+      ['One single origin','Every pack comes from one apiary and one harvest. Never blended, never anonymous.'],
+      ['The name of whoever made it','The beekeeper stays on the product, with their own name and mark. We bring it to your door; we do not put our name over theirs.'],
+      ['Raw and unfiltered','Nothing added, nothing taken away, no heat. The honey arrives as the bees left it, wax included.'],
+      ['Limited quantities','We sell what the season gave. When a variety runs out we wait for the next bloom: we do not replace it with something else.'],
     ],
     blogLabel:'Journal', blogTitle:'Blog',
     blogSub:'Recipes, stories from the apiaries and notes on the varieties.',
@@ -1358,12 +1440,12 @@ function renderChrome(){
   setText('t-nav-cart', t.navCart);
   setText('t-menu-beekeepers', t.menuBeekeepers);
   setText('t-menu-why', t.menuWhy);
-  setText('t-menu-promise', t.menuPromise);
+  setText('t-menu-mission', t.menuMission);
   setText('t-m-shop', t.navShop);
   setText('t-m-about', t.navAbout);
   setText('t-m-beekeepers', t.menuBeekeepers);
   setText('t-m-why', t.menuWhy);
-  setText('t-m-promise', t.menuPromise);
+  setText('t-m-mission', t.menuMission);
   setText('t-m-blog', t.navBlog);
 
   setText('t-hero-label', t.heroLabel);
@@ -1397,13 +1479,31 @@ function renderChrome(){
   setText('t-foot-ship-note', t.footShipNote);
 
   renderEditorial('why', t.whyLabel, t.whyTitle, t.whySub, t.whyBlocks);
-  renderEditorial('promise', t.promiseLabel, t.promiseTitle, t.promiseSub, t.promiseBlocks);
+  renderMission();
   renderBlog();
   if (el('view-entry').classList.contains('active') && currentSlug) renderEntry(currentSlug);
 
 }
 
 /* ============ editorial pages ============ */
+/* The mission page carries prose rather than a grid of cards, and ends with
+   the promise, which used to be a page of its own and was never read there. */
+function renderMission(){
+  const t = T();
+  setText('t-about-label', t.misLabel);
+  setText('t-about-title', t.misTitle);
+  el('about-body').innerHTML =
+    `<p class="lede">${t.misLede}</p>` +
+    t.misBlocks.map(([h, paras]) =>
+      `<section><h2>${h}</h2>${paras.map(x => `<p>${x}</p>`).join('')}</section>`).join('');
+
+  setText('t-rules-title', t.rulesTitle);
+  setText('t-rules-sub', t.rulesSub);
+  el('rules-body').innerHTML = t.rulesBlocks.map(([h, p], i) =>
+    `<div class="rule"><span class="n">${String(i + 1).padStart(2, '0')}</span>
+       <div><h3>${h}</h3><p>${p}</p></div></div>`).join('');
+}
+
 function renderEditorial(key, label, title, sub, blocks){
   setText('t-' + key + '-label', label);
   setText('t-' + key + '-title', title);
@@ -1893,82 +1993,96 @@ const POSTS = [
     img:'blog/burrata-fichi-favo.webp',
     it:{
       kicker:'Ricetta',
-      title:'Burrata, fichi arrostiti e un quadrato di favo',
-      lede:'Il piatto che ci ha convinti a vendere il favo: tre ingredienti caldi, uno freddo, e un pezzo di cera che non va mai sul fuoco.',
-      caption:'Il piatto originale, mangiato a cena. Da lì siamo partiti.',
-      facts:[['Per','2 persone'],['Tempo','25 minuti'],['Difficoltà','Nessuna, davvero']],
+      title:'Burrata, fichi arrostiti e miele in favo: un incontro da provare',
+      lede:'Ci sono abbinamenti che funzionano al primo assaggio. Questo è uno di quelli.',
+      caption:'Il miele in favo si aggiunge per ultimo, a crudo, poco prima di servire.',
+      facts:[['Per','2 persone'],['Preparazione','25 minuti'],['Difficoltà','Facile']],
       body:[
-        ['p','Questa ricetta non è nostra. È un piatto mangiato a cena, fotografato prima di finirlo, e rifatto a casa finché non è tornato uguale. Lo raccontiamo perché è il modo più semplice che conosciamo per far capire il favo a chi non l\'ha mai assaggiato: non lo si spiega, lo si mette sopra qualcosa di freddo e cremoso e si lascia che faccia il resto.'],
+        ['p','La delicatezza della burrata, la dolcezza dei fichi appena arrostiti e il miele racchiuso nel suo favo. Tre consistenze diverse, sapori che si incontrano senza coprirsi e un piccolo dettaglio che cambia tutto: un pezzo di favo da portare direttamente in tavola.'],
+        ['p','È un piatto che abbiamo assaggiato durante una cena e che ci è rimasto in mente. Tanto da volerlo riproporre a casa. Ed è proprio da qui che nasce anche il nostro desiderio di raccontarvelo: perché il miele in favo è ancora poco conosciuto, ma basta assaggiarlo nel modo giusto per capirne il fascino.'],
         ['h2','Ingredienti'],
         ['ul',[
           '1 burrata da 250 g',
-          '6 fichi maturi, meglio se quasi troppo',
-          '1 cucchiaio di miele liquido, più il favo a parte',
+          '6 fichi maturi',
+          "1 cucchiaio di miele liquido",
           '1 cucchiaio di aceto balsamico',
-          '1 cucchiaio di olio extravergine',
-          'Sale, pepe nero macinato grosso',
-          'Un pizzico di peperoncino in scaglie (facoltativo, ma ci sta)',
-          'Un quadrato di miele in favo, circa 30 g',
-          'Qualche fogliolina di timo',
+          "1 cucchiaio di olio extravergine d'oliva",
+          'Sale e pepe nero',
+          'Un pizzico di peperoncino in scaglie (facoltativo)',
+          'Circa 30 g di miele in favo',
+          'Qualche fogliolina di timo fresco',
         ]],
-        ['h2','Come si fa'],
+        ['h2','Preparazione'],
         ['ol',[
-          '<b>Tira fuori la burrata dal frigo mezz\'ora prima.</b> È il passaggio che quasi tutti saltano ed è quello che decide il piatto: la burrata fredda non sa di niente, il grasso resta chiuso e il latte non si sente. A temperatura ambiente diventa un\'altra cosa.',
-          'Accendi il forno a 200 °C. Taglia i fichi a metà, mettili in una teglia con la parte tagliata verso l\'alto, condisci con l\'olio, il cucchiaio di miele, un pizzico di sale.',
-          '<b>Inforna 12–15 minuti</b>, finché non si afflosciano e i bordi scuriscono. Devono cedere, non seccarsi: se al centro sono ancora sodi dagli altri cinque minuti.',
-          'Metti da parte quattro mezzi fichi. Gli altri due schiacciali in un padellino con il loro sugo di cottura, l\'aceto balsamico e un cucchiaio d\'acqua. <b>Due minuti a fuoco vivo</b>, mescolando: diventa una salsa densa e lucida. Se si asciuga troppo, un altro cucchiaio d\'acqua.',
-          'Appoggia la burrata intera al centro del piatto e aprila in cima con la punta del coltello, senza affondare: deve mostrarsi, non spandersi.',
-          'Disponi i fichi intorno e sopra, versa la salsa calda a filo. <b>Il caldo sul freddo è metà del piatto</b>, quindi questo passaggio va fatto all\'ultimo.',
-          '<b>Il favo va per ultimo, sempre a freddo.</b> Appoggia il quadrato in cima, senza premere. Pepe, timo, eventualmente il peperoncino. Portalo in tavola subito.',
+          "<b>La burrata, prima di tutto.</b><br>Tiratela fuori dal frigorifero circa 30 minuti prima di servire. A temperatura ambiente sarà più morbida e cremosa e sprigionerà tutto il suo sapore. È un piccolo accorgimento, ma fa davvero la differenza.",
+          "<b>Prepariamo i fichi.</b><br>Preriscaldate il forno a 200 °C. Tagliate i fichi a metà e disponeteli in una teglia con la parte tagliata rivolta verso l'alto. Conditeli con l'olio extravergine, il miele e un pizzico di sale.<br>Infornate per 12–15 minuti, fino a quando saranno morbidi, leggermente caramellati sui bordi e ancora succosi al centro.",
+          "<b>Una salsa semplice, ma speciale.</b><br>Tenete da parte quattro mezzi fichi per la decorazione. Mettete gli altri in un pentolino con il loro fondo di cottura, aggiungete l'aceto balsamico e un cucchiaio d'acqua.<br>Lasciate cuocere per un paio di minuti, schiacciando delicatamente i fichi con una forchetta, fino a ottenere una salsa morbida e profumata. Se necessario, aggiungete ancora poca acqua.",
+          "<b>Componiamo il piatto.</b><br>Sistemate la burrata al centro di un piatto da portata e apritela delicatamente in superficie. Disponete intorno i fichi arrostiti e completate con la salsa ancora tiepida.",
+          "<b>Il tocco finale: il miele in favo.</b><br>Ecco il momento più interessante. Tagliate un piccolo quadrato di favo e adagiatelo sulla burrata, solo poco prima di servire.<br>Completate con pepe nero, qualche fogliolina di timo e, se vi piace, un pizzico di peperoncino.<br>Portate subito in tavola: il contrasto tra la burrata fresca, i fichi tiepidi e il miele in favo è proprio ciò che rende questo piatto così piacevole.",
         ]],
-        ['aside',[
-          '<b>Perché il favo non va mai scaldato.</b> La cera fonde intorno ai 62 °C e sopra i 40 °C il miele comincia a perdere gli aromi più volatili, cioè esattamente quelli per cui si compra un miele crudo. Un favo appoggiato su una salsa bollente diventa una pozza dolce: hai pagato la struttura e l\'hai sciolta. Mettilo sopra per ultimo, su qualcosa che si sta già raffreddando.',
-          '<b>E la cera si mangia?</b> Sì, tutta. Non si scioglie in bocca come il cioccolato: si mastica, rilascia il miele, e alla fine resta un piccolo residuo morbido. C\'è chi lo ingoia e chi lo lascia come una gomma. Nessuna delle due è sbagliata, e nessuna delle due fa male.',
-        ]],
-        ['h2','Quale favo usare'],
-        ['p','Un <b>favo di acacia</b> è la scelta giusta qui: è delicato, pulito, e non copre né il latte della burrata né l\'acidità del balsamico. Un castagno, che è amaro e potente, si mangerebbe tutto il piatto. Se vuoi più carattere senza strafare, un millefiori di fine estate regge bene i fichi.'],
-        ['h2','Se avanza'],
-        ['p','Non avanza. Ma se avanzano i fichi arrostiti, in frigo durano tre giorni e il mattino dopo sono ottimi sullo yogurt, con sopra un altro pezzetto di favo. La burrata invece va finita: aperta, il giorno dopo non è più lei.'],
+        ['h2','Perché aggiungere il miele in favo alla fine?'],
+        ['p',"Il miele in favo merita un'attenzione particolare. Non è semplicemente miele servito in modo diverso: è miele nella sua struttura naturale, ancora racchiuso nelle celle di cera costruite dalle api."],
+        ['p','Per questo preferiamo aggiungerlo a crudo, direttamente sul piatto, senza cuocerlo né metterlo a contatto con preparazioni troppo calde. In questo modo si apprezzano meglio i suoi profumi, la consistenza del miele e quella particolare esperienza di degustazione che solo il favo sa regalare.'],
+        ['p','Un piccolo pezzo è sufficiente. Mentre si mastica, il miele si libera lentamente e la cera aggiunge una consistenza del tutto particolare.'],
+        ['h2','Ma la cera del favo si può mangiare?'],
+        ['p',"Sì! La cera d'api alimentare è commestibile e si può tranquillamente masticare insieme al miele."],
+        ['p','Non si scioglie completamente in bocca: durante la masticazione il miele viene rilasciato, mentre la cera mantiene la sua consistenza morbida ed elastica. Potete ingerirla oppure semplicemente non deglutirla, proprio come preferite.'],
+        ['p','È una delle caratteristiche che rendono il miele in favo così particolare: non si assaggia soltanto un sapore, ma anche una consistenza e un modo diverso di vivere il miele.'],
+        ['h2','Quale miele in favo scegliere?'],
+        ['p','Per questa ricetta consigliamo un miele in favo di acacia. Il suo profilo delicato e floreale accompagna la dolcezza dei fichi e la freschezza della burrata senza sovrastare gli altri ingredienti.'],
+        ['p','Se invece amate i sapori più intensi, potete provare un miele millefiori di fine estate, che regala al piatto una nota più ricca e caratteristica.'],
+        ['p','Il nostro consiglio è di partire da un miele delicato: lasciate che siano i tre ingredienti a raccontarsi, senza che uno prevalga sugli altri.'],
+        ['h2','E se avanzano i fichi?'],
+        ['p','I fichi arrostiti si conservano in frigorifero, in un contenitore chiuso, per circa 2–3 giorni. Sono buonissimi anche il giorno dopo, magari a colazione, accompagnati da yogurt bianco e da un piccolo pezzetto di miele in favo.'],
+        ['p',"La burrata, invece, è decisamente meglio gustarla appena aperta."],
+        ['p',"<b>Un ultimo consiglio:</b> se non avete mai assaggiato il miele in favo, questa è una ricetta perfetta per iniziare. Non servono preparazioni elaborate né abbinamenti complicati. Basta lasciargli il giusto spazio nel piatto e scoprire quanto può essere sorprendente."],
       ],
     },
     en:{
       kicker:'Recipe',
-      title:'Burrata, roasted figs and a square of comb',
-      lede:'The plate that convinced us to sell comb honey: three warm things, one cold one, and a piece of wax that never goes near the heat.',
-      caption:'The original plate, eaten at dinner. That is where this started.',
-      facts:[['Serves','2'],['Time','25 minutes'],['Difficulty','None, honestly']],
+      title:'Burrata, roasted figs and honey in the comb: a pairing worth trying',
+      lede:'Some pairings work from the very first taste. This is one of them.',
+      caption:'The comb honey goes on last, uncooked, just before serving.',
+      facts:[['Serves','2'],['Preparation','25 minutes'],['Difficulty','Easy']],
       body:[
-        ['p','This recipe is not ours. It is a dish eaten at dinner, photographed before it was finished, and cooked at home until it came back the same. We are writing it down because it is the simplest way we know to explain comb honey to someone who has never tasted it: you do not explain it, you put it on top of something cold and creamy and let it do the rest.'],
+        ['p','The delicacy of burrata, the sweetness of figs straight from the oven, and honey still held in its comb. Three different textures, flavours that meet without covering one another, and one small detail that changes everything: a piece of comb brought straight to the table.'],
+        ['p','It is a dish we tasted at a dinner and could not forget. Enough to want to make it again at home. And that is exactly where our wish to tell you about it comes from: comb honey is still little known, but you only need to taste it the right way to understand its charm.'],
         ['h2','Ingredients'],
         ['ul',[
           '1 burrata, 250 g',
-          '6 ripe figs, better almost too ripe',
-          '1 tbsp runny honey, plus the comb separately',
+          '6 ripe figs',
+          '1 tbsp runny honey',
           '1 tbsp balsamic vinegar',
           '1 tbsp extra virgin olive oil',
-          'Salt, coarsely ground black pepper',
-          'A pinch of chilli flakes (optional, but it works)',
-          'A square of honey in the comb, about 30 g',
-          'A few thyme leaves',
+          'Salt and black pepper',
+          'A pinch of chilli flakes (optional)',
+          'About 30 g of honey in the comb',
+          'A few fresh thyme leaves',
         ]],
         ['h2','Method'],
         ['ol',[
-          '<b>Take the burrata out of the fridge half an hour before.</b> Almost everyone skips this and it is the step that decides the dish: cold burrata tastes of nothing, the fat stays shut and you never meet the milk. At room temperature it is a different thing altogether.',
-          'Heat the oven to 200 °C. Halve the figs, put them cut side up in a tray, dress with the oil, the spoon of honey and a pinch of salt.',
-          '<b>Roast for 12–15 minutes</b>, until they slump and the edges darken. They should give way, not dry out: if the centres are still firm, give them another five.',
-          'Set four halves aside. Crush the other two in a small pan with their roasting juices, the balsamic and a spoon of water. <b>Two minutes over a high flame</b>, stirring: it turns thick and glossy. If it tightens too far, another spoon of water.',
-          'Sit the whole burrata in the middle of the plate and open the top with the tip of a knife, without going deep: it should show itself, not spread.',
-          'Arrange the figs around and on top, pour the warm sauce over. <b>Warm against cold is half the dish</b>, so do this at the last moment.',
-          '<b>The comb goes on last, always cold.</b> Lay the square on top without pressing. Pepper, thyme, chilli if you like. Take it to the table straight away.',
+          "<b>The burrata, first of all.</b><br>Take it out of the fridge about 30 minutes before serving. At room temperature it is softer and creamier and gives up all of its flavour. It is a small thing, but it really does make the difference.",
+          "<b>Let us prepare the figs.</b><br>Heat the oven to 200 °C. Halve the figs and lay them in a tray, cut side up. Dress them with the olive oil, the honey and a pinch of salt.<br>Roast for 12–15 minutes, until they are soft, lightly caramelised at the edges and still juicy in the middle.",
+          "<b>A simple sauce, but a special one.</b><br>Set four halves aside for decoration. Put the rest in a small pan with their roasting juices, add the balsamic vinegar and a spoonful of water.<br>Cook for a couple of minutes, gently crushing the figs with a fork, until you have a soft, fragrant sauce. Add a little more water if you need to.",
+          "<b>Let us build the plate.</b><br>Sit the burrata in the middle of a serving plate and open it gently at the surface. Arrange the roasted figs around it and finish with the sauce while it is still warm.",
+          "<b>The final touch: the honey in the comb.</b><br>Here is the most interesting moment. Cut a small square of comb and lay it on the burrata, only just before serving.<br>Finish with black pepper, a few thyme leaves and, if you like, a pinch of chilli.<br>Take it to the table straight away: the contrast between the cool burrata, the warm figs and the comb honey is exactly what makes this dish so enjoyable.",
         ]],
-        ['aside',[
-          '<b>Why the comb never gets heated.</b> Beeswax melts at around 62 °C, and above 40 °C honey starts losing its most volatile aromas — precisely the ones you pay for in a raw honey. A comb set on a boiling sauce becomes a sweet puddle: you bought the structure and then melted it. Put it on last, onto something already cooling.',
-          '<b>And do you eat the wax?</b> Yes, all of it. It does not melt away like chocolate: you chew it, it releases the honey, and a small soft residue is left. Some people swallow it, some park it like gum. Neither is wrong, and neither does any harm.',
-        ]],
-        ['h2','Which comb to use'],
-        ['p','An <b>acacia comb</b> is the right call here: delicate and clean, it covers neither the milk of the burrata nor the sharpness of the balsamic. Chestnut, bitter and loud, would eat the whole plate. If you want more character without overwhelming it, a late-summer wildflower comb holds up to figs well.'],
-        ['h2','Leftovers'],
-        ['p','There are none. But if the roasted figs survive, they keep three days in the fridge and are very good the next morning on yoghurt, with another piece of comb on top. The burrata will not wait: once opened, the following day it is no longer itself.'],
+        ['h2','Why add the comb honey at the end?'],
+        ['p','Comb honey deserves particular care. It is not simply honey served a different way: it is honey in its natural structure, still held in the wax cells the bees built.'],
+        ['p','That is why we prefer to add it raw, straight onto the plate, without cooking it or letting it touch anything too hot. That way you appreciate its aromas, the texture of the honey and that particular tasting experience only the comb can give.'],
+        ['p','A small piece is enough. As you chew, the honey is released slowly and the wax adds a texture all of its own.'],
+        ['h2','But can you eat the wax?'],
+        ['p','Yes! Food-grade beeswax is edible and can be chewed quite happily along with the honey.'],
+        ['p','It does not melt away completely in the mouth: as you chew, the honey is released while the wax keeps its soft, elastic texture. You can swallow it or simply not swallow it, exactly as you prefer.'],
+        ['p','It is one of the things that make comb honey so particular: you are not only tasting a flavour, but a texture and a different way of experiencing honey.'],
+        ['h2','Which comb honey to choose?'],
+        ['p','For this recipe we recommend an acacia comb honey. Its delicate, floral profile accompanies the sweetness of the figs and the freshness of the burrata without overwhelming the other ingredients.'],
+        ['p','If you prefer more intense flavours, try a late-summer wildflower honey, which gives the dish a richer, more characterful note.'],
+        ['p','Our advice is to start from a delicate honey: let the three ingredients tell their own story, without one prevailing over the others.'],
+        ['h2','And if there are figs left over?'],
+        ['p','Roasted figs keep in the fridge, in a closed container, for about 2–3 days. They are very good the next day too, at breakfast perhaps, with plain yoghurt and a small piece of comb honey.'],
+        ['p','The burrata, on the other hand, is decidedly better eaten as soon as it is opened.'],
+        ['p','<b>One last piece of advice:</b> if you have never tasted comb honey, this is a perfect recipe to start with. No elaborate preparations or complicated pairings are needed. You only have to give it the right space on the plate and discover how surprising it can be.'],
       ],
     },
   },
@@ -2241,7 +2355,7 @@ function showTransferDone(d){
 function showView(name){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   el('view-' + name).classList.add('active');
-  const aboutViews = ['producers', 'why', 'promise'];
+  const aboutViews = ['producers', 'why', 'about'];
   // reading an entry is still being in the journal, as far as the nav is concerned
   const navFor = name === 'entry' ? 'blog' : name;
   document.querySelectorAll('.nav-left [data-nav]').forEach(b =>
