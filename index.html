@@ -506,37 +506,12 @@ a{color:inherit;text-decoration:none}
 .empty p{font-size:14px;color:var(--ink-2);max-width:42ch;margin:0 auto 22px}
 .empty .btn{width:auto;display:inline-block;padding:13px 34px}
 
-/* ---------- page head (producers / cart) ---------- */
-.page-head{padding:clamp(44px,6vw,72px) 0 0}
-.page-head h1{font-size:clamp(26px,3.6vw,38px);font-weight:600;letter-spacing:-.026em;line-height:1.12;margin:14px 0 12px}
-.page-head p{font-size:15px;color:var(--ink-2);max-width:56ch}
-
-/* ---------- editorial pages ---------- */
-.editorial{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:0 56px;padding:44px 0 84px;max-width:1180px;
-}
-/* A plain stacked heading: the editorial grid would spread these into columns. */
+/* ---------- page heading ---------- */
+/* One stacked heading for every page. There used to be two of these rules,
+   one quietly overriding the other; these are the values that were winning. */
 .page-head{padding:44px 0 30px;max-width:620px}
 .page-head h1{font-size:clamp(26px,3.6vw,36px);font-weight:600;letter-spacing:-.025em;line-height:1.12;margin:14px 0 12px}
-.page-head p{font-size:15.5px;line-height:1.62;color:var(--ink-2)}
-.tform{padding-bottom:84px}
-
-/* contact pages */
-.contact-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:0 56px;padding-bottom:90px;max-width:1000px;
-}
-.ct-block{padding:26px 0;border-top:1px solid var(--line)}
-.ct-block h3{font-size:16px;font-weight:600;letter-spacing:-.015em;margin-bottom:9px}
-.ct-block p{font-size:14.5px;line-height:1.68;color:var(--ink-2);max-width:50ch}
-.ct-block a{color:var(--accent);text-decoration:none}
-.ct-block a:hover{text-decoration:underline}
-.ct-big{font-size:19px;font-weight:600;letter-spacing:-.01em;display:inline-block;margin-top:4px}
-
-.ed-block{padding:26px 0;border-top:1px solid var(--line)}
-.ed-block h3{font-size:16px;font-weight:600;letter-spacing:-.015em;margin-bottom:9px}
-.ed-block p{font-size:14.5px;line-height:1.68;color:var(--ink-2);max-width:54ch}
+.page-head p{font-size:15.5px;line-height:1.62;color:var(--ink-2);max-width:56ch}
 /* ---------- mission ---------- */
 .mission{max-width:760px;padding-bottom:20px}
 .mission .lede{
@@ -597,6 +572,11 @@ a{color:inherit;text-decoration:none}
   border-radius:var(--r);overflow:hidden;margin-bottom:16px;
 }
 .post-card .shot img{width:100%;height:100%;object-fit:cover;object-position:center 42%;display:block;transition:transform .5s ease}
+/* Not every entry has a photograph. Rather than let a text card collapse to
+   half the height of its neighbour, it gets a combed panel of the same shape. */
+.post-card .shot.blank{display:flex;align-items:center;justify-content:center;background:var(--tint)}
+.post-card .shot.blank svg{width:100%;height:100%;opacity:.5;transition:transform .5s ease}
+.post-card:hover .shot.blank svg{transform:scale(1.03)}
 .post-card:hover .shot img{transform:scale(1.03)}
 .post-meta{
   font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
@@ -614,6 +594,8 @@ a{color:inherit;text-decoration:none}
 .entry .back:hover{color:var(--ink)}
 .entry .post-meta{display:block}
 .entry h1{font-size:clamp(30px,4.4vw,44px);line-height:1.1;letter-spacing:-.025em;margin:10px 0 16px}
+.entry .lede{margin-bottom:30px}
+.entry .lede:last-of-type + h2{margin-top:10px}
 .entry .lede{font-size:17px;line-height:1.65;color:var(--ink-2);margin-bottom:30px}
 .entry figure{margin:0 0 34px}
 /* A phone photograph is usually taller than it is wide. Capping the height
@@ -814,7 +796,6 @@ a{color:inherit;text-decoration:none}
         </button>
         <div class="dropdown" id="about-dropdown">
           <button data-nav="producers" id="t-menu-beekeepers"></button>
-          <button data-nav="why" id="t-menu-why"></button>
           <button data-nav="about" id="t-menu-mission"></button>
         </div>
       </div>
@@ -847,7 +828,6 @@ a{color:inherit;text-decoration:none}
     <button data-nav="shop" id="t-m-shop"></button>
     <span class="m-group" id="t-m-about"></span>
     <button data-nav="producers" class="sub" id="t-m-beekeepers"></button>
-    <button data-nav="why" class="sub" id="t-m-why"></button>
     <button data-nav="about" class="sub" id="t-m-mission"></button>
     <button data-nav="blog" id="t-m-blog"></button>
   </nav>
@@ -986,17 +966,6 @@ a{color:inherit;text-decoration:none}
   </section>
 
   <!-- ============ editorial pages ============ -->
-  <section class="view" id="view-why">
-    <div class="shell">
-      <div class="page-head">
-        <span class="u-label" id="t-why-label"></span>
-        <h1 id="t-why-title"></h1>
-        <p id="t-why-sub"></p>
-      </div>
-      <div class="editorial" id="why-body"></div>
-    </div>
-  </section>
-
   <section class="view" id="view-about">
     <div class="shell">
       <div class="page-head">
@@ -1099,17 +1068,7 @@ a{color:inherit;text-decoration:none}
 const I18N = {
   it: {
     navShop:'Shop', navAbout:'Chi siamo', navBlog:'Blog', navCart:'Carrello', menu:'Menu',
-    menuBeekeepers:'I nostri apicoltori', menuWhy:'Perché il miele?',
-    whyLabel:'Cultura del miele', whyTitle:'Perché il miele?',
-    whySub:'Non tutti i mieli sono la stessa cosa. Ecco cosa distingue un monoflora da apicoltore da quello del supermercato.',
-    whyBlocks:[
-      ['Un fiore, un sapore','Un miele monoflora nasce quando le api bottinano in prevalenza su una sola fioritura. Acacia, castagno, tiglio, timo: stessa ape, stessa tecnica, risultati completamente diversi nel colore, nella densità e nel gusto.'],
-      ['Il territorio si sente','Lo stesso fiore, su suoli e altitudini diverse, dà mieli diversi. È lo stesso principio del vino: il castagno del Canavese non è quello dell’Appennino.'],
-      ['Grezzo significa vivo','Il miele non filtrato e non pastorizzato conserva pollini ed enzimi. È anche il motivo per cui alcuni cristallizzano e altri no: è un comportamento naturale, non un difetto.'],
-      ['Non scade','Il miele puro è uno dei pochissimi alimenti che non deperisce. Alcune varietà, come l’acacia, restano liquide per anni senza mai cristallizzare.'],
-      ['La stagione decide','Ogni fioritura dura poche settimane e alcune sono imprevedibili. Il tiglio di montagna a volte non si raccoglie affatto: per questo certe varietà esistono solo in quantità limitate.'],
-      ['Chi lo produce conta','Un apicoltore che sposta poche arnie dietro una fioritura fa un mestiere diverso da chi miscela partite di provenienza ignota. La differenza si legge in etichetta, se l’etichetta è onesta.'],
-    ],
+    menuBeekeepers:'I nostri apicoltori',
     menuMission:'La nostra missione',
     misLabel:'Perché esistiamo', misTitle:'La nostra missione',
     misLede:'Il miele, proprio come nasce.',
@@ -1248,17 +1207,7 @@ const I18N = {
   },
   en: {
     navShop:'Shop', navAbout:'About', navBlog:'Blog', navCart:'Cart', menu:'Menu',
-    menuBeekeepers:'Our beekeepers', menuWhy:'Why honey?',
-    whyLabel:'Honey culture', whyTitle:'Why honey?',
-    whySub:'Not all honey is the same thing. Here is what separates a beekeeper\u2019s single-flower honey from the supermarket jar.',
-    whyBlocks:[
-      ['One flower, one flavour','A single-flower honey happens when bees forage mostly on one bloom. Acacia, chestnut, linden, thyme: same bee, same craft, completely different colour, density and taste.'],
-      ['You can taste the territory','The same flower, on different soils and altitudes, gives a different honey. It works like wine: chestnut from Canavese is not chestnut from the Apennines.'],
-      ['Raw means alive','Unfiltered, unpasteurised honey keeps its pollen and enzymes. It is also why some jars crystallise and others never do \u2014 that is natural behaviour, not a fault.'],
-      ['It does not expire','Pure honey is one of the very few foods that never spoils. Some varieties, like acacia, stay liquid for years without ever crystallising.'],
-      ['The season decides','Every bloom lasts a few weeks and some are unpredictable. Mountain linden sometimes cannot be harvested at all \u2014 which is why certain varieties exist only in small quantities.'],
-      ['The hands behind it matter','A beekeeper moving a few hives to follow a bloom is doing a different job from someone blending lots of unknown origin. The difference shows on the label, if the label is honest.'],
-    ],
+    menuBeekeepers:'Our beekeepers',
     menuMission:'Our mission',
     misLabel:'Why we exist', misTitle:'Our mission',
     misLede:'Honey, exactly as it is born.',
@@ -1486,12 +1435,10 @@ function renderChrome(){
   setText('t-nav-blog', t.navBlog);
   setText('t-nav-cart', t.navCart);
   setText('t-menu-beekeepers', t.menuBeekeepers);
-  setText('t-menu-why', t.menuWhy);
   setText('t-menu-mission', t.menuMission);
   setText('t-m-shop', t.navShop);
   setText('t-m-about', t.navAbout);
   setText('t-m-beekeepers', t.menuBeekeepers);
-  setText('t-m-why', t.menuWhy);
   setText('t-m-mission', t.menuMission);
   setText('t-m-blog', t.navBlog);
 
@@ -1525,41 +1472,10 @@ function renderChrome(){
   setText('t-foot-rights', t.footRights);
   setText('t-foot-ship-note', t.footShipNote);
 
-  renderEditorial('why', t.whyLabel, t.whyTitle, t.whySub, t.whyBlocks);
   renderMission();
   renderBlog();
   if (el('view-entry').classList.contains('active') && currentSlug) renderEntry(currentSlug);
 
-}
-
-/* ============ editorial pages ============ */
-/* The mission page carries prose rather than a grid of cards, and ends with
-   the promise, which used to be a page of its own and was never read there. */
-function renderMission(){
-  const t = T();
-  setText('t-about-label', t.misLabel);
-  setText('t-about-title', t.misTitle);
-  el('about-body').innerHTML =
-    `<p class="lede">${t.misLede}</p>` +
-    t.misBlocks.map(([h, paras]) =>
-      `<section>${h ? `<h2>${h}</h2>` : ''}${paras.map(x => `<p>${x}</p>`).join('')}</section>`).join('');
-
-  setText('t-rules-title', t.rulesTitle);
-  setText('t-rules-sub', t.rulesSub);
-  el('rules-body').innerHTML = t.rulesBlocks.map(([h, p], i) =>
-    `<div class="rule"><span class="n">${String(i + 1).padStart(2, '0')}</span>
-       <div><h3>${h}</h3><p>${p}</p></div></div>`).join('');
-  setText('t-rules-outro', t.rulesOutro);
-  setText('t-mis-sign', t.misSign);
-}
-
-function renderEditorial(key, label, title, sub, blocks){
-  setText('t-' + key + '-label', label);
-  setText('t-' + key + '-title', title);
-  setText('t-' + key + '-sub', sub);
-  el(key + '-body').innerHTML = blocks
-    .map(([h, p]) => `<article class="ed-block"><h3>${h}</h3><p>${p}</p></article>`)
-    .join('');
 }
 
 /* ============ filters ============ */
@@ -2009,6 +1925,26 @@ function initNewsletter(){
 }
 
 /* ============ contact pages ============ */
+/* The mission page carries prose rather than a grid of cards, and ends with
+   the commitments, which used to be a page of their own and were never read. */
+function renderMission(){
+  const t = T();
+  setText('t-about-label', t.misLabel);
+  setText('t-about-title', t.misTitle);
+  el('about-body').innerHTML =
+    `<p class="lede">${t.misLede}</p>` +
+    t.misBlocks.map(([h, paras]) =>
+      `<section>${h ? `<h2>${h}</h2>` : ''}${paras.map(x => `<p>${x}</p>`).join('')}</section>`).join('');
+
+  setText('t-rules-title', t.rulesTitle);
+  setText('t-rules-sub', t.rulesSub);
+  el('rules-body').innerHTML = t.rulesBlocks.map(([h, p], i) =>
+    `<div class="rule"><span class="n">${String(i + 1).padStart(2, '0')}</span>
+       <div><h3>${h}</h3><p>${p}</p></div></div>`).join('');
+  setText('t-rules-outro', t.rulesOutro);
+  setText('t-mis-sign', t.misSign);
+}
+
 function renderContactPages(){
   const t = T();
   const mail = 'hey.urbanbees@gmail.com';
@@ -2036,6 +1972,101 @@ function renderContactPages(){
    written twice, and keeping the two versions side by side is how they stay
    the same post. */
 const POSTS = [
+  {
+    slug:'perche-il-miele-non-e-mai-tutto-uguale',
+    date:'2026-11-19',
+    img:null,
+    it:{
+      kicker:'Cultura del miele',
+      title:'Perché il miele non è mai tutto uguale',
+      lede:'Un fiore, un territorio, una stagione. Il miele è il risultato di tanti elementi che si incontrano e che rendono ogni raccolto diverso dal precedente.',
+      body:[
+        ['p','Quando si parla di miele, spesso si pensa a un prodotto unico, che cambia soltanto per colore o consistenza. In realtà, dietro ogni varietà c’è un mondo fatto di fioriture, paesaggi, clima e lavoro delle api.'],
+        ['p','È proprio questo che ci affascina: scoprire come un alimento così semplice possa raccontare storie e territori così diversi.'],
+        ['p','Ecco alcune cose che vale la pena conoscere per imparare ad apprezzare davvero il miele.'],
+        ['h2','Un fiore, un sapore'],
+        ['p','Hai mai assaggiato un miele di acacia e uno di castagno? La differenza è sorprendente.'],
+        ['p','Il miele monoflora nasce quando le api raccolgono nettare prevalentemente da una determinata specie botanica. Acacia, castagno, tiglio, sulla o timo: ogni fioritura regala al miele caratteristiche proprie, che si ritrovano nel profumo, nel colore, nella consistenza e nel gusto.'],
+        ['p','Il miele di acacia, per esempio, è delicato e naturalmente dolce, mentre quello di castagno ha un carattere più deciso, con note intense e leggermente amare.'],
+        ['p','È sempre miele, ma ogni varietà ha una personalità tutta sua.'],
+        ['h2','Anche il territorio fa la differenza'],
+        ['p','Non è soltanto il fiore a determinare le caratteristiche di un miele. Contano anche il territorio, il clima, il terreno e l’altitudine.'],
+        ['p','La stessa fioritura può dare risultati diversi a seconda del luogo in cui cresce. Per questo un miele di castagno raccolto in Piemonte può avere caratteristiche differenti da uno prodotto sull’Appennino.'],
+        ['p','È un po’ come accade con il vino: conoscere la varietà è importante, ma conoscere anche la sua provenienza permette di apprezzarlo ancora di più.'],
+        ['p','Dietro ogni vasetto c’è un paesaggio, e imparare a riconoscerlo rende ogni assaggio più interessante.'],
+        ['h2','Il miele naturale cambia, ed è normale'],
+        ['p','Una delle caratteristiche più interessanti del miele è la sua capacità di evolvere nel tempo.'],
+        ['p','Alcuni mieli rimangono liquidi a lungo, altri tendono a cristallizzare dopo poche settimane o mesi. Dipende soprattutto dalla loro composizione naturale, in particolare dal rapporto tra glucosio e fruttosio.'],
+        ['p','La cristallizzazione è un processo del tutto naturale e non significa che il miele sia andato a male o abbia perso la propria qualità.'],
+        ['p','Anche la lavorazione conta: un miele non pastorizzato e lavorato delicatamente conserva le sue caratteristiche naturali senza essere sottoposto a trattamenti termici intensi.'],
+        ['p','Insomma, se il tuo miele cristallizza, non c’è nulla di cui preoccuparsi. È semplicemente il miele che segue il suo corso naturale.'],
+        ['h2','Un alimento che si conserva a lungo'],
+        ['p','Il miele puro, grazie alla sua composizione e al basso contenuto di acqua, è un alimento particolarmente stabile e può conservarsi per moltissimo tempo, se tenuto correttamente.'],
+        ['p','Non ha una vera e propria scadenza nel senso comune del termine, anche se sulla confezione viene indicato un termine minimo di conservazione.'],
+        ['p','Colore, profumo e consistenza possono cambiare con il passare del tempo, ma questo fa parte della sua evoluzione naturale.'],
+        ['p','Il nostro consiglio? Conservalo in un luogo fresco e asciutto, lontano dalla luce diretta e con il vasetto sempre ben chiuso.'],
+        ['h2','Ogni raccolto ha i suoi tempi'],
+        ['p','Il miele segue i ritmi della natura, non quelli di un calendario di produzione.'],
+        ['p','Ogni fioritura ha una durata limitata e dipende dalle condizioni climatiche della stagione. Ci sono annate particolarmente generose e altre in cui il tempo, la pioggia o le temperature possono compromettere il raccolto.'],
+        ['p','Per questo alcune varietà sono disponibili soltanto in quantità ridotte, mentre altre possono mancare completamente per una stagione.'],
+        ['p','È una delle cose che rendono speciale il lavoro degli apicoltori: ogni anno porta con sé condizioni nuove e risultati che non si possono programmare con certezza.'],
+        ['p','Quando un miele termina, non sempre è possibile ritrovarlo subito. A volte bisogna semplicemente aspettare la fioritura successiva.'],
+        ['h2','Dietro ogni miele c’è il lavoro di un apicoltore'],
+        ['p','Conoscere il miele significa anche conoscere chi lo produce.'],
+        ['p','Un apicoltore segue le proprie api durante tutto l’anno, osserva le fioriture, si prende cura degli alveari e sceglie il momento più adatto per raccogliere il miele.'],
+        ['p','È un lavoro che richiede esperienza, attenzione e una profonda conoscenza del territorio.'],
+        ['p','Per questo, quando scegliamo un miele, per noi è importante sapere da dove arriva e conoscere la persona che se ne è occupata.'],
+        ['p','Su Urban Bees vogliamo dare spazio proprio a queste storie: quelle dei piccoli apicoltori italiani, dei loro territori e dei raccolti che ogni stagione ci regalano.'],
+        ['p','Perché un buon miele non racconta soltanto il sapore di un fiore. Racconta anche tutto il lavoro che c’è dietro.'],
+        ['p','E forse è proprio questo il bello del miele: non ce n’è mai uno identico all’altro, perché non esistono due stagioni, due territori e due raccolti perfettamente uguali.'],
+      ],
+    },
+    en:{
+      kicker:'Honey culture',
+      title:'Why honey is never all the same',
+      lede:'A flower, a place, a season. Honey is the result of many things meeting, and it is what makes every harvest different from the one before.',
+      body:[
+        ['p','When people talk about honey, they often think of a single product that varies only in colour or texture. In reality, behind every variety there is a whole world of blooms, landscapes, weather and the work of bees.'],
+        ['p','That is exactly what fascinates us: discovering how a food this simple can tell such different stories and speak of such different places.'],
+        ['p','Here are a few things worth knowing in order to really appreciate honey.'],
+        ['h2','One flower, one flavour'],
+        ['p','Have you ever tasted an acacia honey next to a chestnut one? The difference is startling.'],
+        ['p','A single-flower honey comes about when bees gather nectar mainly from one botanical species. Acacia, chestnut, lime, sulla or thyme: each bloom gives the honey characteristics of its own, found in the aroma, the colour, the texture and the taste.'],
+        ['p','Acacia honey, for instance, is delicate and naturally sweet, while chestnut has a far bolder character, with intense and slightly bitter notes.'],
+        ['p','It is always honey, but every variety has a personality entirely its own.'],
+        ['h2','The place makes a difference too'],
+        ['p','It is not only the flower that determines what a honey is like. The land, the climate, the soil and the altitude all count.'],
+        ['p','The same bloom can give different results depending on where it grows. That is why a chestnut honey harvested in Piedmont can be quite different from one produced in the Apennines.'],
+        ['p','It is rather like wine: knowing the variety matters, but knowing where it came from lets you appreciate it even more.'],
+        ['p','Behind every jar there is a landscape, and learning to recognise it makes every taste more interesting.'],
+        ['h2','Natural honey changes, and that is normal'],
+        ['p','One of the most interesting things about honey is its capacity to evolve over time.'],
+        ['p','Some honeys stay liquid for a long while, others tend to crystallise after a few weeks or months. It depends mostly on their natural composition, in particular on the ratio between glucose and fructose.'],
+        ['p','Crystallisation is an entirely natural process, and it does not mean the honey has spoiled or lost any of its quality.'],
+        ['p','How it is handled matters too: an unpasteurised honey, gently processed, keeps its natural characteristics without being put through heavy heat treatment.'],
+        ['p','So if your honey crystallises, there is nothing to worry about. It is simply honey following its own natural course.'],
+        ['h2','A food that keeps for a very long time'],
+        ['p','Pure honey, thanks to its composition and its low water content, is a particularly stable food and can keep for a very long time if it is stored properly.'],
+        ['p','It has no real expiry date in the usual sense of the term, even though the packaging carries a best-before date.'],
+        ['p','Colour, aroma and texture can change as time passes, but that is part of its natural evolution.'],
+        ['p','Our advice? Keep it somewhere cool and dry, away from direct light, with the jar always properly closed.'],
+        ['h2','Every harvest has its own timing'],
+        ['p','Honey follows the rhythms of nature, not those of a production calendar.'],
+        ['p','Every bloom lasts a limited time and depends on the season’s weather. Some years are particularly generous and in others the weather, the rain or the temperatures can ruin the harvest.'],
+        ['p','That is why some varieties are available only in small quantities, while others can be missing altogether for a season.'],
+        ['p','It is one of the things that make a beekeeper’s work special: every year brings new conditions and results that cannot be planned with any certainty.'],
+        ['p','When a honey runs out, it is not always possible to find it again straight away. Sometimes you simply have to wait for the next bloom.'],
+        ['h2','Behind every honey there is a beekeeper’s work'],
+        ['p','Getting to know honey also means getting to know the people who produce it.'],
+        ['p','A beekeeper follows their bees through the whole year, watches the blooms, looks after the hives and chooses the right moment to take the honey.'],
+        ['p','It is work that calls for experience, attention and a deep knowledge of the land.'],
+        ['p','That is why, when we choose a honey, it matters to us to know where it comes from and who looked after it.'],
+        ['p','At Urban Bees we want to make room for exactly those stories: those of small Italian beekeepers, of their territories and of the harvests each season gives us.'],
+        ['p','Because a good honey does not only tell you the flavour of a flower. It tells you all the work behind it too.'],
+        ['p','And perhaps that is the beauty of honey: no two are ever identical, because no two seasons, two places and two harvests ever are.'],
+      ],
+    },
+  },
   {
     slug:'burrata-fichi-favo',
     date:'2026-11-19',
@@ -2150,6 +2181,21 @@ function postDate(iso){
   return lang === 'en' ? `${months.en[m-1]} ${d}, ${y}` : `${d} ${months.it[m-1]} ${y}`;
 }
 
+/* A field of hexagons, drawn rather than photographed. The pattern id has to
+   be unique per card or the second one reuses the first one's definition. */
+function combPanel(id){
+  return `<svg viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><pattern id="comb-${id}" width="56" height="32.3" patternUnits="userSpaceOnUse">
+      <g fill="none" stroke="#C8B38A" stroke-width="1.1">
+        <path d="M9.3 16.15 L18.7 0 L37.3 0 L46.7 16.15 L37.3 32.3 L18.7 32.3 Z"/>
+        <path d="M-18.7 0 L-9.3 -16.15 L9.3 -16.15 L18.7 0 L9.3 16.15 L-9.3 16.15 Z"/>
+        <path d="M37.3 0 L46.7 -16.15 L65.3 -16.15 L74.7 0 L65.3 16.15 L46.7 16.15 Z"/>
+        <path d="M-18.7 32.3 L-9.3 16.15 L9.3 16.15 L18.7 32.3 L9.3 48.45 L-9.3 48.45 Z"/>
+        <path d="M37.3 32.3 L46.7 16.15 L65.3 16.15 L74.7 32.3 L65.3 48.45 L46.7 48.45 Z"/>
+      </g></pattern></defs>
+    <rect width="320" height="240" fill="url(#comb-${id})"/></svg>`;
+}
+
 function renderBlog(){
   const t = T();
   setText('t-blog-label', t.blogLabel);
@@ -2164,8 +2210,11 @@ function renderBlog(){
   el('blog-body').className = 'post-list';
   el('blog-body').innerHTML = POSTS.map(post => {
     const c = post[lang];
+    const shot = post.img
+      ? `<span class="shot"><img src="${post.img}" alt="" loading="lazy"></span>`
+      : `<span class="shot blank">${combPanel(post.slug)}</span>`;
     return `<button class="post-card" data-slug="${post.slug}">
-      <span class="shot"><img src="${post.img}" alt="" loading="lazy"></span>
+      ${shot}
       <span class="post-meta">${c.kicker} · ${postDate(post.date)}</span>
       <h3>${c.title}</h3>
       <p>${c.lede}</p>
@@ -2198,11 +2247,11 @@ function renderEntry(slug){
     <span class="post-meta">${c.kicker} · ${postDate(post.date)}</span>
     <h1>${c.title}</h1>
     <p class="lede">${c.lede}</p>
-    <figure>
+    ${post.img ? `<figure>
       <img src="${post.img}" alt="${c.title}">
       <figcaption>${c.caption}</figcaption>
-    </figure>
-    <div class="facts">${c.facts.map(([k,v]) => `<span>${k}: <b>${v}</b></span>`).join('')}</div>
+    </figure>` : ''}
+    ${c.facts ? `<div class="facts">${c.facts.map(([k,v]) => `<span>${k}: <b>${v}</b></span>`).join('')}</div>` : ''}
     ${blocks}`;
   bindNav(el('entry-body'));
   return true;
@@ -2404,7 +2453,7 @@ function showTransferDone(d){
 function showView(name){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   el('view-' + name).classList.add('active');
-  const aboutViews = ['producers', 'why', 'about'];
+  const aboutViews = ['producers', 'about'];
   // reading an entry is still being in the journal, as far as the nav is concerned
   const navFor = name === 'entry' ? 'blog' : name;
   document.querySelectorAll('.nav-left [data-nav]').forEach(b =>
