@@ -522,6 +522,32 @@ a{color:inherit;text-decoration:none}
 }
 .blog-soon p{font-size:15px;color:var(--ink-2);max-width:52ch;line-height:1.7}
 
+/* ---------- newsletter ---------- */
+.news{border-top:1px solid var(--line);background:var(--tint)}
+.news-inner{
+  max-width:1520px;margin:0 auto;padding:46px var(--pad) 48px;
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);
+  gap:22px 56px;align-items:start;
+}
+.news-inner h3{font-size:20px;font-weight:600;letter-spacing:-.018em;margin-bottom:8px}
+.news-inner > div > p{font-size:14.5px;color:var(--ink-2);max-width:46ch;line-height:1.6}
+.news-form{display:flex;gap:10px;flex-wrap:wrap}
+.news-form input[type=email]{
+  flex:1 1 220px;font-family:var(--font);font-size:15px;color:var(--ink);
+  background:var(--surface);border:1px solid var(--line-2);border-radius:var(--r);padding:12px 14px;
+}
+.news-form input[type=email]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.news-form .btn{flex:0 0 auto;width:auto;padding:12px 26px}
+.news-note{grid-column:2;font-size:12px;line-height:1.55;color:var(--ink-3);margin:0}
+.news-note a{color:var(--ink-2)}
+.news-msg{grid-column:2;font-size:14px;color:var(--accent);margin:0;font-weight:600}
+.news-msg[hidden]{display:none}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:860px){
+  .news-inner{grid-template-columns:1fr;gap:18px}
+  .news-note,.news-msg{grid-column:1}
+}
+
 /* ---------- footer ---------- */
 .site-footer{border-top:1px solid var(--line);background:var(--bg)}
 .footer-inner{
@@ -821,6 +847,23 @@ a{color:inherit;text-decoration:none}
 </main>
 
 <footer class="site-footer">
+  <div class="news">
+    <div class="news-inner">
+      <div>
+        <h3 id="t-news-title"></h3>
+        <p id="t-news-sub"></p>
+      </div>
+      <form class="news-form" id="news-form" novalidate>
+        <label class="sr-only" for="news-email" id="t-news-label"></label>
+        <input id="news-email" type="email" autocomplete="email" required>
+        <span class="hp"><label for="news-company">Company</label><input id="news-company" tabindex="-1" autocomplete="off"></span>
+        <button class="btn btn-solid" type="submit" id="news-submit"></button>
+      </form>
+      <p class="news-note" id="t-news-note"></p>
+      <p class="news-msg" id="news-msg" hidden></p>
+    </div>
+  </div>
+
   <div class="footer-inner">
     <div class="footer-col footer-brand">
       <span class="wordmark">Urban Bees</span>
@@ -958,6 +1001,14 @@ const I18N = {
     charColor:'Colore', charHarvest:'Raccolta', charCrystal:'Cristallizzazione', charFlavor:'Sapore',
     aboutTitle:'Il miele', pairingTitle:'Abbinamenti',
     footBlurb:'Miele in favo da apicoltori italiani indipendenti: come le api l\'hanno sigillato, senza estrazione e senza filtri.',
+    newsTitle:'Resta aggiornato',
+    newsSub:'Quando arriva un favo nuovo, quando una fioritura va male, quando c\'è qualcosa che vale la pena raccontare. Poche email, scritte a mano.',
+    newsLabel:'Il tuo indirizzo email', newsPlaceholder:'nome@esempio.it', newsBtn:'Iscriviti',
+    newsNote:'Iscrivendoti accetti che usiamo il tuo indirizzo solo per scriverti di Urban Bees. Puoi cancellarti quando vuoi rispondendo a una qualsiasi email. <a href="privacy.html">Informativa privacy</a>.',
+    newsOk:'Fatto — ti scriveremo.',
+    newsBad:'Controlla l\'indirizzo email.',
+    newsFallback:'Apriamo la tua email: mandaci il messaggio e ti aggiungiamo noi.',
+    newsSubject:'Iscrizione newsletter Urban Bees',
     footFollowH:'Seguici', footAboutH:'Urban Bees',
     footProducers:'Gli apicoltori', footShipping:'Spedizioni', footContact:'Contatti',
     footBeekeep:'Sei un apicoltore?',
@@ -1068,6 +1119,14 @@ const I18N = {
     charColor:'Colour', charHarvest:'Harvest', charCrystal:'Crystallisation', charFlavor:'Flavour',
     aboutTitle:'About this honey', pairingTitle:'Pairings',
     footBlurb:'Honey in the comb from independent Italian beekeepers: as the bees sealed it, never extracted, never filtered.',
+    newsTitle:'Stay in touch',
+    newsSub:'When a new comb arrives, when a bloom fails, when there is something worth telling. A few emails, written by hand.',
+    newsLabel:'Your email address', newsPlaceholder:'name@example.com', newsBtn:'Subscribe',
+    newsNote:'By subscribing you agree that we use your address only to write to you about Urban Bees. Unsubscribe whenever you like by replying to any email. <a href="privacy.html?lang=en">Privacy notice</a>.',
+    newsOk:'Done — we will be in touch.',
+    newsBad:'Please check your email address.',
+    newsFallback:'Opening your mail app: send us the message and we will add you.',
+    newsSubject:'Urban Bees newsletter signup',
     footFollowH:'Follow us', footAboutH:'Urban Bees',
     footProducers:'The beekeepers', footShipping:'Shipping', footContact:'Contact',
     footBeekeep:'Are you a beekeeper?',
@@ -1078,18 +1137,18 @@ const I18N = {
 };
 
 const PRODUCTS = [
-  {id:1, emoji:'🍯', price:8.90, stock:10, farm:'Apicoltura Cazzola',
+  {id:1, emoji:'🍯', price:11.90, stock:10, farm:'Apicoltura Cazzola',
    tastes:['floral'],
-   cat:{it:'Delicato',en:'Delicate'}, name:{it:'Favo di Acacia',en:'Acacia Comb'},
-   region:{it:'Emilia-Romagna',en:'Emilia-Romagna'}, unit:{it:'favo 100g',en:'100g comb'},
-   color:{it:'Cera chiara, miele quasi trasparente',en:'Pale wax, nearly transparent honey'},
+   cat:{it:'Delicato',en:'Delicate'}, name:{it:'Miele di Acacia in favo',en:'Acacia Honey in the Comb'},
+   region:{it:'Emilia-Romagna',en:'Emilia-Romagna'}, unit:{it:'favo 125g',en:'125g comb'},
+   color:{it:'Cera chiara, miele quasi trasparente nelle celle',en:'Pale wax, honey almost transparent in the cells'},
    harvest:{it:'Maggio',en:'May'},
-   crystal:{it:'Resta liquido nelle celle per molto tempo',en:'Stays liquid in the cells for a long time'},
+   crystal:{it:'Resta liquido nelle celle molto a lungo',en:'Stays liquid in the cells for a long time'},
    flavor:{it:'Delicato, vaniglia e fiori bianchi',en:'Delicate, vanilla and white flowers'},
-   pairing:{it:'Su pane e burro, o da solo a cucchiaiate',en:'On bread and butter, or on its own'},
-   desc:{it:'Il favo di acacia è il più delicato: la cera quasi non si sente e il miele resta liquido nelle celle. Si taglia a pezzi e si mangia tutto, cera compresa.',
-         en:'Acacia comb is the most delicate: the wax barely registers and the honey stays liquid in the cells. Cut a piece and eat all of it, wax included.'}},
-  {id:2, emoji:'🌾', price:7.90, stock:10, farm:'Apicoltura Cazzola',
+   pairing:{it:'Su pane e burro, con i formaggi freschi, o da solo',en:'On bread and butter, with fresh cheese, or on its own'},
+   desc:{it:'Il favo intero, così come le api lo hanno costruito e sigillato: nessuna estrazione, nessun filtro, nessun passaggio in centrifuga. Si taglia a pezzi e si mangia tutto, cera compresa — è cera d\'api vergine, masticabile e commestibile. L\'acacia è la più delicata delle fioriture e nel favo resta liquida a lungo, con il profumo che la cera tiene chiuso fino al momento in cui lo apri.',
+         en:'The whole comb, exactly as the bees built and sealed it: no extraction, no filtering, no spinning. Cut a piece and eat all of it, wax included — it is virgin beeswax, chewable and edible. Acacia is the most delicate of blooms, and in the comb it stays liquid for a long time, its scent held shut by the wax until you open it.'}},
+  {id:2, emoji:'🌾', price:7.90, stock:0, farm:'Apicoltura Cazzola',
    tastes:['floral'],
    cat:{it:'Delicato',en:'Delicate'}, name:{it:'Favo Millefiori',en:'Wildflower Comb'},
    region:{it:'Emilia-Romagna',en:'Emilia-Romagna'}, unit:{it:'favo 100g',en:'100g comb'},
@@ -1100,7 +1159,7 @@ const PRODUCTS = [
    pairing:{it:'Formaggi freschi, colazione, tisane',en:'Fresh cheeses, breakfast, herbal tea'},
    desc:{it:'Quello che le api hanno trovato nel raggio di volo, sigillato come l\'hanno lasciato. Ogni favo è un\'istantanea della pianura in quelle settimane: nessuno è uguale al precedente.',
          en:'Whatever the bees found within flight range, sealed as they left it. Every comb is a snapshot of the plain in those weeks: no two are alike.'}},
-  {id:3, emoji:'🍃', price:9.90, stock:10, farm:'Apicoltura Cazzola',
+  {id:3, emoji:'🍃', price:9.90, stock:0, farm:'Apicoltura Cazzola',
    tastes:['balsamic'],
    cat:{it:'Aromatico',en:'Aromatic'}, name:{it:'Favo di Tiglio',en:'Linden Comb'},
    region:{it:'Emilia-Romagna',en:'Emilia-Romagna'}, unit:{it:'favo 100g',en:'100g comb'},
@@ -1111,7 +1170,7 @@ const PRODUCTS = [
    pairing:{it:'Infusi della sera, formaggi erborinati',en:'Evening infusions, blue cheese'},
    desc:{it:'I tigli fioriscono per poche settimane e non tutti gli anni danno raccolto. Il favo conserva l\'aroma mentolato molto meglio del miele estratto, perché la cera lo tiene chiuso fino al momento in cui lo apri.',
          en:'Limes bloom for a few weeks and some years give nothing. The comb holds the minty aroma far better than extracted honey, because the wax keeps it shut until you open it.'}},
-  {id:4, emoji:'🌸', price:8.50, stock:10, farm:'Apicoltura Cazzola',
+  {id:4, emoji:'🌸', price:8.50, stock:0, farm:'Apicoltura Cazzola',
    tastes:['herbal'],
    cat:{it:'Aromatico',en:'Aromatic'}, name:{it:'Favo di Erba Medica',en:'Alfalfa Comb'},
    region:{it:'Emilia-Romagna',en:'Emilia-Romagna'}, unit:{it:'favo 100g',en:'100g comb'},
@@ -1124,10 +1183,10 @@ const PRODUCTS = [
          en:'A honey of the plain, little known outside Emilia, which is at its best in the comb: very delicate, with a grassy note of the field it came from.'}},
 ];
 const FARMERS = [
-  {emoji:'🍯', name:'Apicoltura Cazzola', products:4, rating:{it:'—',en:'—'},
+  {emoji:'🍯', name:'Apicoltura Cazzola', products:1, rating:{it:'—',en:'—'},
    loc:{it:'Altedo di Malalbergo, Bologna',en:'Altedo di Malalbergo, Bologna'},
-   desc:{it:'Apicoltura della pianura bolognese specializzata nel miele in favo: il miele resta nelle celle di cera come le api lo hanno sigillato, senza estrazione e senza filtri.',
-         en:'A beekeeping operation on the Bologna plain specialising in honey in the comb: the honey stays in its wax cells exactly as the bees sealed it, never extracted, never filtered.'}},
+   desc:{it:'Un\'apicoltura della pianura bolognese che ha fatto una scelta rara: lasciare il miele dove le api lo mettono. Invece di estrarlo con la centrifuga, raccolgono il favo intero e lo confezionano così, con la cera ancora sigillata. È un modo di lavorare che costa di più e rende di meno — l\'ape deve ricostruire il favo da zero a ogni raccolta, mentre nell\'apicoltura normale lo stesso telaio si riusa per anni — ma dà un prodotto che non si può imitare: il miele non ha mai visto l\'aria, non è stato scaldato, non è passato da nessun filtro.',
+         en:'A beekeeping operation on the Bologna plain that made an unusual choice: leave the honey where the bees put it. Instead of spinning it out, they take the whole comb and pack it as it is, still sealed in its wax. It costs more and yields less — the bees must rebuild the comb from scratch at every harvest, where ordinary beekeeping reuses the same frame for years — but it gives something that cannot be imitated: honey that has never met the air, never been warmed, never passed through a filter.'}},
 ];
 
 /* ============ state ============ */
@@ -1188,6 +1247,12 @@ function renderChrome(){
   setText('t-cart-label', t.cartLabel);
   setText('t-cart-title', t.cartTitle);
 
+  setText('t-news-title', t.newsTitle);
+  setText('t-news-sub', t.newsSub);
+  setText('t-news-label', t.newsLabel);
+  setText('news-submit', t.newsBtn);
+  el('news-email').placeholder = t.newsPlaceholder;
+  el('t-news-note').innerHTML = t.newsNote;
   setText('t-foot-blurb', t.footBlurb);
   setText('t-foot-follow-h', t.footFollowH);
   setText('t-foot-about-h', t.footAboutH);
@@ -1300,9 +1365,6 @@ function renderFilters(){
   const list = el('facet-list');
   list.innerHTML = '';
   FACET_GROUPS.forEach(group => {
-    // With one supplier there is one origin and one beekeeper: a group that
-    // cannot narrow anything is just noise, so it is left out.
-    if (optionsOf(group).length < 2) return;
     const counts = {};
     poolExcluding(group).forEach(p => valuesOf(p, group).forEach(v => counts[v] = (counts[v] || 0) + 1));
 
@@ -1440,7 +1502,7 @@ function renderProducers(){
       <p>${f.desc[lang]}</p>
       <div class="producer-stats">
         <span><b>${f.products}</b> ${t.varieties}</span>
-        <span>★ <b>${f.rating[lang]}</b></span>
+        ${f.rating[lang] && f.rating[lang] !== '—' ? `<span>★ <b>${f.rating[lang]}</b></span>` : ''}
         <span><b>✓</b> ${t.verified}</span>
       </div>
     </article>`).join('');
@@ -1631,6 +1693,42 @@ function handleCheckoutRedirect(){
   }
 }
 
+
+/* ============ newsletter ============ */
+function initNewsletter(){
+  const form = el('news-form');
+  if (!form) return;
+  form.onsubmit = async e => {
+    e.preventDefault();
+    const t = T();
+    const email = (el('news-email').value || '').trim();
+    const msg = el('news-msg');
+    const btn = el('news-submit');
+    const say = text => { msg.textContent = text; msg.hidden = false; };
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return say(t.newsBad);
+
+    btn.disabled = true;
+    try {
+      const r = await fetch(CHECKOUT_API.replace('/api/checkout', '/api/subscribe'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, company: el('news-company').value }),
+      });
+      if (!r.ok) throw new Error('not configured');
+      say(t.newsOk);
+      form.reset();
+    } catch (err) {
+      // Until the mail service is wired up, hand the reader their own mail client
+      // rather than swallow the address.
+      const subject = encodeURIComponent(T().newsSubject);
+      const body = encodeURIComponent(email);
+      location.href = `mailto:hey.urbanbees@gmail.com?subject=${subject}&body=${body}`;
+      say(t.newsFallback);
+    }
+    btn.disabled = false;
+  };
+}
 
 /* ============ contact pages ============ */
 function renderContactPages(){
@@ -1875,6 +1973,7 @@ bindNav(document);
 setLang(lang);
 routeHash();
 handleCheckoutRedirect();
+initNewsletter();
 loadPaymentConfig();
 loadStock();
 </script>

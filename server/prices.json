@@ -1,6 +1,6 @@
 [
-  {"id": 1, "name": {"it": "Favo di Acacia", "en": "Acacia Comb"}, "unit": {"it": "favo 100g", "en": "100g comb"}, "price": 8.90, "stock": 10},
-  {"id": 2, "name": {"it": "Favo Millefiori", "en": "Wildflower Comb"}, "unit": {"it": "favo 100g", "en": "100g comb"}, "price": 7.90, "stock": 10},
-  {"id": 3, "name": {"it": "Favo di Tiglio", "en": "Linden Comb"}, "unit": {"it": "favo 100g", "en": "100g comb"}, "price": 9.90, "stock": 10},
-  {"id": 4, "name": {"it": "Favo di Erba Medica", "en": "Alfalfa Comb"}, "unit": {"it": "favo 100g", "en": "100g comb"}, "price": 8.50, "stock": 10}
+  {"id": 1, "name": {"it": "Miele di Acacia in favo", "en": "Acacia Honey in the Comb"}, "unit": {"it": "favo 125g", "en": "125g comb"}, "price": 11.90, "stock": 10},
+  {"id": 2, "name": {"it": "Favo Millefiori", "en": "Wildflower Comb"}, "unit": {"it": "favo 100g", "en": "100g comb"}, "price": 7.90, "stock": 0},
+  {"id": 3, "name": {"it": "Favo di Tiglio", "en": "Linden Comb"}, "unit": {"it": "favo 100g", "en": "100g comb"}, "price": 9.90, "stock": 0},
+  {"id": 4, "name": {"it": "Favo di Erba Medica", "en": "Alfalfa Comb"}, "unit": {"it": "favo 100g", "en": "100g comb"}, "price": 8.50, "stock": 0}
 ]

@@ -192,6 +192,37 @@ async function sendEmail({ to, subject, html, replyTo }) {
   if (!r.ok) throw new Error(`Resend ${r.status}`);
 }
 
+app.post('/api/subscribe', async (req, res) => {
+  if (!RESEND_API_KEY || !ORDER_EMAIL_TO) {
+    // The page falls back to opening the reader's mail client.
+    return res.status(503).json({ error: 'Newsletter is not configured' });
+  }
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
+    || req.socket.remoteAddress || 'unknown';
+  if (rateLimited(ip)) return res.status(429).json({ error: 'Too many requests' });
+
+  const email = str((req.body || {}).email, 120).toLowerCase();
+  if ((req.body || {}).company) return res.json({ ok: true });  // honeypot
+  if (!looksLikeEmail(email)) return res.status(400).json({ error: 'Invalid email' });
+
+  try {
+    await sendEmail({
+      to: ORDER_EMAIL_TO,
+      replyTo: email,
+      subject: `Iscrizione newsletter — ${email}`,
+      html: `<div style="font-family:sans-serif;font-size:14px">
+               <p>Nuova iscrizione alla newsletter:</p>
+               <p><strong>${esc(email)}</strong></p>
+             </div>`,
+    });
+    console.log('Newsletter signup received');   // the address itself stays out of the logs
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Subscribe error:', err.message);
+    res.status(500).json({ error: 'Could not subscribe' });
+  }
+});
+
 app.post('/api/order/bank-transfer', async (req, res) => {
   if (!bankTransferReady) {
     return res.status(503).json({ error: 'Bank transfer is not configured' });
