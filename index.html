@@ -120,6 +120,12 @@ a{color:inherit;text-decoration:none}
   display:flex;align-items:center;gap:8px;color:rgba(242,239,233,.86);transition:color .15s;
 }
 .cart-btn:hover{color:#FFFFFF}
+/* Word on a wide screen, mark on a narrow one. Both live in the markup and
+   the media query picks; the button keeps its name for screen readers either
+   way, since an icon on its own announces nothing. */
+.lang-short,.cart-ico{display:none}
+.cart-ico{width:21px;height:21px}
+.cart-btn .cart-ico + .cart-count{margin-left:-2px}
 .cart-count{
   min-width:19px;height:19px;padding:0 5px;border-radius:100px;
   background:#FFFFFF;color:var(--deep);
@@ -754,12 +760,13 @@ a{color:inherit;text-decoration:none}
   .detail,.cart-wrap{grid-template-columns:1fr}
   .nav-left .navlink,.nav-left .has-menu{display:none}
   .menu-btn{display:inline-flex}
-  /* On a phone the header holds the menu button, the name and the cart, and
-     nothing else: a language picker there is a word nobody came for, and it
-     was wide enough to shove the name off centre. It lives in the menu. */
-  .lang-menu{display:none}
-  .mobile-nav .sub.on{color:#FFFFFF}
-  .mobile-nav .sub.on::after{content:' ·';color:var(--tint)}
+  /* The phone header keeps both controls, abbreviated: the language as its
+     two-letter code, the cart as its icon. Shortening them is what buys the
+     room the full words were taking from the name in the middle. */
+  .lang-long,.cart-btn .label{display:none}
+  .lang-short{display:inline}
+  .cart-ico{display:block}
+  .nav-right{gap:16px}
   .header-inner{height:62px;gap:10px}
   .shop-layout,.shop-layout.rail-closed{grid-template-columns:1fr;gap:0;padding-top:0}
   .shop-layout.rail-closed .facets-body,
@@ -848,7 +855,8 @@ a{color:inherit;text-decoration:none}
     <div class="nav-right">
       <div class="has-menu lang-menu" id="lang-menu">
         <button class="navlink" id="lang-trigger" aria-expanded="false" aria-haspopup="true">
-          <span id="t-lang-current"></span>
+          <span class="lang-long" id="t-lang-current"></span>
+          <span class="lang-short" id="t-lang-short"></span>
           <svg viewBox="0 0 10 10" fill="none" aria-hidden="true">
             <path d="M1 3.5 L5 7 L9 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
           </svg>
@@ -858,8 +866,14 @@ a{color:inherit;text-decoration:none}
           <button id="lang-en" onclick="setLang('en')">English</button>
         </div>
       </div>
-      <button class="cart-btn" data-nav="cart">
-        <span id="t-nav-cart"></span>
+      <button class="cart-btn" data-nav="cart" id="cart-btn">
+        <svg class="cart-ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6.5 8h11l-1 11.2a1.8 1.8 0 0 1-1.8 1.6H9.3a1.8 1.8 0 0 1-1.8-1.6L6.5 8Z"
+                stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="M9.2 10V7.1a2.8 2.8 0 0 1 5.6 0V10"
+                stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <span class="label" id="t-nav-cart"></span>
         <span class="cart-count" id="cart-count" hidden>0</span>
       </button>
     </div>
@@ -871,9 +885,6 @@ a{color:inherit;text-decoration:none}
     <button data-nav="producers" class="sub" id="t-m-beekeepers"></button>
     <button data-nav="about" class="sub" id="t-m-mission"></button>
     <button data-nav="blog" id="t-m-blog"></button>
-    <span class="m-group" id="t-m-lang"></span>
-    <button class="sub" id="m-lang-it" onclick="setLang('it')">Italiano</button>
-    <button class="sub" id="m-lang-en" onclick="setLang('en')">English</button>
   </nav>
 </header>
 
@@ -1114,8 +1125,8 @@ a{color:inherit;text-decoration:none}
 /* ============ i18n ============ */
 const I18N = {
   it: {
+    langPick:'Scegli la lingua',
     navShop:'Shop', navAbout:'Chi siamo', navBlog:'Blog', navCart:'Carrello', menu:'Menu',
-    mLang:'Lingua',
     menuBeekeepers:'I nostri apicoltori',
     menuMission:'La nostra missione',
     misLabel:'Perché esistiamo', misTitle:'La nostra missione',
@@ -1254,8 +1265,8 @@ const I18N = {
     dec:',',
   },
   en: {
+    langPick:'Choose a language',
     navShop:'Shop', navAbout:'About', navBlog:'Blog', navCart:'Cart', menu:'Menu',
-    mLang:'Language',
     menuBeekeepers:'Our beekeepers',
     menuMission:'Our mission',
     misLabel:'Why we exist', misTitle:'Our mission',
@@ -1477,15 +1488,16 @@ function renderChrome(){
   el('lang-en').classList.toggle('on', lang === 'en');
   el('lang-it').classList.toggle('on', lang === 'it');
   setText('t-lang-current', lang === 'en' ? 'English' : 'Italiano');
-  setText('t-m-lang', t.mLang);
-  el('m-lang-it').classList.toggle('on', lang === 'it');
-  el('m-lang-en').classList.toggle('on', lang === 'en');
+  setText('t-lang-short', lang === 'en' ? 'EN' : 'IT');
+
 
   setText('t-menu', t.menu);
   setText('t-nav-shop', t.navShop);
   setText('t-nav-about', t.navAbout);
   setText('t-nav-blog', t.navBlog);
   setText('t-nav-cart', t.navCart);
+  el('cart-btn').setAttribute('aria-label', t.navCart);
+  el('lang-trigger').setAttribute('aria-label', t.langPick);
   setText('t-menu-beekeepers', t.menuBeekeepers);
   setText('t-menu-mission', t.menuMission);
   setText('t-m-shop', t.navShop);
