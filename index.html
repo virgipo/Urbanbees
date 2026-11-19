@@ -537,6 +537,82 @@ a{color:inherit;text-decoration:none}
 .ed-block{padding:26px 0;border-top:1px solid var(--line)}
 .ed-block h3{font-size:16px;font-weight:600;letter-spacing:-.015em;margin-bottom:9px}
 .ed-block p{font-size:14.5px;line-height:1.68;color:var(--ink-2);max-width:54ch}
+/* ---------- journal ---------- */
+.post-list{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));
+  gap:40px 34px;padding-bottom:60px;
+}
+.post-card{text-align:left;display:block;width:100%}
+/* display:block matters: aspect-ratio is ignored on an inline box, and this
+   is a <span> inside a button, so without it a tall photo is never cropped. */
+.post-card .shot{
+  display:block;aspect-ratio:4/3;background:var(--tint);
+  border-radius:var(--r);overflow:hidden;margin-bottom:16px;
+}
+.post-card .shot img{width:100%;height:100%;object-fit:cover;object-position:center 42%;display:block;transition:transform .5s ease}
+.post-card:hover .shot img{transform:scale(1.03)}
+.post-meta{
+  font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:9px;
+}
+.post-card h3{font-size:20px;line-height:1.25;letter-spacing:-.015em;margin-bottom:8px}
+.post-card p{font-size:14px;color:var(--ink-2);line-height:1.65;max-width:46ch}
+
+/* a single entry */
+.entry{max-width:720px;margin:0 auto;padding-bottom:72px}
+.entry .back{
+  font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:26px;display:inline-flex;align-items:center;gap:8px;
+}
+.entry .back:hover{color:var(--ink)}
+.entry .post-meta{display:block}
+.entry h1{font-size:clamp(30px,4.4vw,44px);line-height:1.1;letter-spacing:-.025em;margin:10px 0 16px}
+.entry .lede{font-size:17px;line-height:1.65;color:var(--ink-2);margin-bottom:30px}
+.entry figure{margin:0 0 34px}
+/* A phone photograph is usually taller than it is wide. Capping the height
+   and letting the width follow keeps the whole plate in frame — cropping it
+   to a letterbox would cut the dish — without turning the page into a wall. */
+.entry figure img{
+  display:block;margin:0 auto;border-radius:var(--r);
+  max-width:100%;max-height:560px;width:auto;
+}
+.entry figcaption{font-size:12px;color:var(--ink-3);margin-top:12px;line-height:1.6;text-align:center}
+.entry h2{
+  font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin:38px 0 14px;
+}
+.entry p{font-size:15.5px;line-height:1.75;color:var(--ink);margin-bottom:16px}
+.entry ul,.entry ol{margin:0 0 16px;padding-left:0;list-style:none}
+.entry ul li{font-size:15.5px;line-height:1.7;padding:7px 0 7px 20px;position:relative;border-bottom:1px solid var(--line)}
+.entry ul li::before{content:'';position:absolute;left:2px;top:17px;width:5px;height:5px;border-radius:50%;background:var(--line-2)}
+.entry ol{counter-reset:step}
+.entry ol li{
+  font-size:15.5px;line-height:1.75;counter-increment:step;
+  padding:0 0 20px 44px;position:relative;
+}
+.entry ol li::before{
+  content:counter(step);position:absolute;left:0;top:1px;
+  width:27px;height:27px;border-radius:50%;background:var(--tint);color:var(--ink-2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:600;
+}
+.entry .facts{
+  display:flex;flex-wrap:wrap;gap:8px 30px;
+  padding:16px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  margin-bottom:30px;font-size:12.5px;color:var(--ink-2);
+}
+.entry .facts b{color:var(--ink);font-weight:600}
+.entry .aside{
+  background:var(--tint);border-radius:var(--r);padding:22px 24px;margin:30px 0;
+}
+.entry .aside p{font-size:14.5px;margin:0;color:var(--ink-2)}
+.entry .aside p + p{margin-top:11px}
+.entry .aside b{color:var(--ink)}
+@media (max-width:620px){
+  .post-list{grid-template-columns:1fr;gap:34px}
+  .entry p,.entry ul li,.entry ol li{font-size:15px}
+}
+
 .blog-soon{
   padding:64px 0 96px;border-top:1px solid var(--line);margin-top:40px;
 }
@@ -888,7 +964,14 @@ a{color:inherit;text-decoration:none}
         <h1 id="t-blog-title"></h1>
         <p id="t-blog-sub"></p>
       </div>
-      <div class="blog-soon" id="blog-body"></div>
+      <div id="blog-body"></div>
+    </div>
+  </section>
+
+  <!-- ============ one journal entry ============ -->
+  <section class="view" id="view-entry">
+    <div class="shell">
+      <article class="entry" id="entry-body"></article>
     </div>
   </section>
 
@@ -978,7 +1061,8 @@ const I18N = {
       ['Quantità limitate','Vendiamo quello che la stagione ha dato. Quando una varietà finisce, si aspetta la fioritura successiva.'],
     ],
     blogLabel:'Diario', blogTitle:'Blog',
-    blogSub:'Racconti dagli apiari, stagioni di raccolta e note sulle varietà.',
+    blogSub:'Ricette, racconti dagli apiari e note sulle varietà.',
+    blogBack:'Tutti gli articoli',
     blogSoon:'Le prime storie stanno arrivando: visite agli apiari, il calendario delle fioriture e come si assaggia un miele. Torna presto.',
     ctLabel:'Parliamone', ctTitle:'Contatti',
     ctSub:'Siamo una realtà piccola: rispondiamo di persona, di solito entro un giorno lavorativo.',
@@ -1091,7 +1175,8 @@ const I18N = {
       ['Limited quantities','We sell what the season gave. When a variety runs out, we wait for the next bloom.'],
     ],
     blogLabel:'Journal', blogTitle:'Blog',
-    blogSub:'Stories from the apiaries, harvest seasons and notes on the varieties.',
+    blogSub:'Recipes, stories from the apiaries and notes on the varieties.',
+    blogBack:'All entries',
     blogSoon:'The first stories are on their way: visits to the apiaries, the bloom calendar, and how to taste a honey properly. Check back soon.',
     ctLabel:'Get in touch', ctTitle:'Contact',
     ctSub:'We are a small operation: you will get a reply from a person, usually within one working day.',
@@ -1313,10 +1398,8 @@ function renderChrome(){
 
   renderEditorial('why', t.whyLabel, t.whyTitle, t.whySub, t.whyBlocks);
   renderEditorial('promise', t.promiseLabel, t.promiseTitle, t.promiseSub, t.promiseBlocks);
-  setText('t-blog-label', t.blogLabel);
-  setText('t-blog-title', t.blogTitle);
-  setText('t-blog-sub', t.blogSub);
-  el('blog-body').innerHTML = `<p>${t.blogSoon}</p>`;
+  renderBlog();
+  if (el('view-entry').classList.contains('active') && currentSlug) renderEntry(currentSlug);
 
 }
 
@@ -1799,6 +1882,169 @@ function renderContactPages(){
   });
 }
 
+/* ============ journal ============ */
+/* Entries live here rather than in the language tables: a post is one thing
+   written twice, and keeping the two versions side by side is how they stay
+   the same post. */
+const POSTS = [
+  {
+    slug:'burrata-fichi-favo',
+    date:'2026-11-19',
+    img:'blog/burrata-fichi-favo.webp',
+    it:{
+      kicker:'Ricetta',
+      title:'Burrata, fichi arrostiti e un quadrato di favo',
+      lede:'Il piatto che ci ha convinti a vendere il favo: tre ingredienti caldi, uno freddo, e un pezzo di cera che non va mai sul fuoco.',
+      caption:'Il piatto originale, mangiato a cena. Da lì siamo partiti.',
+      facts:[['Per','2 persone'],['Tempo','25 minuti'],['Difficoltà','Nessuna, davvero']],
+      body:[
+        ['p','Questa ricetta non è nostra. È un piatto mangiato a cena, fotografato prima di finirlo, e rifatto a casa finché non è tornato uguale. Lo raccontiamo perché è il modo più semplice che conosciamo per far capire il favo a chi non l\'ha mai assaggiato: non lo si spiega, lo si mette sopra qualcosa di freddo e cremoso e si lascia che faccia il resto.'],
+        ['h2','Ingredienti'],
+        ['ul',[
+          '1 burrata da 250 g',
+          '6 fichi maturi, meglio se quasi troppo',
+          '1 cucchiaio di miele liquido, più il favo a parte',
+          '1 cucchiaio di aceto balsamico',
+          '1 cucchiaio di olio extravergine',
+          'Sale, pepe nero macinato grosso',
+          'Un pizzico di peperoncino in scaglie (facoltativo, ma ci sta)',
+          'Un quadrato di miele in favo, circa 30 g',
+          'Qualche fogliolina di timo',
+        ]],
+        ['h2','Come si fa'],
+        ['ol',[
+          '<b>Tira fuori la burrata dal frigo mezz\'ora prima.</b> È il passaggio che quasi tutti saltano ed è quello che decide il piatto: la burrata fredda non sa di niente, il grasso resta chiuso e il latte non si sente. A temperatura ambiente diventa un\'altra cosa.',
+          'Accendi il forno a 200 °C. Taglia i fichi a metà, mettili in una teglia con la parte tagliata verso l\'alto, condisci con l\'olio, il cucchiaio di miele, un pizzico di sale.',
+          '<b>Inforna 12–15 minuti</b>, finché non si afflosciano e i bordi scuriscono. Devono cedere, non seccarsi: se al centro sono ancora sodi dagli altri cinque minuti.',
+          'Metti da parte quattro mezzi fichi. Gli altri due schiacciali in un padellino con il loro sugo di cottura, l\'aceto balsamico e un cucchiaio d\'acqua. <b>Due minuti a fuoco vivo</b>, mescolando: diventa una salsa densa e lucida. Se si asciuga troppo, un altro cucchiaio d\'acqua.',
+          'Appoggia la burrata intera al centro del piatto e aprila in cima con la punta del coltello, senza affondare: deve mostrarsi, non spandersi.',
+          'Disponi i fichi intorno e sopra, versa la salsa calda a filo. <b>Il caldo sul freddo è metà del piatto</b>, quindi questo passaggio va fatto all\'ultimo.',
+          '<b>Il favo va per ultimo, sempre a freddo.</b> Appoggia il quadrato in cima, senza premere. Pepe, timo, eventualmente il peperoncino. Portalo in tavola subito.',
+        ]],
+        ['aside',[
+          '<b>Perché il favo non va mai scaldato.</b> La cera fonde intorno ai 62 °C e sopra i 40 °C il miele comincia a perdere gli aromi più volatili, cioè esattamente quelli per cui si compra un miele crudo. Un favo appoggiato su una salsa bollente diventa una pozza dolce: hai pagato la struttura e l\'hai sciolta. Mettilo sopra per ultimo, su qualcosa che si sta già raffreddando.',
+          '<b>E la cera si mangia?</b> Sì, tutta. Non si scioglie in bocca come il cioccolato: si mastica, rilascia il miele, e alla fine resta un piccolo residuo morbido. C\'è chi lo ingoia e chi lo lascia come una gomma. Nessuna delle due è sbagliata, e nessuna delle due fa male.',
+        ]],
+        ['h2','Quale favo usare'],
+        ['p','Un <b>favo di acacia</b> è la scelta giusta qui: è delicato, pulito, e non copre né il latte della burrata né l\'acidità del balsamico. Un castagno, che è amaro e potente, si mangerebbe tutto il piatto. Se vuoi più carattere senza strafare, un millefiori di fine estate regge bene i fichi.'],
+        ['h2','Se avanza'],
+        ['p','Non avanza. Ma se avanzano i fichi arrostiti, in frigo durano tre giorni e il mattino dopo sono ottimi sullo yogurt, con sopra un altro pezzetto di favo. La burrata invece va finita: aperta, il giorno dopo non è più lei.'],
+      ],
+    },
+    en:{
+      kicker:'Recipe',
+      title:'Burrata, roasted figs and a square of comb',
+      lede:'The plate that convinced us to sell comb honey: three warm things, one cold one, and a piece of wax that never goes near the heat.',
+      caption:'The original plate, eaten at dinner. That is where this started.',
+      facts:[['Serves','2'],['Time','25 minutes'],['Difficulty','None, honestly']],
+      body:[
+        ['p','This recipe is not ours. It is a dish eaten at dinner, photographed before it was finished, and cooked at home until it came back the same. We are writing it down because it is the simplest way we know to explain comb honey to someone who has never tasted it: you do not explain it, you put it on top of something cold and creamy and let it do the rest.'],
+        ['h2','Ingredients'],
+        ['ul',[
+          '1 burrata, 250 g',
+          '6 ripe figs, better almost too ripe',
+          '1 tbsp runny honey, plus the comb separately',
+          '1 tbsp balsamic vinegar',
+          '1 tbsp extra virgin olive oil',
+          'Salt, coarsely ground black pepper',
+          'A pinch of chilli flakes (optional, but it works)',
+          'A square of honey in the comb, about 30 g',
+          'A few thyme leaves',
+        ]],
+        ['h2','Method'],
+        ['ol',[
+          '<b>Take the burrata out of the fridge half an hour before.</b> Almost everyone skips this and it is the step that decides the dish: cold burrata tastes of nothing, the fat stays shut and you never meet the milk. At room temperature it is a different thing altogether.',
+          'Heat the oven to 200 °C. Halve the figs, put them cut side up in a tray, dress with the oil, the spoon of honey and a pinch of salt.',
+          '<b>Roast for 12–15 minutes</b>, until they slump and the edges darken. They should give way, not dry out: if the centres are still firm, give them another five.',
+          'Set four halves aside. Crush the other two in a small pan with their roasting juices, the balsamic and a spoon of water. <b>Two minutes over a high flame</b>, stirring: it turns thick and glossy. If it tightens too far, another spoon of water.',
+          'Sit the whole burrata in the middle of the plate and open the top with the tip of a knife, without going deep: it should show itself, not spread.',
+          'Arrange the figs around and on top, pour the warm sauce over. <b>Warm against cold is half the dish</b>, so do this at the last moment.',
+          '<b>The comb goes on last, always cold.</b> Lay the square on top without pressing. Pepper, thyme, chilli if you like. Take it to the table straight away.',
+        ]],
+        ['aside',[
+          '<b>Why the comb never gets heated.</b> Beeswax melts at around 62 °C, and above 40 °C honey starts losing its most volatile aromas — precisely the ones you pay for in a raw honey. A comb set on a boiling sauce becomes a sweet puddle: you bought the structure and then melted it. Put it on last, onto something already cooling.',
+          '<b>And do you eat the wax?</b> Yes, all of it. It does not melt away like chocolate: you chew it, it releases the honey, and a small soft residue is left. Some people swallow it, some park it like gum. Neither is wrong, and neither does any harm.',
+        ]],
+        ['h2','Which comb to use'],
+        ['p','An <b>acacia comb</b> is the right call here: delicate and clean, it covers neither the milk of the burrata nor the sharpness of the balsamic. Chestnut, bitter and loud, would eat the whole plate. If you want more character without overwhelming it, a late-summer wildflower comb holds up to figs well.'],
+        ['h2','Leftovers'],
+        ['p','There are none. But if the roasted figs survive, they keep three days in the fridge and are very good the next morning on yoghurt, with another piece of comb on top. The burrata will not wait: once opened, the following day it is no longer itself.'],
+      ],
+    },
+  },
+];
+
+const postBySlug = slug => POSTS.find(x => x.slug === slug);
+
+function postDate(iso){
+  const months = {
+    it:['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio',
+        'agosto','settembre','ottobre','novembre','dicembre'],
+    en:['January','February','March','April','May','June','July',
+        'August','September','October','November','December'],
+  };
+  const [y,m,d] = iso.split('-').map(Number);
+  return lang === 'en' ? `${months.en[m-1]} ${d}, ${y}` : `${d} ${months.it[m-1]} ${y}`;
+}
+
+function renderBlog(){
+  const t = T();
+  setText('t-blog-label', t.blogLabel);
+  setText('t-blog-title', t.blogTitle);
+  setText('t-blog-sub', t.blogSub);
+
+  if (!POSTS.length){
+    el('blog-body').className = 'blog-soon';
+    el('blog-body').innerHTML = `<p>${t.blogSoon}</p>`;
+    return;
+  }
+  el('blog-body').className = 'post-list';
+  el('blog-body').innerHTML = POSTS.map(post => {
+    const c = post[lang];
+    return `<button class="post-card" data-slug="${post.slug}">
+      <span class="shot"><img src="${post.img}" alt="" loading="lazy"></span>
+      <span class="post-meta">${c.kicker} · ${postDate(post.date)}</span>
+      <h3>${c.title}</h3>
+      <p>${c.lede}</p>
+    </button>`;
+  }).join('');
+  el('blog-body').querySelectorAll('[data-slug]').forEach(b => {
+    b.onclick = () => { location.hash = 'post-' + b.dataset.slug; };
+  });
+}
+
+function renderEntry(slug){
+  const post = postBySlug(slug);
+  if (!post) return false;
+  const c = post[lang], t = T();
+
+  const blocks = c.body.map(([kind, val]) => {
+    if (kind === 'p')  return `<p>${val}</p>`;
+    if (kind === 'h2') return `<h2>${val}</h2>`;
+    if (kind === 'ul') return `<ul>${val.map(x => `<li>${x}</li>`).join('')}</ul>`;
+    if (kind === 'ol') return `<ol>${val.map(x => `<li>${x}</li>`).join('')}</ol>`;
+    if (kind === 'aside') return `<div class="aside">${val.map(x => `<p>${x}</p>`).join('')}</div>`;
+    return '';
+  }).join('');
+
+  el('entry-body').innerHTML = `
+    <button class="back" data-nav="blog">
+      <svg viewBox="0 0 10 10" fill="none" aria-hidden="true" style="width:11px;height:11px">
+        <path d="M6.5 1 2.5 5l4 4" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/></svg>${t.blogBack}</button>
+    <span class="post-meta">${c.kicker} · ${postDate(post.date)}</span>
+    <h1>${c.title}</h1>
+    <p class="lede">${c.lede}</p>
+    <figure>
+      <img src="${post.img}" alt="${c.title}">
+      <figcaption>${c.caption}</figcaption>
+    </figure>
+    <div class="facts">${c.facts.map(([k,v]) => `<span>${k}: <b>${v}</b></span>`).join('')}</div>
+    ${blocks}`;
+  bindNav(el('entry-body'));
+  return true;
+}
+
 /* ============ announcement bar ============ */
 /* A sliding line of text cannot be read at the reader's own pace, so each
    message is held still and the next one fades in. It moves on by itself
@@ -1996,8 +2242,10 @@ function showView(name){
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   el('view-' + name).classList.add('active');
   const aboutViews = ['producers', 'why', 'promise'];
+  // reading an entry is still being in the journal, as far as the nav is concerned
+  const navFor = name === 'entry' ? 'blog' : name;
   document.querySelectorAll('.nav-left [data-nav]').forEach(b =>
-    b.classList.toggle('on', b.dataset.nav === name));
+    b.classList.toggle('on', b.dataset.nav === navFor));
   el('about-trigger').classList.toggle('on', aboutViews.includes(name));
   closeMenus();
   if (name === 'cart') renderCart();
@@ -2013,8 +2261,19 @@ function bindNav(scope){
   });
 }
 
+let currentSlug = null;
+
 function routeHash(){
   const h = location.hash;
+  if (h.startsWith('#post-')){
+    const slug = h.slice(6);
+    if (renderEntry(slug)){
+      currentSlug = slug;
+      showView('entry');
+      return;
+    }
+  }
+  if (el('view-entry').classList.contains('active')) { currentSlug = null; showView('blog'); }
   if (h.startsWith('#honey-')){
     const id = +h.slice(7);
     if (PRODUCTS.some(p => p.id === id)){
