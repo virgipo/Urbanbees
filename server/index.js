@@ -86,6 +86,9 @@ app.post('/api/checkout', async (req, res) => {
       mode: 'payment',
       // Apple Pay and Google Pay ride along with 'card' and need no entry here.
       payment_method_types: PAYMENT_METHODS,
+      // Shows the "Add promotion code" field on Stripe's page. The codes
+      // themselves are created in the Stripe dashboard, not here.
+      allow_promotion_codes: true,
       line_items,
       locale,
       // Italy only for now: the business is not yet set up to charge another

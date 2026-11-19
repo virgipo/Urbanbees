@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -150,6 +150,31 @@ a{color:inherit;text-decoration:none}
 .view{display:none}
 .view.active{display:block}
 .shell{max-width:1520px;margin:0 auto;padding:0 var(--pad)}
+
+/* ---------- ticker ---------- */
+/* One line of standing claims, sliding. Duplicated once so the loop has no
+   seam; paused for anyone who asked their system not to animate. */
+.ticker{
+  background:var(--deep);color:#E8E4D9;overflow:hidden;
+  padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+}
+.ticker-track{
+  display:flex;width:max-content;gap:0;
+  animation:ticker 46s linear infinite;
+}
+.ticker:hover .ticker-track{animation-play-state:paused}
+.ticker span{
+  font-size:11.5px;font-weight:600;letter-spacing:.17em;text-transform:uppercase;
+  padding:0 30px;white-space:nowrap;
+}
+.ticker span::after{content:'·';margin-left:30px;opacity:.45}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){
+  .ticker-track{animation:none;justify-content:center;width:100%;flex-wrap:wrap}
+  .ticker span:last-child::after{content:none}
+}
 
 /* ---------- hero ---------- */
 .hero{
@@ -477,6 +502,18 @@ a{color:inherit;text-decoration:none}
 .page-head p{font-size:15.5px;line-height:1.62;color:var(--ink-2)}
 .tform{padding-bottom:84px}
 
+/* contact pages */
+.contact-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:0 56px;padding-bottom:90px;max-width:1000px;
+}
+.ct-block{padding:26px 0;border-top:1px solid var(--line)}
+.ct-block h3{font-size:16px;font-weight:600;letter-spacing:-.015em;margin-bottom:9px}
+.ct-block p{font-size:14.5px;line-height:1.68;color:var(--ink-2);max-width:50ch}
+.ct-block a{color:var(--accent);text-decoration:none}
+.ct-block a:hover{text-decoration:underline}
+.ct-big{font-size:19px;font-weight:600;letter-spacing:-.01em;display:inline-block;margin-top:4px}
+
 .ed-block{padding:26px 0;border-top:1px solid var(--line)}
 .ed-block h3{font-size:16px;font-weight:600;letter-spacing:-.015em;margin-bottom:9px}
 .ed-block p{font-size:14.5px;line-height:1.68;color:var(--ink-2);max-width:54ch}
@@ -616,6 +653,9 @@ a{color:inherit;text-decoration:none}
 
   <!-- ============ shop ============ -->
   <section class="view active" id="view-shop">
+    <div class="ticker" aria-label="Urban Bees">
+      <div class="ticker-track" id="ticker"></div>
+    </div>
     <div class="hero">
       <div class="hero-inner">
         <span class="u-label" id="t-hero-label"></span>
@@ -697,6 +737,30 @@ a{color:inherit;text-decoration:none}
     </div>
   </section>
 
+  <!-- ============ contact ============ -->
+  <section class="view" id="view-contact">
+    <div class="shell">
+      <div class="page-head">
+        <span class="u-label" id="t-ct-label"></span>
+        <h1 id="t-ct-title"></h1>
+        <p id="t-ct-sub"></p>
+      </div>
+      <div class="contact-grid" id="contact-body"></div>
+    </div>
+  </section>
+
+  <!-- ============ for beekeepers ============ -->
+  <section class="view" id="view-beekeep">
+    <div class="shell">
+      <div class="page-head">
+        <span class="u-label" id="t-bk-label"></span>
+        <h1 id="t-bk-title"></h1>
+        <p id="t-bk-sub"></p>
+      </div>
+      <div class="contact-grid" id="beekeep-body"></div>
+    </div>
+  </section>
+
   <!-- ============ bank transfer ============ -->
   <section class="view" id="view-transfer">
     <div class="shell">
@@ -763,15 +827,19 @@ a{color:inherit;text-decoration:none}
       <p id="t-foot-blurb"></p>
     </div>
     <div class="footer-col">
-      <h4 id="t-foot-shop-h"></h4>
-      <ul id="foot-cats"></ul>
+      <h4 id="t-foot-follow-h"></h4>
+      <ul>
+        <li><a class="foot-link" href="https://www.instagram.com/urbanbees.it/" target="_blank" rel="noopener me">Instagram</a></li>
+        <li><a class="foot-link" href="mailto:hey.urbanbees@gmail.com">hey.urbanbees@gmail.com</a></li>
+      </ul>
     </div>
     <div class="footer-col">
       <h4 id="t-foot-about-h"></h4>
       <ul>
         <li id="t-foot-producers"></li>
         <li id="t-foot-shipping"></li>
-        <li id="t-foot-contact"></li>
+        <li><button class="foot-link" data-nav="contact" id="t-foot-contact"></button></li>
+        <li><button class="foot-link" data-nav="beekeep" id="t-foot-beekeep"></button></li>
         <li><a class="foot-link" href="privacy.html" id="t-foot-privacy"></a></li>
       </ul>
     </div>
@@ -812,6 +880,29 @@ const I18N = {
     blogLabel:'Diario', blogTitle:'Blog',
     blogSub:'Racconti dagli apiari, stagioni di raccolta e note sulle varietà.',
     blogSoon:'Le prime storie stanno arrivando: visite agli apiari, il calendario delle fioriture e come si assaggia un miele. Torna presto.',
+    ctLabel:'Parliamone', ctTitle:'Contatti',
+    ctSub:'Siamo una realtà piccola: rispondiamo di persona, di solito entro un giorno lavorativo.',
+    ctBlocks:[
+      ['Scrivici','Per ordini, spedizioni, consigli su quale miele scegliere o qualsiasi altra cosa.<br><span class="js-mail"></span>'],
+      ['Seguici','Le storie dagli apiari, le fioriture e i nuovi arrivi li raccontiamo su Instagram: <a href="https://www.instagram.com/urbanbees.it/" target="_blank" rel="noopener">@urbanbees.it</a>'],
+      ['Hai già ordinato?','Scrivici indicando il codice dell\'ordine, quello che inizia per UB: ci permette di trovarti subito.'],
+      ['Un problema con il pacco','Se un vasetto arriva rotto, mandaci una foto. Lo rimandiamo o lo rimborsiamo, senza discutere.'],
+    ],
+    bkLabel:'Lavoriamo insieme', bkTitle:'Sei un apicoltore?',
+    bkSub:'Cerchiamo pochi produttori per volta, e li scegliamo uno a uno. Se fai un miele di cui vai fiero, ci interessa conoscerti.',
+    bkBlocks:[
+      ['Cosa cerchiamo','Mieli monoflora da un solo apiario e una sola raccolta, grezzi e non filtrati. Ci interessa molto il miele in favo. Le quantità piccole non sono un problema: anzi.'],
+      ['Come lavoriamo','Il tuo nome e il tuo marchio restano sul vasetto: non facciamo private label. Raccontiamo chi sei, dove sono le arnie e che annata è stata.'],
+      ['Cosa ci serve da te','Quali mieli produci, in che quantità, le analisi che hai e un listino per rivenditori. Se ci siamo, ci sentiamo a voce.'],
+      ['Scrivici','<span class="js-mail"></span>'],
+    ],
+    ticker:[
+      'Miele in favo, come lo fanno le api',
+      'Spedizione inclusa in ogni ordine',
+      'Apicoltori italiani indipendenti',
+      'Grezzo, non filtrato, non pastorizzato',
+      'Quantità limitate, raccolto per raccolto',
+    ],
     heroLabel:'Apicoltori indipendenti · Italia',
     heroTitle:'Il miele più autentico d\'Italia, direttamente a casa tua.',
     heroSub:'Varietà rare da apiari visitati uno per uno. Niente intermediari, niente scaffali: ogni vasetto racconta un territorio e una fioritura.',
@@ -867,8 +958,9 @@ const I18N = {
     charColor:'Colore', charHarvest:'Raccolta', charCrystal:'Cristallizzazione', charFlavor:'Sapore',
     aboutTitle:'Il miele', pairingTitle:'Abbinamenti',
     footBlurb:'Mieli monoflora da apicoltori indipendenti italiani, selezionati uno a uno.',
-    footShopH:'Mieli', footAboutH:'Urban Bees',
+    footFollowH:'Seguici', footAboutH:'Urban Bees',
     footProducers:'Gli apicoltori', footShipping:'Spedizioni', footContact:'Contatti',
+    footBeekeep:'Sei un apicoltore?',
     footPrivacy:'Privacy',
     footRights:'© 2026 Urban Bees', footShipNote:'Spedizione inclusa in ogni ordine',
     dec:',',
@@ -898,6 +990,29 @@ const I18N = {
     blogLabel:'Journal', blogTitle:'Blog',
     blogSub:'Stories from the apiaries, harvest seasons and notes on the varieties.',
     blogSoon:'The first stories are on their way: visits to the apiaries, the bloom calendar, and how to taste a honey properly. Check back soon.',
+    ctLabel:'Get in touch', ctTitle:'Contact',
+    ctSub:'We are a small operation: you will get a reply from a person, usually within one working day.',
+    ctBlocks:[
+      ['Write to us','For orders, shipping, advice on which honey to choose, or anything else.<br><span class="js-mail"></span>'],
+      ['Follow us','Stories from the apiaries, the blooms and new arrivals go on Instagram: <a href="https://www.instagram.com/urbanbees.it/" target="_blank" rel="noopener">@urbanbees.it</a>'],
+      ['Already ordered?','Write to us quoting your order reference, the one starting with UB: it lets us find you straight away.'],
+      ['A problem with your parcel','If a jar arrives broken, send us a photo. We replace it or refund it, no argument.'],
+    ],
+    bkLabel:'Work with us', bkTitle:'Are you a beekeeper?',
+    bkSub:'We take on a few producers at a time, and we choose them one by one. If you make a honey you are proud of, we would like to meet you.',
+    bkBlocks:[
+      ['What we look for','Single-flower honeys from one apiary and one harvest, raw and unfiltered. We are especially interested in honey in the comb. Small quantities are not a problem — rather the opposite.'],
+      ['How we work','Your name and your mark stay on the jar: we do not do private label. We tell people who you are, where the hives stand and what the season was like.'],
+      ['What we need from you','Which honeys you make, in what quantities, any analyses you hold, and a trade price list. If it fits, we talk.'],
+      ['Write to us','<span class="js-mail"></span>'],
+    ],
+    ticker:[
+      'Honey in the comb, as the bees make it',
+      'Shipping included on every order',
+      'Independent Italian beekeepers',
+      'Raw, unfiltered, unpasteurised',
+      'Limited quantities, harvest by harvest',
+    ],
     heroLabel:'Independent beekeepers · Italy',
     heroTitle:'The most authentic honey from Italy, straight to your door.',
     heroSub:'Rare varieties from apiaries visited one by one. No middlemen, no shelves — every jar tells the story of a territory and a bloom.',
@@ -953,8 +1068,9 @@ const I18N = {
     charColor:'Colour', charHarvest:'Harvest', charCrystal:'Crystallisation', charFlavor:'Flavour',
     aboutTitle:'About this honey', pairingTitle:'Pairings',
     footBlurb:'Single-flower honeys from independent Italian beekeepers, selected one by one.',
-    footShopH:'Honeys', footAboutH:'Urban Bees',
+    footFollowH:'Follow us', footAboutH:'Urban Bees',
     footProducers:'The beekeepers', footShipping:'Shipping', footContact:'Contact',
+    footBeekeep:'Are you a beekeeper?',
     footPrivacy:'Privacy',
     footRights:'© 2026 Urban Bees', footShipNote:'Shipping included on every order',
     dec:'.',
@@ -1079,7 +1195,7 @@ const FARMERS = [
 ];
 
 /* ============ state ============ */
-let lang = 'en';
+let lang = 'it';
 let cart = {};
 const FACET_GROUPS = ['origin', 'taste', 'farm'];
 let picked = { origin:new Set(), taste:new Set(), farm:new Set() };
@@ -1093,9 +1209,10 @@ const el = id => document.getElementById(id);
 const setText = (id, v) => { const n = el(id); if (n) n.textContent = v; };
 
 function setLang(l){
+  document.documentElement.lang = l;
   lang = l;
   document.documentElement.lang = l;
-  renderChrome(); renderFilters(); renderGrid(); renderProducers();
+  renderChrome(); renderTicker(); renderContactPages(); renderFilters(); renderGrid(); renderProducers();
   if (el('view-cart').classList.contains('active')) renderCart();
   if (el('view-detail').classList.contains('active') && currentDetailId != null) renderDetail(currentDetailId);
 }
@@ -1136,11 +1253,12 @@ function renderChrome(){
   setText('t-cart-title', t.cartTitle);
 
   setText('t-foot-blurb', t.footBlurb);
-  setText('t-foot-shop-h', t.footShopH);
+  setText('t-foot-follow-h', t.footFollowH);
   setText('t-foot-about-h', t.footAboutH);
   setText('t-foot-producers', t.footProducers);
   setText('t-foot-shipping', t.footShipping);
   setText('t-foot-contact', t.footContact);
+  setText('t-foot-beekeep', t.footBeekeep);
   setText('t-foot-privacy', t.footPrivacy);
   el('t-foot-privacy').href = lang === 'en' ? 'privacy.html?lang=en' : 'privacy.html';
   setText('t-foot-rights', t.footRights);
@@ -1153,21 +1271,6 @@ function renderChrome(){
   setText('t-blog-sub', t.blogSub);
   el('blog-body').innerHTML = `<p>${t.blogSoon}</p>`;
 
-  const fc = el('foot-cats');
-  fc.innerHTML = '';
-  optionsOf('taste').forEach(key => {
-    const li = document.createElement('li');
-    const a = document.createElement('button');
-    a.className = 'foot-link';
-    a.textContent = labelOf('taste', key);
-    a.onclick = () => {
-      clearFilters();
-      togglePick('taste', key);
-      showView('shop');
-    };
-    li.appendChild(a);
-    fc.appendChild(li);
-  });
 }
 
 /* ============ editorial pages ============ */
@@ -1589,6 +1692,37 @@ function handleCheckoutRedirect(){
   }
 }
 
+
+/* ============ contact pages ============ */
+function renderContactPages(){
+  const t = T();
+  const mail = 'hey.urbanbees@gmail.com';
+
+  setText('t-ct-label', t.ctLabel);
+  setText('t-ct-title', t.ctTitle);
+  setText('t-ct-sub',   t.ctSub);
+  el('contact-body').innerHTML = t.ctBlocks
+    .map(([h, b]) => `<div class="ct-block"><h3>${h}</h3><p>${b}</p></div>`).join('');
+
+  setText('t-bk-label', t.bkLabel);
+  setText('t-bk-title', t.bkTitle);
+  setText('t-bk-sub',   t.bkSub);
+  el('beekeep-body').innerHTML = t.bkBlocks
+    .map(([h, b]) => `<div class="ct-block"><h3>${h}</h3><p>${b}</p></div>`).join('');
+
+  // one address, written once, so it cannot drift between the two pages
+  document.querySelectorAll('.js-mail').forEach(n => {
+    n.outerHTML = `<a class="ct-big" href="mailto:${mail}">${mail}</a>`;
+  });
+}
+
+/* ============ ticker ============ */
+function renderTicker(){
+  const items = T().ticker;
+  // twice, so the halfway point of the loop looks like the start
+  el('ticker').innerHTML = items.concat(items)
+    .map(x => `<span>${x}</span>`).join('');
+}
 
 /* ============ bank transfer ============ */
 /* Which payment methods the server is actually able to take. Asked once, so a
