@@ -432,6 +432,8 @@ a{color:inherit;text-decoration:none}
 .field textarea{resize:vertical;min-height:84px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .tform .btn{margin-top:4px}
+.form-privacy{font-size:12.5px;line-height:1.6;color:var(--ink-3);margin:18px 0 4px;max-width:58ch}
+.form-privacy a{color:var(--ink-2)}
 .form-err{color:#9C2B26;font-size:14px;margin-top:12px}
 .form-err[hidden]{display:none}
 
@@ -831,6 +833,7 @@ const I18N = {
     fNote:'Note per la consegna (facoltativo)',
     trSubmit:'Conferma ordine', trSending:'Invio in corso…',
     trBack:'Torna al carrello',
+    trPrivacy:'Usiamo questi dati solo per preparare e spedire il tuo ordine. Non li salviamo in nessun database del sito e non li diamo a nessuno a parte il corriere. <a href="privacy.html">Leggi l\'informativa privacy</a>.',
     trErrRequired:'Compila tutti i campi obbligatori.',
     trErrEmail:'Controlla l\'indirizzo email.',
     trErrGeneric:'Qualcosa è andato storto — riprova fra poco.',
@@ -914,6 +917,7 @@ const I18N = {
     fNote:'Delivery notes (optional)',
     trSubmit:'Confirm order', trSending:'Sending…',
     trBack:'Back to cart',
+    trPrivacy:'We use these details only to prepare and ship your order. They go into no database on this site and to no one but the courier. <a href="privacy.html?lang=en">Read the privacy notice</a>.',
     trErrRequired:'Please fill in all required fields.',
     trErrEmail:'Please check your email address.',
     trErrGeneric:'Something went wrong — please try again shortly.',
@@ -1583,6 +1587,7 @@ function showTransferForm(){
         ${f('note',    t.fNote,    { wide:true, area:true })}
       </div>
       <p class="form-err" id="transfer-err" hidden></p>
+      <p class="form-privacy">${t.trPrivacy}</p>
       <button class="btn btn-solid" type="submit" id="transfer-submit">${t.trSubmit}</button>
       <button class="btn btn-outline" type="button" onclick="showView('cart')">${t.trBack}</button>
     </form>`;
