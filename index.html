@@ -558,7 +558,16 @@ a{color:inherit;text-decoration:none}
   text-transform:none;color:var(--ink);margin-bottom:10px;
 }
 .rules-head p{font-size:15px;color:var(--ink-2);line-height:1.7;margin-bottom:30px;max-width:56ch}
-.rule-list{display:grid;gap:0;padding-bottom:70px}
+.rule-list{display:grid;gap:0}
+.rules-outro{
+  font-size:15.5px;line-height:1.75;color:var(--ink-2);
+  max-width:62ch;margin:30px 0 0;
+}
+.mis-sign{
+  font-size:clamp(18px,2.2vw,21px);line-height:1.4;letter-spacing:-.015em;
+  color:var(--ink);margin:46px 0 0;padding:28px 0 76px;
+  border-top:1px solid var(--line);
+}
 .rule{
   display:grid;grid-template-columns:40px 1fr;gap:0 18px;
   padding:22px 0;border-bottom:1px solid var(--line);align-items:start;
@@ -1001,6 +1010,8 @@ a{color:inherit;text-decoration:none}
           <p id="t-rules-sub"></p>
         </div>
         <div class="rule-list" id="rules-body"></div>
+        <p class="rules-outro" id="t-rules-outro"></p>
+        <p class="mis-sign" id="t-mis-sign"></p>
       </div>
     </div>
   </section>
@@ -1101,31 +1112,48 @@ const I18N = {
     ],
     menuMission:'La nostra missione',
     misLabel:'Perché esistiamo', misTitle:'La nostra missione',
-    misLede:'Portare il miele italiano a casa delle persone così come le api lo hanno fatto: nel favo, intero, senza che nessuno lo abbia aperto prima.',
+    misLede:'Il miele, proprio come nasce.',
     misBlocks:[
-      ['Come è cominciata', [
-        'Urban Bees nasce a Milano da una cosa che ci ha sempre dato fastidio: il miele che si trova quasi ovunque è costruito per non sorprendere. È una miscela — di apiari diversi, di raccolti diversi, spesso di paesi diversi — filtrata e portata a temperatura perché il vasetto di marzo sia identico a quello di ottobre.',
-        'Il miele di un apicoltore fa l\'esatto contrario. Cambia con la fioritura, con il terreno e con l\'annata. Certe annate è bellissimo, certe altre non esiste affatto. Ci sembra un difetto solo finché non lo si assaggia.',
+      ['', [
+        'Crediamo che ci siano prodotti che non abbiano bisogno di essere trasformati per essere speciali. Il miele è uno di questi.',
+        'Nasce dal lavoro delle api, dai fiori che incontrano, dalle stagioni e dai luoghi in cui vivono. Ogni raccolto racconta qualcosa di diverso e porta con sé caratteristiche che non si possono riprodurre a comando.',
+        'Con Urban Bees vogliamo far conoscere proprio questo mondo: il miele italiano nella sua forma più autentica, custodito nel favo, così come le api lo hanno prodotto e conservato.',
+        'Perché a volte, per riscoprire qualcosa di straordinario, basta tornare alla sua origine.',
       ]],
-      ['Perché proprio il favo', [
-        'Quasi tutto il miele in commercio viene estratto: il favo si apre, si centrifuga e si restituisce vuoto alle api, che lo riempiono di nuovo. È efficiente, ed è per questo che è la norma.',
-        'Noi abbiamo scelto di vendere il favo intero. Vuol dire che la cera parte insieme al miele, e che le api dovranno ricostruirla da zero al raccolto successivo. Rende meno, costa di più e si fa in quantità piccole. In cambio il miele non viene mai estratto, mai filtrato, mai scaldato: arriva nelle celle in cui è nato, ancora sigillate.',
-        'È anche il motivo per cui ci interessa raccontarlo. Il favo in Italia è poco conosciuto, e si capisce in un assaggio molto più che in una pagina.',
+      ['Come tutto è cominciato', [
+        'Urban Bees nasce da un ricordo legato alle estati trascorse in Sardegna. È lì che abbiamo conosciuto e imparato ad amare il miele in favo, grazie ai piccoli apicoltori della zona che ogni estate ci facevano scoprire il loro miele.',
+        'Un prodotto che ci aveva conquistati per il suo sapore, i suoi profumi e quella consistenza particolare che lo rende così diverso dal miele a cui siamo abituati.',
+        'Poi arrivava l\'inverno, si tornava alla vita di città e quel sapore diventava difficile da ritrovare. Cercavamo il miele che avevamo imparato ad amare, ma tra supermercati e negozi online trovavamo soprattutto miele tradizionale, mentre il favo intero sembrava quasi introvabile.',
+        'Ci siamo chiesti perché un prodotto così speciale fosse ancora così poco conosciuto e difficile da acquistare.',
+        'Da quella mancanza è nata Urban Bees: dal desiderio di ritrovare un sapore che ci accompagnava da anni e dalla voglia di farlo conoscere anche a chi, come noi, avrebbe voluto averlo sempre a portata di mano.',
+        'Abbiamo iniziato a conoscere piccoli apicoltori italiani, a scoprire i loro territori e il loro modo di lavorare. Ci siamo innamorati ancora di più di un mondo fatto di stagioni, fioriture e raccolti sempre diversi.',
+        'E abbiamo capito che volevamo costruire qualcosa intorno a tutto questo: un progetto capace di avvicinare le persone al miele nella sua forma più naturale e a chi, con il proprio lavoro, lo rende possibile.',
       ]],
-      ['Cosa siamo, e cosa non siamo ancora', [
-        'Non siamo apicoltori. Compriamo da piccoli apicoltori italiani e rivendiamo il loro miele <b>con il loro nome sopra</b>, perché chi lo ha prodotto è l\'informazione più importante dell\'etichetta — e nasconderla sarebbe il primo passo verso il vasetto anonimo da cui vogliamo stare lontani.',
-        'Il primo è l\'<b>Apicoltura Cazzola</b>, ad Altedo di Malalbergo, in provincia di Bologna. Gli altri arriveranno uno alla volta: preferiamo pochi nomi che sappiamo raccontare a un catalogo pieno di varietà di cui non sappiamo niente.',
+      ['Perché abbiamo scelto il miele in favo', [
+        'Il favo è forse il modo più bello per avvicinarsi al miele.',
+        'È la struttura naturale che le api costruiscono con la cera per custodire il loro raccolto. Ogni piccola cella contiene miele, ancora lì dove è stato depositato, senza essere estratto o separato dalla cera.',
+        'È una forma di miele che conserva tutta la sua particolarità: si assaggia il miele, ma anche la sua consistenza, il modo in cui si libera lentamente durante la masticazione e quella particolare esperienza di degustazione che solo il favo sa regalare.',
+        'La maggior parte del miele viene estratta dal favo attraverso la centrifugazione. Noi abbiamo scelto di proporre anche il favo intero, senza passare da questo processo.',
+        'È una scelta che richiede attenzione e comporta una produzione più limitata. Le api, infatti, dovranno ricostruire le celle di cera per i raccolti successivi. Ma per noi il valore di questo prodotto sta proprio nella sua integrità.',
+        'Non vogliamo che il miele sia soltanto qualcosa da spalmare sul pane o aggiungere a una ricetta. Vogliamo far conoscere un\'esperienza diversa, che in Italia è ancora poco diffusa e che merita di essere scoperta.',
+      ]],
+      ['Chi siamo e con chi lavoriamo', [
+        'Collaboriamo con piccoli apicoltori, selezionando realtà di cui conosciamo il lavoro e condividiamo l\'attenzione per la qualità e l\'origine del prodotto.',
+        'Ogni miele mantiene il nome di chi lo ha prodotto. Non vogliamo nascondere le persone dietro un marchio, ma dare loro il riconoscimento che meritano.',
+        'La prima realtà con cui abbiamo scelto di iniziare questo percorso è <b>Apicoltura Cazzola</b>, ad Altedo di Malalbergo, in provincia di Bologna.',
+        'È il primo incontro di un progetto che vogliamo far crescere in modo organico, una collaborazione alla volta. Preferiamo conoscere davvero ogni apicoltore, il suo territorio e il suo modo di lavorare, piuttosto che riempire il nostro catalogo di prodotti di cui non conosciamo la storia.',
       ]],
     ],
-    rulesTitle:'La nostra promessa',
-    rulesSub:'Cinque impegni che valgono per ogni favo che spediamo. Sono pochi perché vogliamo poterli mantenere tutti.',
+    rulesTitle:'I nostri impegni',
+    rulesSub:'Ci sono alcune cose a cui teniamo particolarmente. Sono i principi con cui scegliamo i prodotti e che vogliamo rispettare ogni volta che un nostro favo arriva a casa tua.',
     rulesBlocks:[
-      ['Un\'origine sola','Ogni confezione viene da un solo apiario e da una sola raccolta. Mai miscelata, mai anonima.'],
-      ['Il nome di chi lo ha fatto','L\'apicoltore resta sul prodotto, con il suo nome e il suo marchio. Noi lo portiamo a casa tua, non ce lo intestiamo.'],
-      ['Apiari visitati','Lavoriamo solo con apicoltori che abbiamo incontrato di persona e di cui conosciamo le arnie e i metodi.'],
-      ['Grezzo e non filtrato','Nulla aggiunto, nulla tolto, niente calore. Il miele arriva come le api lo hanno lasciato, cera compresa.'],
-      ['Quantità limitate','Vendiamo quello che la stagione ha dato. Quando una varietà finisce, si aspetta la fioritura dopo: non la rimpiazziamo con qualcos\'altro.'],
+      ['Un\'origine riconoscibile','Ogni confezione racconta una provenienza precisa. Vogliamo che sia sempre possibile sapere da dove arriva il miele e conoscere l\'apicoltore che lo ha prodotto.'],
+      ['Il rispetto per chi produce','Il nome dell\'apicoltore rimane ben visibile. Per noi è importante dare valore al suo lavoro e riconoscere il ruolo di chi si prende cura delle api e del loro raccolto.'],
+      ['Il miele nella sua forma naturale','Il nostro favo viene proposto intero, con il miele custodito nelle sue celle di cera. Non viene estratto né filtrato: vogliamo preservare proprio quella forma che lo rende così particolare.'],
+      ['La stagionalità, senza compromessi','Le quantità dipendono dal raccolto e dai ritmi della natura. Quando un miele termina, non cerchiamo un prodotto qualsiasi con cui sostituirlo. Aspettiamo il raccolto successivo.'],
     ],
+    rulesOutro:'Perché crediamo che la qualità abbia anche questo significato: saper rispettare i tempi della natura, senza volerli forzare.',
+    misSign:'Urban Bees. Il miele, così come le api lo fanno.',
     blogLabel:'Diario', blogTitle:'Blog',
     blogSub:'Ricette, racconti dagli apiari e note sulle varietà.',
     blogBack:'Tutti gli articoli',
@@ -1233,31 +1261,48 @@ const I18N = {
     ],
     menuMission:'Our mission',
     misLabel:'Why we exist', misTitle:'Our mission',
-    misLede:'To bring Italian honey to people\'s homes exactly as the bees made it: in the comb, whole, with nobody having opened it first.',
+    misLede:'Honey, exactly as it is born.',
     misBlocks:[
-      ['How it started', [
-        'Urban Bees began in Milan, out of something that always bothered us: the honey you find almost everywhere is built not to surprise you. It is a blend — of different apiaries, different harvests, often different countries — filtered and brought to temperature so that March\'s jar is identical to October\'s.',
-        'A beekeeper\'s honey does the exact opposite. It changes with the bloom, with the soil and with the year. Some years it is wonderful, some years it does not exist at all. That looks like a flaw right up until you taste it.',
+      ['', [
+        'We believe some products do not need to be transformed in order to be special. Honey is one of them.',
+        'It comes from the work of the bees, from the flowers they meet, from the seasons and from the places where they live. Every harvest tells you something different and carries characteristics that cannot be reproduced on demand.',
+        'With Urban Bees we want to make that world known: Italian honey in its most authentic form, held in the comb, exactly as the bees produced and kept it.',
+        'Because sometimes, to rediscover something extraordinary, it is enough to go back to where it came from.',
       ]],
-      ['Why the comb', [
-        'Almost all honey on sale is extracted: the comb is opened, spun, and handed back empty to the bees, who fill it again. It is efficient, which is why it is the norm.',
-        'We chose to sell the comb whole. That means the wax leaves with the honey, and the bees have to rebuild it from nothing for the next harvest. It yields less, costs more and is made in small quantities. In exchange the honey is never extracted, never filtered, never warmed: it arrives in the cells where it was made, still sealed.',
-        'It is also why we want to talk about it. Comb honey is still little known in Italy, and one mouthful explains it far better than a page does.',
+      ['How it all started', [
+        'Urban Bees began with a memory of summers spent in Sardinia. That is where we came to know comb honey and learned to love it, thanks to the small local beekeepers who let us discover their honey every summer.',
+        'A product that won us over with its flavour, its aromas and that particular texture that makes it so different from the honey we are used to.',
+        'Then winter came, city life resumed, and that taste became hard to find again. We were looking for the honey we had learned to love, but between supermarkets and online shops we mostly found ordinary honey, while the whole comb seemed almost impossible to come by.',
+        'We asked ourselves why a product this special was still so little known and so hard to buy.',
+        'Urban Bees was born out of that gap: out of the wish to find again a taste that had been with us for years, and the wish to share it with anyone who, like us, would have liked to have it always within reach.',
+        'We started getting to know small Italian beekeepers, discovering their territories and the way they work. We fell even more in love with a world made of seasons, blooms and harvests that are never the same.',
+        'And we understood that we wanted to build something around all of it: a project that brings people closer to honey in its most natural form, and to those whose work makes it possible.',
       ]],
-      ['What we are, and what we are not yet', [
-        'We are not beekeepers. We buy from small Italian beekeepers and sell their honey <b>under their own name</b>, because who made it is the most important thing on the label — and hiding it would be the first step towards the anonymous jar we want to stay away from.',
-        'The first is <b>Apicoltura Cazzola</b>, at Altedo di Malalbergo, in the province of Bologna. The others will come one at a time: we would rather have a few names we can tell you about than a catalogue full of varieties we know nothing about.',
+      ['Why we chose honey in the comb', [
+        'The comb is perhaps the most beautiful way to come to honey.',
+        'It is the natural structure the bees build out of wax to hold their harvest. Each small cell holds honey, still where it was laid down, never extracted or separated from the wax.',
+        'It is a form of honey that keeps everything particular about it: you taste the honey, but also its texture, the way it is released slowly as you chew, and that particular tasting experience only the comb can give.',
+        'Most honey is extracted from the comb by spinning it. We chose to offer the whole comb as well, without going through that process.',
+        'It is a choice that takes care and means a more limited production. The bees, after all, will have to rebuild the wax cells for the harvests that follow. But for us the value of this product lies precisely in its wholeness.',
+        'We do not want honey to be only something to spread on bread or add to a recipe. We want to share a different experience, one still uncommon in Italy and well worth discovering.',
+      ]],
+      ['Who we are and who we work with', [
+        'We work with small beekeepers, choosing people whose work we know and who share our care for the quality and the origin of the product.',
+        'Every honey keeps the name of whoever produced it. We do not want to hide people behind a brand, but to give them the recognition they deserve.',
+        'The first of them, the one we chose to begin this path with, is <b>Apicoltura Cazzola</b>, at Altedo di Malalbergo, in the province of Bologna.',
+        'It is the first meeting in a project we want to grow organically, one partnership at a time. We would rather genuinely know every beekeeper, their land and the way they work, than fill our catalogue with products whose story we do not know.',
       ]],
     ],
-    rulesTitle:'Our promise',
-    rulesSub:'Five commitments that hold for every comb we ship. There are few of them because we want to be able to keep all of them.',
+    rulesTitle:'Our commitments',
+    rulesSub:'There are some things we care about particularly. They are the principles by which we choose our products, and which we want to honour every time one of our combs arrives at your door.',
     rulesBlocks:[
-      ['One single origin','Every pack comes from one apiary and one harvest. Never blended, never anonymous.'],
-      ['The name of whoever made it','The beekeeper stays on the product, with their own name and mark. We bring it to your door; we do not put our name over theirs.'],
-      ['Apiaries we have visited','We only work with beekeepers we have met in person, whose hives and methods we know.'],
-      ['Raw and unfiltered','Nothing added, nothing taken away, no heat. The honey arrives as the bees left it, wax included.'],
-      ['Limited quantities','We sell what the season gave. When a variety runs out we wait for the next bloom: we do not replace it with something else.'],
+      ['A recognisable origin','Every pack tells you exactly where it came from. We want it always to be possible to know where the honey comes from and who the beekeeper behind it is.'],
+      ['Respect for the people who make it','The beekeeper\'s name stays clearly visible. It matters to us that their work is valued and that the role of those who look after the bees and their harvest is recognised.'],
+      ['Honey in its natural form','Our comb is offered whole, with the honey held in its wax cells. It is neither extracted nor filtered: we want to preserve exactly the form that makes it so particular.'],
+      ['Seasonality, without compromise','Quantities depend on the harvest and on the rhythms of nature. When a honey runs out, we do not look for just any product to replace it with. We wait for the next harvest.'],
     ],
+    rulesOutro:'Because we believe quality also means this: knowing how to respect nature\'s own timing, without trying to force it.',
+    misSign:'Urban Bees. Honey, just as the bees make it.',
     blogLabel:'Journal', blogTitle:'Blog',
     blogSub:'Recipes, stories from the apiaries and notes on the varieties.',
     blogBack:'All entries',
@@ -1497,13 +1542,15 @@ function renderMission(){
   el('about-body').innerHTML =
     `<p class="lede">${t.misLede}</p>` +
     t.misBlocks.map(([h, paras]) =>
-      `<section><h2>${h}</h2>${paras.map(x => `<p>${x}</p>`).join('')}</section>`).join('');
+      `<section>${h ? `<h2>${h}</h2>` : ''}${paras.map(x => `<p>${x}</p>`).join('')}</section>`).join('');
 
   setText('t-rules-title', t.rulesTitle);
   setText('t-rules-sub', t.rulesSub);
   el('rules-body').innerHTML = t.rulesBlocks.map(([h, p], i) =>
     `<div class="rule"><span class="n">${String(i + 1).padStart(2, '0')}</span>
        <div><h3>${h}</h3><p>${p}</p></div></div>`).join('');
+  setText('t-rules-outro', t.rulesOutro);
+  setText('t-mis-sign', t.misSign);
 }
 
 function renderEditorial(key, label, title, sub, blocks){
