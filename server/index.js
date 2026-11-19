@@ -36,6 +36,12 @@ app.use(express.json());
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
+// What is actually left, straight from the authoritative copy. The storefront
+// asks on load so a page left open overnight does not keep offering sold-out jars.
+app.get('/api/stock', (req, res) => {
+  res.json(Object.fromEntries(prices.map(p => [p.id, p.stock ?? 0])));
+});
+
 app.post('/api/checkout', async (req, res) => {
   try {
     const { cart, lang } = req.body || {};
@@ -53,6 +59,11 @@ app.post('/api/checkout', async (req, res) => {
       const product = priceById.get(id);
       if (!product || !Number.isInteger(quantity) || quantity < 1) {
         throw new Error(`Invalid cart line: id=${idStr} qty=${qty}`);
+      }
+      // Stock is checked here, not in the browser: the page's copy is only for
+      // display and anyone can edit it.
+      if (quantity > (product.stock ?? 0)) {
+        throw new Error(`Out of stock: id=${idStr} wanted=${quantity} left=${product.stock ?? 0}`);
       }
       return {
         quantity,
@@ -223,6 +234,13 @@ app.post('/api/order/bank-transfer', async (req, res) => {
       const quantity = Number(qty);
       if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
         return res.status(400).json({ error: 'Invalid cart line' });
+      }
+      if (quantity > (product.stock ?? 0)) {
+        return res.status(409).json({
+          error: 'Out of stock',
+          id: product.id,
+          left: product.stock ?? 0,
+        });
       }
       const sum = product.price * quantity;
       total += sum;

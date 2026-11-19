@@ -7,8 +7,22 @@ frontend a redirect URL.
 ## ⚠️ Keep `prices.json` in sync
 
 `prices.json` is a second copy of the `PRODUCTS` catalog in the root
-`index.html`. When you add, remove, or re-price a honey on the site, update
-both files. There's no shared data source yet — for a catalog this size
+`index.html`. When you add, remove, re-price **or re-stock** a honey on the
+site, update both files.
+
+### Stock
+
+Each entry carries a `stock` count. **This file is the one that counts**: the
+storefront's copy only draws the "Sold out" and "Only N left" labels, and
+anyone can edit a page in their own browser, so every order is checked against
+the number here before it is accepted.
+
+It does **not** count down by itself. Nothing is written back after a sale,
+because the server keeps no state between restarts. So after shipping, lower
+the number here and in `index.html`, and commit. Two people buying the last
+jar in the same minute will both get through; with ten jars per honey that is
+a small risk, and the fix when it stops being small is a real datastore
+(Render Key Value or Postgres) holding the counts. There's no shared data source yet — for a catalog this size
 (8 items) duplicating with this warning was simpler than building one; worth
 revisiting if the catalog grows a lot.
 

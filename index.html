@@ -297,6 +297,18 @@ a{color:inherit;text-decoration:none}
 .grid[hidden]{display:none}
 .empty-state[hidden]{display:none}
 .card{display:flex;flex-direction:column;cursor:pointer}
+.card.sold-out .tile{opacity:.5}
+.card.sold-out .card-name,.card.sold-out .card-price{color:var(--ink-3)}
+.card .tile{position:relative}
+.stock-flag{
+  position:absolute;left:10px;top:10px;
+  font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  padding:4px 8px;border-radius:2px;line-height:1;
+}
+.stock-flag.out{background:var(--ink);color:var(--bg)}
+.stock-flag.low{background:var(--accent);color:#FFF8EC}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:disabled:hover{background:var(--btn)}
 .tile{
   aspect-ratio:1/1;background:var(--tint);border-radius:var(--r);
   display:flex;align-items:center;justify-content:center;
@@ -816,6 +828,8 @@ const I18N = {
     countOne:'varietà', countMany:'varietà',
     all:'Tutti',
     add:'Aggiungi', added:'Aggiunto', toastAdd:'Aggiunto al carrello',
+    soldOut:'Esaurito', onlyLeft:'Ultimi {n}',
+    toastMax:'Non ne abbiamo altri di questo miele.',
     back:'Torna ai mieli',
     prodLabel:'La filiera',
     prodTitle:'I nostri apicoltori',
@@ -900,6 +914,8 @@ const I18N = {
     countOne:'variety', countMany:'varieties',
     all:'All',
     add:'Add to cart', added:'Added', toastAdd:'Added to cart',
+    soldOut:'Sold out', onlyLeft:'Only {n} left',
+    toastMax:'We have no more of this honey.',
     back:'Back to honeys',
     prodLabel:'The supply chain',
     prodTitle:'Our beekeepers',
@@ -946,7 +962,7 @@ const I18N = {
 };
 
 const PRODUCTS = [
-  {id:1, emoji:'🌼', price:13.50, farm:'Apicoltura Valle Sacra',
+  {id:1, emoji:'🌼', price:13.50, stock:10, farm:'Apicoltura Valle Sacra',
    tastes:['floral'],
    cat:{it:'Delicato',en:'Delicate'}, name:{it:'Miele di Acacia',en:'Acacia Honey'},
    region:{it:'Piemonte',en:'Piedmont'}, unit:{it:'vasetto 400g',en:'400g jar'},
@@ -957,7 +973,7 @@ const PRODUCTS = [
    pairing:{it:'Yogurt, formaggi freschi, tisane',en:'Yogurt, fresh cheeses, herbal tea'},
    desc:{it:'Raccolto dalle fioriture di robinia lungo i pendii del Canavese, è il miele più delicato del nostro catalogo: quasi incolore, non copre mai il sapore di ciò che accompagna. Grazie all\'alto contenuto di fruttosio resta liquido per anni, senza mai cristallizzare.',
          en:'Harvested from black locust blossoms along the Canavese hillsides, it\'s the most delicate honey in our catalogue — nearly colourless and it never overpowers what it\'s paired with. Thanks to its high fructose content, it stays liquid for years without crystallising.'}},
-  {id:2, emoji:'🌰', price:15.00, farm:'Apicoltura Valle Sacra',
+  {id:2, emoji:'🌰', price:15.00, stock:10, farm:'Apicoltura Valle Sacra',
    tastes:['bold'],
    cat:{it:'Deciso',en:'Bold'}, name:{it:'Miele di Castagno',en:'Chestnut Honey'},
    region:{it:'Piemonte',en:'Piedmont'}, unit:{it:'vasetto 400g',en:'400g jar'},
@@ -968,7 +984,7 @@ const PRODUCTS = [
    pairing:{it:'Formaggi stagionati, carni rosse, pane nero',en:'Aged cheeses, red meats, dark bread'},
    desc:{it:'Prodotto sugli stessi crinali dell\'acacia ma un mese più tardi, quando fioriscono i castagneti secolari del Canavese. È il miele più identitario della cucina italiana: intenso e tannico, capace di reggere il confronto con un formaggio stagionato o una fetta di pane nero.',
          en:'Produced on the same ridges as the acacia, a month later, when the centuries-old chestnut groves of Canavese bloom. It\'s the most iconic honey in Italian cuisine — bold and tannic, robust enough to stand up to an aged cheese or a slice of dark bread.'}},
-  {id:3, emoji:'🌳', price:26.00, farm:'Apiario Sardo Antico',
+  {id:3, emoji:'🌳', price:26.00, stock:10, farm:'Apiario Sardo Antico',
    tastes:['bitter','earthy'],
    cat:{it:'Amaro',en:'Bitter'}, name:{it:'Miele di Corbezzolo',en:'Strawberry Tree Honey'},
    region:{it:'Sardegna',en:'Sardinia'}, unit:{it:'vasetto 250g',en:'250g jar'},
@@ -979,7 +995,7 @@ const PRODUCTS = [
    pairing:{it:'Pecorino stagionato, cioccolato fondente',en:'Aged pecorino, dark chocolate'},
    desc:{it:'Una delle rarità assolute dell\'apicoltura mondiale: il corbezzolo fiorisce in piena autunno, quando quasi nessun\'altra pianta è attiva, e le api ne raccolgono pochissimo. Il risultato è un miele amaro e intenso, con note di caffè tostato e liquirizia, che in Sardegna si mangia tradizionalmente col pane carasau.',
          en:'One of the true rarities of world beekeeping: the strawberry tree blooms in deep autumn, when almost nothing else is flowering, so bees gather very little of it. The result is a bitter, intense honey with notes of roasted coffee and liquorice, traditionally eaten in Sardinia with carasau bread.'}},
-  {id:4, emoji:'🌸', price:10.50, farm:'Apiario dei Colli Umbri',
+  {id:4, emoji:'🌸', price:10.50, stock:10, farm:'Apiario dei Colli Umbri',
    tastes:['floral'],
    cat:{it:'Delicato',en:'Delicate'}, name:{it:'Miele Millefiori',en:'Wildflower Honey'},
    region:{it:'Umbria',en:'Umbria'}, unit:{it:'vasetto 500g',en:'500g jar'},
@@ -990,7 +1006,7 @@ const PRODUCTS = [
    pairing:{it:'Colazione di tutti i giorni, dolci, tè',en:'Everyday breakfast, desserts, tea'},
    desc:{it:'Il miele più antico e versatile: nasce quando le api bottinano su decine di specie diverse nello stesso raggio di volo, senza una fioritura dominante. Ogni vasetto è leggermente diverso dal precedente — un\'istantanea della campagna umbra in quella particolare settimana.',
          en:'The oldest and most versatile honey: it comes from bees foraging across dozens of different species within the same flight range, with no single dominant bloom. Every jar is slightly different from the last — a snapshot of the Umbrian countryside in that particular week.'}},
-  {id:5, emoji:'🌿', price:12.00, farm:'Apicoltura Maremma Selvatica',
+  {id:5, emoji:'🌿', price:12.00, stock:10, farm:'Apicoltura Maremma Selvatica',
    tastes:['bold','balsamic'],
    cat:{it:'Deciso',en:'Bold'}, name:{it:'Miele di Eucalipto',en:'Eucalyptus Honey'},
    region:{it:'Toscana',en:'Tuscany'}, unit:{it:'vasetto 400g',en:'400g jar'},
@@ -1001,7 +1017,7 @@ const PRODUCTS = [
    pairing:{it:'Tisane invernali, ricotta, torte speziate',en:'Winter herbal teas, ricotta, spiced cakes'},
    desc:{it:'Le arnie seguono i filari di eucalipto piantati oltre un secolo fa per prosciugare le paludi maremmane. Il miele che ne risulta è scuro, maltato, con un caratteristico retrogusto balsamico — da sempre abbinato, nella tradizione contadina toscana, a un tè caldo al limone nelle sere d\'inverno.',
          en:'Hives follow the eucalyptus rows planted more than a century ago to drain the Maremma marshland. The resulting honey is dark and malty, with a distinctive balsamic aftertaste — long paired, in Tuscan farmhouse tradition, with a warm lemon tea on cold winter evenings.'}},
-  {id:6, emoji:'🍃', price:16.00, farm:'Apicoltura delle Dolomiti',
+  {id:6, emoji:'🍃', price:16.00, stock:10, farm:'Apicoltura delle Dolomiti',
    tastes:['balsamic'],
    cat:{it:'Aromatico',en:'Aromatic'}, name:{it:'Miele di Tiglio',en:'Linden (Lime) Honey'},
    region:{it:'Alto Adige',en:'South Tyrol'}, unit:{it:'vasetto 300g',en:'300g jar'},
@@ -1012,7 +1028,7 @@ const PRODUCTS = [
    pairing:{it:'Infusi serali, frutta secca, formaggi erborinati',en:'Evening infusions, dried fruit, blue cheese'},
    desc:{it:'I tigli secolari della Val Pusteria fioriscono per una finestra brevissima e imprevedibile, spesso meno di due settimane. Chi riesce a raccoglierlo ottiene un miele fresco e balsamico, con un aroma mentolato che ricorda il fiore stesso.',
          en:'The centuries-old lime trees of Val Pusteria bloom for a very short, unpredictable window — often less than two weeks. Beekeepers who manage to harvest it get a fresh, balsamic honey with a minty aroma reminiscent of the blossom itself.'}},
-  {id:7, emoji:'🌱', price:19.00, farm:'Apiario Sardo Antico',
+  {id:7, emoji:'🌱', price:19.00, stock:10, farm:'Apiario Sardo Antico',
    tastes:['herbal'],
    cat:{it:'Aromatico',en:'Aromatic'}, name:{it:'Miele di Timo',en:'Thyme Honey'},
    region:{it:'Sardegna',en:'Sardinia'}, unit:{it:'vasetto 250g',en:'250g jar'},
@@ -1023,7 +1039,7 @@ const PRODUCTS = [
    pairing:{it:'Formaggi di capra, verdure grigliate, latte caldo',en:'Goat cheese, grilled vegetables, warm milk'},
    desc:{it:'Raccolto tra i cespugli di timo selvatico della macchia mediterranea sarda, è un miele aromatico e speziato che porta con sé il profumo dell\'estate mediterranea — un cucchiaino nel latte caldo prima di dormire è un rito di famiglia.',
          en:'Gathered among the wild thyme scrub of the Sardinian maquis, this aromatic, spiced honey carries the scent of the Mediterranean summer — a spoonful stirred into warm milk before bed is a family ritual here.'}},
-  {id:8, emoji:'🐝', price:48.00, farm:'Wild Coast Apiaries',
+  {id:8, emoji:'🐝', price:48.00, stock:10, farm:'Wild Coast Apiaries',
    tastes:['earthy'],
    cat:{it:'Raro',en:'Rare'}, name:{it:'Miele di Manuka',en:'Manuka Honey'},
    region:{it:'Nuova Zelanda',en:'New Zealand'}, unit:{it:'vasetto 250g · UMF 10+',en:'250g jar · UMF 10+'},
@@ -1334,8 +1350,15 @@ function renderGrid(){
   list.forEach(p => {
     const card = document.createElement('article');
     card.className = 'card';
+    const left = p.stock ?? 0;
+    const out = left <= 0;
+    if (out) card.classList.add('sold-out');
+    const flag = out
+      ? `<span class="stock-flag out">${t.soldOut}</span>`
+      : left <= 3 ? `<span class="stock-flag low">${t.onlyLeft.replace('{n}', left)}</span>` : '';
+
     card.innerHTML = `
-      <div class="tile">${p.emoji}</div>
+      <div class="tile">${p.emoji}${flag}</div>
       <span class="u-label card-region">${p.region[lang]}</span>
       <h3 class="card-name">${p.name[lang]}</h3>
       <p class="card-farm">${p.farm}</p>
@@ -1343,7 +1366,7 @@ function renderGrid(){
         <span class="card-price">${money(p.price)}</span>
         <span class="card-unit">${p.unit[lang]}</span>
       </div>
-      <button class="btn" data-id="${p.id}">${t.add}</button>`;
+      <button class="btn" data-id="${p.id}"${out ? ' disabled' : ''}>${out ? t.soldOut : t.add}</button>`;
     card.onclick = () => openDetail(p.id);
     box.appendChild(card);
   });
@@ -1417,14 +1440,43 @@ function renderDetail(id){
 }
 
 /* ============ cart ============ */
+/* The page ships with a stock figure per honey, and asks the server for the
+   current one on load. Either way the server has the last word at checkout. */
+function stockOf(id){
+  const p = PRODUCTS.find(x => x.id === +id);
+  return p ? (p.stock ?? 0) : 0;
+}
+
+async function loadStock(){
+  try {
+    const r = await fetch(CHECKOUT_API.replace('/api/checkout', '/api/stock'));
+    if (!r.ok) return;
+    const live = await r.json();
+    PRODUCTS.forEach(p => { if (live[p.id] !== undefined) p.stock = live[p.id]; });
+    // A jar that sold out while the tab was open must leave the cart too.
+    Object.keys(cart).forEach(id => {
+      const left = stockOf(id);
+      if (left <= 0) delete cart[id];
+      else if (cart[id] > left) cart[id] = left;
+    });
+    updateCount();
+    renderFilters(); renderGrid();
+  } catch (e) { /* keep the figures the page shipped with */ }
+}
+
 function addToCart(id){
-  cart[id] = (cart[id] || 0) + 1;
+  const left = stockOf(id);
+  const have = cart[id] || 0;
+  if (have >= left) { showToast(T().toastMax); return; }
+  cart[id] = have + 1;
   updateCount();
   showToast(T().toastAdd);
 }
 
 function chQty(id, d){
-  cart[id] += d;
+  const next = cart[id] + d;
+  if (d > 0 && next > stockOf(id)) { showToast(T().toastMax); return; }
+  cart[id] = next;
   if (cart[id] <= 0) delete cart[id];
   updateCount();
   renderCart();
@@ -1751,6 +1803,7 @@ setLang(lang);
 routeHash();
 handleCheckoutRedirect();
 loadPaymentConfig();
+loadStock();
 </script>
 </body>
 </html>
