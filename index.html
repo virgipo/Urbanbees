@@ -33,6 +33,7 @@
   --btn-hover:#DEDCD6;
   --accent:#A8681B;
   --deep:#1F2A1E;
+  --gold:#E3B468;
 
   --font:'Plus Jakarta Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
   --r:3px;
@@ -107,13 +108,11 @@ a{color:inherit;text-decoration:none}
 }
 .dropdown button:hover{color:#FFFFFF;background:rgba(255,255,255,.07)}
 
-.lang{display:flex;align-items:center;gap:6px}
-.lang button{
-  font-size:11px;font-weight:600;letter-spacing:.08em;
-  color:rgba(242,239,233,.55);padding:3px 2px;transition:color .15s;
-}
-.lang button.on{color:#FFFFFF}
-.lang .sep{color:rgba(242,239,233,.3);font-size:11px}
+/* language: the name of the language you are reading, and a way to change it */
+.lang-menu .dropdown{left:auto;right:-14px;min-width:150px}
+.lang-menu .dropdown button.on{color:#FFFFFF;background:rgba(255,255,255,.07)}
+.lang-menu .dropdown button.on::before{content:'·';margin-right:7px;color:var(--gold)}
+.lang-menu .dropdown button:not(.on)::before{content:'';margin-right:12px}
 .cart-btn{
   font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
   display:flex;align-items:center;gap:8px;color:rgba(242,239,233,.86);transition:color .15s;
@@ -151,29 +150,42 @@ a{color:inherit;text-decoration:none}
 .view.active{display:block}
 .shell{max-width:1520px;margin:0 auto;padding:0 var(--pad)}
 
-/* ---------- ticker ---------- */
-/* One line of standing claims, sliding. Duplicated once so the loop has no
-   seam; paused for anyone who asked their system not to animate. */
-.ticker{
-  background:var(--deep);color:#E8E4D9;overflow:hidden;
-  padding:11px 0;border-bottom:1px solid rgba(255,255,255,.08);
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
-          mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+/* ---------- announcement bar ---------- */
+/* One message at a time, held still so it can be read, with arrows to step
+   through the rest. It advances on its own slowly and stops the moment the
+   reader's pointer or keyboard lands on it. */
+.announce{
+  background:var(--gold);color:var(--deep);
+  border-bottom:1px solid rgba(31,42,30,.14);
 }
-.ticker-track{
-  display:flex;width:max-content;gap:0;
-  animation:ticker 46s linear infinite;
+.announce-inner{
+  max-width:1520px;margin:0 auto;padding:0 10px;
+  display:grid;grid-template-columns:38px 1fr 38px;align-items:center;min-height:42px;
 }
-.ticker:hover .ticker-track{animation-play-state:paused}
-.ticker span{
-  font-size:11.5px;font-weight:600;letter-spacing:.17em;text-transform:uppercase;
-  padding:0 30px;white-space:nowrap;
+.announce-slot{
+  position:relative;overflow:hidden;text-align:center;
+  display:flex;align-items:center;justify-content:center;min-height:42px;
 }
-.ticker span::after{content:'·';margin-left:30px;opacity:.45}
-@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.announce-msg{
+  font-size:12px;font-weight:600;letter-spacing:.075em;
+  padding:4px 2px;line-height:1.35;color:var(--deep);
+  transition:opacity .34s ease,transform .34s ease;
+}
+.announce-msg.out{opacity:0;transform:translateY(-5px)}
+.announce-arrow{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--deep);opacity:.55;transition:opacity .15s,background .15s;
+}
+.announce-arrow:hover{opacity:1;background:rgba(31,42,30,.10)}
+.announce-arrow svg{width:13px;height:13px}
 @media (prefers-reduced-motion:reduce){
-  .ticker-track{animation:none;justify-content:center;width:100%;flex-wrap:wrap}
-  .ticker span:last-child::after{content:none}
+  .announce-msg{transition:none}
+}
+@media (max-width:620px){
+  .announce-inner{grid-template-columns:32px 1fr 32px;padding:0 4px}
+  .announce-msg{font-size:11px;letter-spacing:.05em}
+  .announce-arrow{width:30px;height:30px}
 }
 
 /* ---------- hero ---------- */
@@ -559,6 +571,12 @@ a{color:inherit;text-decoration:none}
 .footer-col ul{list-style:none}
 .foot-link{font-size:13.5px;color:var(--ink-2);line-height:1.7;text-align:left;text-decoration:none;transition:color .15s}
 .foot-link:hover{color:var(--ink)}
+.foot-social li{margin-bottom:4px}
+.foot-link.with-icon{display:inline-flex;align-items:center;gap:9px}
+.foot-link .ico{
+  width:17px;height:17px;flex:none;color:var(--ink-3);transition:color .15s;
+}
+.foot-link.with-icon:hover .ico{color:var(--accent)}
 .footer-brand .wordmark{font-size:15px;margin-bottom:12px;display:block;color:var(--ink);justify-self:start}
 .footer-bottom{
   max-width:1520px;margin:0 auto;padding:30px var(--pad) 34px;margin-top:40px;
@@ -627,6 +645,24 @@ a{color:inherit;text-decoration:none}
 </head>
 <body>
 
+<div class="announce">
+  <div class="announce-inner">
+    <button class="announce-arrow" id="ann-prev">
+      <svg viewBox="0 0 10 10" fill="none" aria-hidden="true">
+        <path d="M6.5 1 2.5 5l4 4" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="announce-slot" aria-live="polite">
+      <span class="announce-msg" id="ann-text"></span>
+    </div>
+    <button class="announce-arrow" id="ann-next">
+      <svg viewBox="0 0 10 10" fill="none" aria-hidden="true">
+        <path d="M3.5 1l4 4-4 4" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+</div>
+
 <header class="site-header">
   <div class="header-inner">
     <div class="nav-left">
@@ -653,10 +689,17 @@ a{color:inherit;text-decoration:none}
     <button class="wordmark" data-nav="shop">Urban Bees</button>
 
     <div class="nav-right">
-      <div class="lang">
-        <button id="lang-en" onclick="setLang('en')">EN</button>
-        <span class="sep">/</span>
-        <button id="lang-it" onclick="setLang('it')">IT</button>
+      <div class="has-menu lang-menu" id="lang-menu">
+        <button class="navlink" id="lang-trigger" aria-expanded="false" aria-haspopup="true">
+          <span id="t-lang-current"></span>
+          <svg viewBox="0 0 10 10" fill="none" aria-hidden="true">
+            <path d="M1 3.5 L5 7 L9 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <div class="dropdown" id="lang-dropdown">
+          <button id="lang-it" onclick="setLang('it')">Italiano</button>
+          <button id="lang-en" onclick="setLang('en')">English</button>
+        </div>
       </div>
       <button class="cart-btn" data-nav="cart">
         <span id="t-nav-cart"></span>
@@ -679,9 +722,6 @@ a{color:inherit;text-decoration:none}
 
   <!-- ============ shop ============ -->
   <section class="view active" id="view-shop">
-    <div class="ticker" aria-label="Urban Bees">
-      <div class="ticker-track" id="ticker"></div>
-    </div>
     <div class="hero">
       <div class="hero-inner">
         <span class="u-label" id="t-hero-label"></span>
@@ -871,9 +911,19 @@ a{color:inherit;text-decoration:none}
     </div>
     <div class="footer-col">
       <h4 id="t-foot-follow-h"></h4>
-      <ul>
-        <li><a class="foot-link" href="https://www.instagram.com/urbanbees.it/" target="_blank" rel="noopener me">Instagram</a></li>
-        <li><a class="foot-link" href="mailto:hey.urbanbees@gmail.com">hey.urbanbees@gmail.com</a></li>
+      <ul class="foot-social">
+        <li><a class="foot-link with-icon" href="https://www.instagram.com/urbanbees.it/" target="_blank" rel="noopener me">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5.2" stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="12" cy="12" r="4.1" stroke="currentColor" stroke-width="1.7"/>
+            <circle cx="17.4" cy="6.6" r="1.25" fill="currentColor"/>
+          </svg><span>@urbanbees.it</span></a></li>
+        <li><a class="foot-link with-icon" href="mailto:hey.urbanbees@gmail.com">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="2.8" y="5" width="18.4" height="14" rx="2.6" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M3.4 7.2 12 13l8.6-5.8" stroke="currentColor" stroke-width="1.7"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg><span>hey.urbanbees@gmail.com</span></a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -883,7 +933,6 @@ a{color:inherit;text-decoration:none}
         <li id="t-foot-shipping"></li>
         <li><button class="foot-link" data-nav="contact" id="t-foot-contact"></button></li>
         <li><button class="foot-link" data-nav="beekeep" id="t-foot-beekeep"></button></li>
-        <li><a class="foot-link" href="privacy.html" id="t-foot-privacy"></a></li>
       </ul>
     </div>
   </div>
@@ -939,6 +988,7 @@ const I18N = {
       ['Cosa ci serve da te','Quali mieli produci, in che quantità, le analisi che hai e un listino per rivenditori. Se ci siamo, ci sentiamo a voce.'],
       ['Scrivici','<span class="js-mail"></span>'],
     ],
+    annPrev:'Messaggio precedente', annNext:'Messaggio successivo',
     ticker:[
       'Miele in favo, come lo fanno le api',
       'Spedizione inclusa in ogni ordine',
@@ -981,7 +1031,7 @@ const I18N = {
     fNote:'Note per la consegna (facoltativo)',
     trSubmit:'Conferma ordine', trSending:'Invio in corso…',
     trBack:'Torna al carrello',
-    trPrivacy:'Usiamo questi dati solo per preparare e spedire il tuo ordine. Non li salviamo in nessun database del sito e non li diamo a nessuno a parte il corriere. <a href="privacy.html">Leggi l\'informativa privacy</a>.',
+    trPrivacy:'Usiamo questi dati solo per preparare e spedire il tuo ordine. Non li salviamo in nessun database del sito e non li diamo a nessuno a parte il corriere.',
     trErrRequired:'Compila tutti i campi obbligatori.',
     trErrEmail:'Controlla l\'indirizzo email.',
     trErrGeneric:'Qualcosa è andato storto — riprova fra poco.',
@@ -1004,7 +1054,7 @@ const I18N = {
     newsTitle:'Resta aggiornato',
     newsSub:'Quando arriva un favo nuovo, quando una fioritura va male, quando c\'è qualcosa che vale la pena raccontare. Poche email, scritte a mano.',
     newsLabel:'Il tuo indirizzo email', newsPlaceholder:'nome@esempio.it', newsBtn:'Iscriviti',
-    newsNote:'Iscrivendoti accetti che usiamo il tuo indirizzo solo per scriverti di Urban Bees. Puoi cancellarti quando vuoi rispondendo a una qualsiasi email. <a href="privacy.html">Informativa privacy</a>.',
+    newsNote:'Iscrivendoti accetti che usiamo il tuo indirizzo solo per scriverti di Urban Bees. Puoi cancellarti quando vuoi rispondendo a una qualsiasi email.',
     newsOk:'Fatto — ti scriveremo.',
     newsBad:'Controlla l\'indirizzo email.',
     newsFallback:'Apriamo la tua email: mandaci il messaggio e ti aggiungiamo noi.',
@@ -1057,6 +1107,7 @@ const I18N = {
       ['What we need from you','Which honeys you make, in what quantities, any analyses you hold, and a trade price list. If it fits, we talk.'],
       ['Write to us','<span class="js-mail"></span>'],
     ],
+    annPrev:'Previous message', annNext:'Next message',
     ticker:[
       'Honey in the comb, as the bees make it',
       'Shipping included on every order',
@@ -1099,7 +1150,7 @@ const I18N = {
     fNote:'Delivery notes (optional)',
     trSubmit:'Confirm order', trSending:'Sending…',
     trBack:'Back to cart',
-    trPrivacy:'We use these details only to prepare and ship your order. They go into no database on this site and to no one but the courier. <a href="privacy.html?lang=en">Read the privacy notice</a>.',
+    trPrivacy:'We use these details only to prepare and ship your order. They go into no database on this site and to no one but the courier.',
     trErrRequired:'Please fill in all required fields.',
     trErrEmail:'Please check your email address.',
     trErrGeneric:'Something went wrong — please try again shortly.',
@@ -1122,7 +1173,7 @@ const I18N = {
     newsTitle:'Stay in touch',
     newsSub:'When a new comb arrives, when a bloom fails, when there is something worth telling. A few emails, written by hand.',
     newsLabel:'Your email address', newsPlaceholder:'name@example.com', newsBtn:'Subscribe',
-    newsNote:'By subscribing you agree that we use your address only to write to you about Urban Bees. Unsubscribe whenever you like by replying to any email. <a href="privacy.html?lang=en">Privacy notice</a>.',
+    newsNote:'By subscribing you agree that we use your address only to write to you about Urban Bees. Unsubscribe whenever you like by replying to any email.',
     newsOk:'Done — we will be in touch.',
     newsBad:'Please check your email address.',
     newsFallback:'Opening your mail app: send us the message and we will add you.',
@@ -1217,6 +1268,7 @@ function renderChrome(){
   const t = T();
   el('lang-en').classList.toggle('on', lang === 'en');
   el('lang-it').classList.toggle('on', lang === 'it');
+  setText('t-lang-current', lang === 'en' ? 'English' : 'Italiano');
 
   setText('t-menu', t.menu);
   setText('t-nav-shop', t.navShop);
@@ -1260,8 +1312,6 @@ function renderChrome(){
   setText('t-foot-shipping', t.footShipping);
   setText('t-foot-contact', t.footContact);
   setText('t-foot-beekeep', t.footBeekeep);
-  setText('t-foot-privacy', t.footPrivacy);
-  el('t-foot-privacy').href = lang === 'en' ? 'privacy.html?lang=en' : 'privacy.html';
   setText('t-foot-rights', t.footRights);
   setText('t-foot-ship-note', t.footShipNote);
 
@@ -1753,12 +1803,64 @@ function renderContactPages(){
   });
 }
 
-/* ============ ticker ============ */
-function renderTicker(){
+/* ============ announcement bar ============ */
+/* A sliding line of text cannot be read at the reader's own pace, so each
+   message is held still and the next one fades in. It moves on by itself
+   every seven seconds, and stops as soon as anyone looks like they are
+   reading it: pointer over the bar, or keyboard focus inside it. */
+let annIndex = 0, annTimer = null;
+const ANN_EVERY = 7000;
+const annStill = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function annShow(i, animate){
   const items = T().ticker;
-  // twice, so the halfway point of the loop looks like the start
-  el('ticker').innerHTML = items.concat(items)
-    .map(x => `<span>${x}</span>`).join('');
+  annIndex = (i + items.length) % items.length;
+  const node = el('ann-text');
+  if (!animate) { node.textContent = items[annIndex]; return; }
+  node.classList.add('out');
+  setTimeout(() => {
+    node.textContent = items[annIndex];
+    node.classList.remove('out');
+  }, 340);
+}
+
+function annStep(d){ annShow(annIndex + d, true); annStart(); }
+
+/* True while someone is plainly reading or using the bar. Kept as state
+   rather than inferred from enter/leave pairs, because a click inside the
+   bar does not re-fire mouseenter and would otherwise restart the clock
+   under the reader's own cursor. */
+let annHeld = false;
+
+function annStart(){
+  clearInterval(annTimer);
+  if (annStill || annHeld) return; // asked not to be moved, or being read
+  annTimer = setInterval(() => annShow(annIndex + 1, true), ANN_EVERY);
+}
+
+function annHold(on){ annHeld = on; annStart(); }
+
+function renderTicker(){
+  const t = T();
+  annShow(annIndex, false);
+  el('ann-prev').setAttribute('aria-label', t.annPrev);
+  el('ann-next').setAttribute('aria-label', t.annNext);
+}
+
+function initAnnounce(){
+  const bar = document.querySelector('.announce');
+  el('ann-prev').onclick = () => annStep(-1);
+  el('ann-next').onclick = () => annStep(1);
+  bar.addEventListener('mouseenter', () => annHold(true));
+  bar.addEventListener('mouseleave', () => annHold(false));
+  /* Only a keyboard landing holds it. A mouse click on an arrow leaves focus
+     on that button in most browsers, and freezing the bar for the rest of the
+     visit because someone once clicked it would be the wrong reading. */
+  bar.addEventListener('focusin', e => {
+    if (e.target.matches(':focus-visible')) annHold(true);
+  });
+  bar.addEventListener('focusout', () => annHold(false));
+  annStart();
 }
 
 /* ============ bank transfer ============ */
@@ -1919,12 +2021,15 @@ window.addEventListener('hashchange', routeHash);
 
 /* ============ menus ============ */
 const aboutMenu = el('about-menu');
+const langMenu = el('lang-menu');
 const mobileNav = el('mobile-nav');
 const menuBtn = el('menu-btn');
 
 function closeMenus(){
   aboutMenu.classList.remove('open');
   el('about-trigger').setAttribute('aria-expanded', 'false');
+  langMenu.classList.remove('open');
+  el('lang-trigger').setAttribute('aria-expanded', 'false');
   mobileNav.classList.remove('open');
   menuBtn.setAttribute('aria-expanded', 'false');
 }
@@ -1933,6 +2038,12 @@ el('about-trigger').onclick = e => {
   e.stopPropagation();
   const open = aboutMenu.classList.toggle('open');
   el('about-trigger').setAttribute('aria-expanded', String(open));
+};
+
+el('lang-trigger').onclick = e => {
+  e.stopPropagation();
+  const open = langMenu.classList.toggle('open');
+  el('lang-trigger').setAttribute('aria-expanded', String(open));
 };
 
 menuBtn.onclick = e => {
@@ -1971,6 +2082,7 @@ el('empty-clear').onclick = () => { clearFilters(); toggleFacets(false); };
 /* ============ boot ============ */
 bindNav(document);
 setLang(lang);
+initAnnounce();
 routeHash();
 handleCheckoutRedirect();
 initNewsletter();
