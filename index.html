@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Urban Bees</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 /* Plus Jakarta Sans, served from this site. SIL Open Font License 1.1 —
    see fonts/LICENSE.txt. Self-hosted so that no visitor's IP reaches a
@@ -521,6 +524,18 @@ a{color:inherit;text-decoration:none}
 .page-head{padding:44px 0 30px;max-width:620px}
 .page-head h1{font-size:clamp(26px,3.6vw,36px);font-weight:600;letter-spacing:-.025em;line-height:1.12;margin:14px 0 12px}
 .page-head p{font-size:15.5px;line-height:1.62;color:var(--ink-2);max-width:56ch}
+/* ---------- contact & beekeeper cards ---------- */
+.contact-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:16px;padding-bottom:88px;
+}
+.ct-block{padding:26px 26px 28px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.ct-block h3{font-size:16.5px;font-weight:600;letter-spacing:-.012em;margin-bottom:10px}
+.ct-block p{font-size:14.5px;line-height:1.7;color:var(--ink-2)}
+.ct-block a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line-2)}
+.ct-block a:hover{text-decoration-color:var(--ink)}
+.ct-block .ct-big{display:inline-block;margin-top:6px;font-size:16px;font-weight:600;text-decoration:none}
+@media (max-width:640px){.contact-grid{padding-bottom:56px}.ct-block{padding:22px 20px 24px}}
 /* ---------- mission ---------- */
 .mission{max-width:760px;padding-bottom:20px}
 .mission .lede{
@@ -1159,8 +1174,7 @@ a{color:inherit;text-decoration:none}
     <div class="footer-col">
       <h4 id="t-foot-about-h"></h4>
       <ul>
-        <li id="t-foot-producers"></li>
-        <li id="t-foot-shipping"></li>
+        <li><button class="foot-link" data-nav="producers" id="t-foot-producers"></button></li>
         <li><button class="foot-link" data-nav="contact" id="t-foot-contact"></button></li>
         <li><button class="foot-link" data-nav="beekeep" id="t-foot-beekeep"></button></li>
       </ul>
@@ -1247,7 +1261,7 @@ const I18N = {
       ['Scrivici','<span class="js-mail"></span>'],
     ],
     annPrev:'Messaggio precedente', annNext:'Messaggio successivo',
-    ticker:['Scopri il miele in favo'],
+    ticker:[['Spediamo in Italia, presto in tutto il mondo · Dall\'estero? Scrivici','contact'],'Scopri il miele in favo'],
     heroLabel:'Apicoltori indipendenti · Italia',
     heroTitle:'Il miele in favo, direttamente a casa tua.',
     heroSub:'Non estratto, non filtrato, non scaldato: arriva nelle celle di cera che le api hanno sigillato, e si mangia tutto, cera compresa.',
@@ -1313,11 +1327,10 @@ const I18N = {
     newsTitle:'Resta aggiornato',
     newsSub:'Quando arriva un favo nuovo, quando una fioritura va male, quando c\'è qualcosa che vale la pena raccontare. Poche email, scritte a mano.',
     newsLabel:'Il tuo indirizzo email', newsPlaceholder:'nome@esempio.it', newsBtn:'Iscriviti',
-    newsNote:'Iscrivendoti accetti che usiamo il tuo indirizzo solo per scriverti di Urban Bees. Puoi cancellarti quando vuoi rispondendo a una qualsiasi email.',
+    newsNote:'Iscrivendoti accetti che usiamo il tuo indirizzo solo per scriverti di Urban Bees. Puoi cancellarti quando vuoi dal link in fondo a ogni email.',
     newsOk:'Fatto — ti scriveremo.',
     newsBad:'Controlla l\'indirizzo email.',
-    newsFallback:'Apriamo la tua email: mandaci il messaggio e ti aggiungiamo noi.',
-    newsSubject:'Iscrizione newsletter Urban Bees',
+    newsFail:'Non siamo riusciti a iscriverti. Riprova tra qualche minuto.',
     footFollowH:'Seguici', footAboutH:'Urban Bees',
     footProducers:'Gli apicoltori', footShipping:'Spedizioni', footContact:'Contatti',
     footBeekeep:'Sei un apicoltore?',
@@ -1395,7 +1408,7 @@ const I18N = {
       ['Write to us','<span class="js-mail"></span>'],
     ],
     annPrev:'Previous message', annNext:'Next message',
-    ticker:['Discover honey in the comb'],
+    ticker:[['We ship within Italy, worldwide soon · Abroad? Write to us','contact'],'Discover honey in the comb'],
     heroLabel:'Independent beekeepers · Italy',
     heroTitle:'Honey in the comb, from the hive to your shelf.',
     heroSub:'Never extracted, never filtered, never warmed: it arrives in the wax cells the bees sealed, and you eat all of it, wax included.',
@@ -1461,11 +1474,10 @@ const I18N = {
     newsTitle:'Stay in touch',
     newsSub:'When a new comb arrives, when a bloom fails, when there is something worth telling. A few emails, written by hand.',
     newsLabel:'Your email address', newsPlaceholder:'name@example.com', newsBtn:'Subscribe',
-    newsNote:'By subscribing you agree that we use your address only to write to you about Urban Bees. Unsubscribe whenever you like by replying to any email.',
+    newsNote:'By subscribing you agree that we use your address only to write to you about Urban Bees. Unsubscribe whenever you like from the link at the bottom of every email.',
     newsOk:'Done — we will be in touch.',
     newsBad:'Please check your email address.',
-    newsFallback:'Opening your mail app: send us the message and we will add you.',
-    newsSubject:'Urban Bees newsletter signup',
+    newsFail:'We could not sign you up. Please try again in a few minutes.',
     footFollowH:'Follow us', footAboutH:'Urban Bees',
     footProducers:'The beekeepers', footShipping:'Shipping', footContact:'Contact',
     footBeekeep:'Are you a beekeeper?',
@@ -1642,7 +1654,6 @@ function renderChrome(){
   setText('t-foot-follow-h', t.footFollowH);
   setText('t-foot-about-h', t.footAboutH);
   setText('t-foot-producers', t.footProducers);
-  setText('t-foot-shipping', t.footShipping);
   setText('t-foot-contact', t.footContact);
   setText('t-foot-beekeep', t.footBeekeep);
   setText('t-foot-rights', t.footRights);
@@ -2164,18 +2175,15 @@ function initNewsletter(){
       const r = await fetch(CHECKOUT_API.replace('/api/checkout', '/api/subscribe'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, company: el('news-company').value }),
+        body: JSON.stringify({ email, lang, company: el('news-company').value }),
       });
-      if (!r.ok) throw new Error('not configured');
+      if (!r.ok) throw new Error(`subscribe ${r.status}`);
       say(t.newsOk);
       form.reset();
     } catch (err) {
-      // Until the mail service is wired up, hand the reader their own mail client
-      // rather than swallow the address.
-      const subject = encodeURIComponent(T().newsSubject);
-      const body = encodeURIComponent(email);
-      location.href = `mailto:hey.urbanbees@gmail.com?subject=${subject}&body=${body}`;
-      say(t.newsFallback);
+      // Never send the reader off to write an email themselves: say it did
+      // not go through and leave the address in the box to try again.
+      say(t.newsFail);
     }
     btn.disabled = false;
   };
@@ -2440,17 +2448,6 @@ const POSTS = [
 
 const postBySlug = slug => POSTS.find(x => x.slug === slug);
 
-function postDate(iso){
-  const months = {
-    it:['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio',
-        'agosto','settembre','ottobre','novembre','dicembre'],
-    en:['January','February','March','April','May','June','July',
-        'August','September','October','November','December'],
-  };
-  const [y,m,d] = iso.split('-').map(Number);
-  return lang === 'en' ? `${months.en[m-1]} ${d}, ${y}` : `${d} ${months.it[m-1]} ${y}`;
-}
-
 /* A field of hexagons, drawn rather than photographed. The pattern id has to
    be unique per card or the second one reuses the first one's definition. */
 function combPanel(id){
@@ -2485,7 +2482,7 @@ function renderBlog(){
       : `<span class="shot blank">${combPanel(post.slug)}</span>`;
     return `<button class="post-card" data-slug="${post.slug}">
       ${shot}
-      <span class="post-meta">${c.kicker} · ${postDate(post.date)}</span>
+      <span class="post-meta">${c.kicker}</span>
       <h3>${c.title}</h3>
       <p>${c.lede}</p>
     </button>`;
@@ -2522,7 +2519,7 @@ function renderEntry(slug){
       <svg viewBox="0 0 10 10" fill="none" aria-hidden="true" style="width:11px;height:11px">
         <path d="M6.5 1 2.5 5l4 4" stroke="currentColor" stroke-width="1.5"
               stroke-linecap="round" stroke-linejoin="round"/></svg>${t.blogBack}</button>
-    <span class="post-meta">${c.kicker} · ${postDate(post.date)}</span>
+    <span class="post-meta">${c.kicker}</span>
     <h1>${c.title}</h1>
     <p class="lede">${c.lede}</p>
     ${post.img ? `<figure>
@@ -2557,13 +2554,20 @@ let annIndex = 0, annTimer = null;
 const ANN_EVERY = 7000;
 const annStill = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* A ticker entry is either plain text, which leads to the shop, or a
+   [text, view] pair that opens that view instead. */
+function annItem(i){
+  const it = T().ticker[i];
+  return Array.isArray(it) ? { text: it[0], go: it[1] } : { text: it, go: null };
+}
+
 function annShow(i, animate){
   const items = T().ticker;
   annIndex = (i + items.length) % items.length;
   const node = el('ann-text');
   const paint = () => {
     node.innerHTML = '';
-    node.appendChild(document.createTextNode(items[annIndex]));
+    node.appendChild(document.createTextNode(annItem(annIndex).text));
     node.insertAdjacentHTML('beforeend',
       `<svg class="arr" viewBox="0 0 14 10" fill="none" aria-hidden="true">
          <path d="M1 5h11.5M8.6 1.2 12.8 5 8.6 8.8" stroke="currentColor"
@@ -2603,6 +2607,8 @@ function renderTicker(){
 function initAnnounce(){
   const bar = document.querySelector('.announce');
   el('ann-link').onclick = () => {
+    const go = annItem(annIndex).go;
+    if (go) { showView(go); return; }
     showView('shop');
     el('facet-bar').scrollIntoView({ behavior: annStill ? 'auto' : 'smooth', block:'start' });
   };
