@@ -31,6 +31,29 @@ cart whatever its stock says. To open sales: set the real prices in both
 files, give the sizes a stock count in both files, and delete the `soon` flag
 from that product in `index.html`.
 
+### The stock counts itself, from Stripe
+
+Nothing here writes anything down. Every Stripe session carries its cart in
+`metadata.ub_items`, so what has sold can be *asked for* instead of stored:
+`/api/stock` lists the paid sessions created since `countSalesSince`, adds up
+what went out and subtracts it from the figures below. The answer is cached
+for a minute.
+
+That is why there is no database to pay for and keep alive, why the counts
+survive a restart or a redeploy, and why the shelf cannot drift from the
+money — the till and the shelf are the same record.
+
+So the numbers in this file are a **starting** stock, true as of
+`countSalesSince`. **Restocking means raising a number and moving that date**,
+otherwise sales already counted get subtracted from the new figure as well.
+
+If Stripe cannot be reached the last good answer is used, and on a cold start
+the starting figures; refusing every sale over a network blip would be a worse
+failure than briefly offering one comb too many.
+
+Bank-transfer orders are not in Stripe, so they do not count themselves. While
+that route is on, subtract those by hand.
+
 ### Packs, or a weight
 
 A size is stocked one of two ways, and the file says which.
@@ -76,6 +99,16 @@ building one; worth revisiting if it grows a lot.
   Payment methods. Asking Stripe for a method that is not activated makes the
   whole checkout fail, which is why this is a variable and not code.
 
+### Order notifications
+
+| Variable | What it is |
+| --- | --- |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_…` from the Stripe dashboard, for the endpoint above |
+| `RESEND_API_KEY` | Resend API key; without it a paid order is logged, not emailed |
+| `ORDER_EMAIL_TO` | where the order lands, e.g. `hey.urbanbees@gmail.com` |
+| `ORDER_EMAIL_FROM` | optional; defaults to Resend's shared sender until a domain is verified |
+| `RESEND_API_URL` | **tests only**: points the mailer at a stub instead of Resend |
+
 ### Bank transfer (optional)
 
 The storefront only offers the bank-transfer option when all three of these
@@ -102,6 +135,33 @@ cd server
 npm install
 STRIPE_SECRET_KEY=sk_test_... SITE_URL=http://localhost:8930 npm start
 ```
+
+## Telling Virginia an order came in
+
+Stripe calls `POST /api/stripe-webhook` when a payment succeeds, and the
+server emails her the lines, the shipping address and a reply-to. It is
+mounted before `express.json()` and takes the raw body, because Stripe signs
+the exact bytes.
+
+Set it up once, in the Stripe dashboard, **in live mode**:
+
+1. Developers → Webhooks → Add endpoint
+2. URL: `https://urbanbees-checkout.onrender.com/api/stripe-webhook`
+3. Event: `checkout.session.completed`
+4. Copy the signing secret (`whsec_…`) into `STRIPE_WEBHOOK_SECRET` on Render
+
+Without the secret the endpoint answers 503 and logs; with a wrong signature,
+400. It answers Stripe before sending the mail, because Stripe retries
+anything slow and a duplicate email is worse than a late one.
+
+If the follow-up call to Stripe for the lines and the address fails, the email
+still goes out, naming what was bought from the cart in the metadata and
+saying to open Stripe for the address. The one thing this must never do is
+stay silent.
+
+The stock does not depend on this endpoint: the same paid session it announces
+is the one `/api/stock` reads. If the webhook were down, the shelf would still
+be right and only the email would be missing.
 
 ## Endpoints
 

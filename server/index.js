@@ -19,12 +19,90 @@ if (!SITE_URL) {
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 const priceById = new Map(prices.map(p => [p.id, p]));
 
+/* ============================================================
+   What is left
+
+   Nothing here writes anything down, because Stripe already has: every paid
+   session carries the cart that produced it in its metadata, so what has been
+   sold can be asked for rather than stored. That means the counts survive a
+   restart, a redeploy and a new container without a database to pay for and
+   keep alive, and they cannot drift from the money — the till and the shelf
+   are the same record.
+
+   The figures in prices.json are therefore a *starting* stock, true as of
+   countSalesSince. Restocking means raising the number and moving that date.
+   ============================================================ */
+
+const COUNT_SINCE = Math.floor(
+  new Date(catalogue.countSalesSince || '2026-01-01T00:00:00Z').getTime() / 1000);
+
+let soldCache = { at: 0, map: null };
+
+async function soldSoFar() {
+  // One call a minute at most: the shop asks on every page load.
+  if (soldCache.map && Date.now() - soldCache.at < 60_000) return soldCache.map;
+
+  const sold = {};
+  let startingAfter;
+  for (let page = 0; page < 10; page++) {
+    const batch = await stripe.checkout.sessions.list({
+      created: { gte: COUNT_SINCE },
+      limit: 100,
+      ...(startingAfter ? { starting_after: startingAfter } : {}),
+    });
+    for (const session of batch.data) {
+      if (session.payment_status !== 'paid') continue;
+      const raw = session.metadata && session.metadata.ub_items;
+      if (!raw) continue;
+      let items;
+      try { items = JSON.parse(raw); } catch { continue; }
+      for (const [sku, qty] of Object.entries(items)) {
+        sold[sku] = (sold[sku] || 0) + Number(qty || 0);
+      }
+    }
+    if (!batch.has_more) break;
+    startingAfter = batch.data[batch.data.length - 1].id;
+  }
+
+  soldCache = { at: Date.now(), map: sold };
+  return sold;
+}
+
+/* Starting stock minus what Stripe says went out. If Stripe cannot be reached
+   the last good answer is used, and only on a cold start does it fall back to
+   the starting figures — refusing every sale because of a network blip would
+   be a worse failure than briefly offering one comb too many. */
+async function availability() {
+  let sold = {};
+  try {
+    sold = await soldSoFar();
+  } catch (err) {
+    console.error('Could not read sales from Stripe:', err.message);
+    sold = soldCache.map || {};
+  }
+
+  const items = {};
+  const grams = Object.fromEntries(
+    Object.entries(pools).map(([name, v]) => [name, v.grams ?? 0]));
+
+  for (const product of prices) {
+    const out = sold[product.id] || 0;
+    if (product.pool) {
+      grams[product.pool] = Math.max(0, (grams[product.pool] ?? 0) - out * product.g);
+    } else {
+      items[product.id] = Math.max(0, (product.stock ?? 0) - out);
+    }
+  }
+  return { items, pools: grams };
+}
+
 /* A honey cut to order has no count of packs: it has a weight, and the sizes
    share it. So stock is checked twice — once per row for countable packs, and
    once per pool for the grams a whole cart asks for. Doing it per line would
    let three 400 g combs through on 1 kg of honey, because each line on its own
    looks fine. */
-function checkCart(cart){
+async function checkCart(cart){
+  const left = await availability();
   const used = {};
   for (const [idStr, qty] of Object.entries(cart)) {
     const product = priceById.get(Number(idStr));
@@ -34,14 +112,14 @@ function checkCart(cart){
     }
     if (product.pool) {
       used[product.pool] = (used[product.pool] || 0) + product.g * quantity;
-    } else if (quantity > (product.stock ?? 0)) {
-      return { error: 'Out of stock', id: product.id, left: product.stock ?? 0, status: 409 };
+    } else if (quantity > (left.items[product.id] ?? 0)) {
+      return { error: 'Out of stock', id: product.id, left: left.items[product.id] ?? 0, status: 409 };
     }
   }
-  for (const [name, grams] of Object.entries(used)) {
-    const have = pools[name] ? pools[name].grams : 0;
-    if (grams > have) {
-      return { error: 'Out of stock', pool: name, wanted: grams, left: have, status: 409 };
+  for (const [name, gramsWanted] of Object.entries(used)) {
+    const have = left.pools[name] ?? 0;
+    if (gramsWanted > have) {
+      return { error: 'Out of stock', pool: name, wanted: gramsWanted, left: have, status: 409 };
     }
   }
   return null;
@@ -62,18 +140,70 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
 
 const app = express();
 app.use(cors({ origin: ALLOWED_ORIGINS }));
+
+/* ============================================================
+   Stripe webhook
+
+   Mounted before express.json(), and only for this path, because Stripe signs
+   the raw bytes: parsing them to an object first and re-serialising would
+   change them and the signature would never verify.
+
+   Its job is to tell Virginia. The stock takes care of itself — the same paid
+   session this call announces is the one availability() reads — so if this
+   endpoint were down the shelf would still be right and only the email would
+   be missing.
+   ============================================================ */
+
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
+
+app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!STRIPE_WEBHOOK_SECRET) {
+    console.error('Webhook received but STRIPE_WEBHOOK_SECRET is not set.');
+    return res.status(503).send('not configured');
+  }
+
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(
+      req.body, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    // Anyone can POST here; only Stripe can sign.
+    console.error('Webhook signature rejected:', err.message);
+    return res.status(400).send('bad signature');
+  }
+
+  // Answer first: Stripe retries anything slow or failed, and a second email
+  // for the same order is worse than a late one.
+  res.json({ received: true });
+
+  if (event.type !== 'checkout.session.completed') return;
+  const session = event.data.object;
+  if (session.payment_status !== 'paid') return;
+
+  // A sale means the figures on the shelf are stale.
+  soldCache = { at: 0, map: null };
+
+  if (!RESEND_API_KEY || !ORDER_EMAIL_TO) {
+    console.error('Paid order received but no mail is configured:', session.id);
+    return;
+  }
+
+  try {
+    await emailPaidOrder(session);
+    console.log('Order email sent for session', session.id);
+  } catch (err) {
+    console.error('Could not email the order for', session.id, err.message);
+  }
+});
+
 app.use(express.json());
 
 app.get('/health', (req, res) => res.json({ ok: true }));
 
 // What is actually left, straight from the authoritative copy. The storefront
 // asks on load so a page left open overnight does not keep offering sold-out jars.
-app.get('/api/stock', (req, res) => {
-  const perItem = Object.fromEntries(
-    prices.filter(p => !p.pool).map(p => [p.id, p.stock ?? 0]));
-  const perPool = Object.fromEntries(
-    Object.entries(pools).map(([name, v]) => [name, v.grams ?? 0]));
-  res.json({ items: perItem, pools: perPool });
+app.get('/api/stock', async (req, res) => {
+  res.json(await availability());
 });
 
 app.post('/api/checkout', async (req, res) => {
@@ -89,7 +219,7 @@ app.post('/api/checkout', async (req, res) => {
 
     // Stock is checked here, not in the browser: the page's copy is only for
     // display and anyone can edit it. The whole cart is weighed at once.
-    const bad = checkCart(cart);
+    const bad = await checkCart(cart);
     if (bad) throw new Error(`${bad.error}: ${JSON.stringify(bad)}`);
 
     const line_items = Object.entries(cart).map(([idStr, qty]) => {
@@ -125,6 +255,9 @@ app.post('/api/checkout', async (req, res) => {
       // Italy only for now: the business is not yet set up to charge another
       // country's VAT, and honey is restricted at several non-EU borders.
       shipping_address_collection: { allowed_countries: ['IT'] },
+      // The cart rides along so a paid session can be read back as a sale.
+      // This is what makes the stock count possible without a database.
+      metadata: { ub_items: JSON.stringify(cart).slice(0, 480) },
       success_url: `${returnTo}/?success=1`,
       cancel_url: `${returnTo}/?canceled=1`,
     });
@@ -154,6 +287,7 @@ const BANK = {
   bank: process.env.BANK_NAME || '',
 };
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
+const RESEND_API_URL = process.env.RESEND_API_URL || 'https://api.resend.com/emails';
 const ORDER_EMAIL_TO = process.env.ORDER_EMAIL_TO || '';
 // Resend will only send from a domain you have verified with it. Until
 // urbanbees.it is verified there, its shared test sender works.
@@ -206,7 +340,7 @@ const esc = v => String(v).replace(/[&<>"]/g,
   c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
 async function sendEmail({ to, subject, html, replyTo }) {
-  const r = await fetch('https://api.resend.com/emails', {
+  const r = await fetch(RESEND_API_URL, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${RESEND_API_KEY}`,
@@ -221,6 +355,77 @@ async function sendEmail({ to, subject, html, replyTo }) {
     }),
   });
   if (!r.ok) throw new Error(`Resend ${r.status}`);
+}
+
+/* When the lines could not be fetched, the cart we put in the metadata is
+   still there, so the email can at least say what was bought. */
+function itemsFromMetadata(session) {
+  const raw = session.metadata && session.metadata.ub_items;
+  if (!raw) return 'Vedi l\'ordine su Stripe';
+  try {
+    return Object.entries(JSON.parse(raw)).map(([sku, qty]) => {
+      const product = priceById.get(Number(sku));
+      return `${qty}× ${product ? product.name.it + ' (' + product.unit.it + ')' : 'codice ' + sku}`;
+    }).join(' · ');
+  } catch {
+    return 'Vedi l\'ordine su Stripe';
+  }
+}
+
+/* What Virginia needs in order to pack a parcel: what, how much, where to,
+   and who to answer. Everything here comes from Stripe, not from the browser. */
+async function emailPaidOrder(session) {
+  /* The event already carries enough to raise the alarm. Asking Stripe for the
+     lines and the address makes a better email, but if that call fails the
+     notification must still go out: an order nobody hears about is the whole
+     thing this endpoint exists to prevent. */
+  let full = session;
+  try {
+    full = await stripe.checkout.sessions.retrieve(session.id, { expand: ['line_items'] });
+  } catch (err) {
+    console.error('Could not expand session', session.id, '—', err.message);
+  }
+
+  const items = (full.line_items && full.line_items.data) || [];
+  const rows = items.length
+    ? items.map(li =>
+        `<tr><td>${esc(li.quantity)}&times;</td><td>${esc(li.description || '')}</td>` +
+        `<td align="right">${money((li.amount_total || 0) / 100)}</td></tr>`).join('')
+    : `<tr><td colspan="3">${esc(itemsFromMetadata(full))}</td></tr>`;
+
+  const ship = full.shipping_details || full.customer_details || {};
+  const addr = ship.address || {};
+  const lines = [
+    ship.name,
+    addr.line1, addr.line2,
+    [addr.postal_code, addr.city, addr.state].filter(Boolean).join(' '),
+    addr.country,
+  ].filter(Boolean).map(esc).join('<br>');
+
+  const email = (full.customer_details && full.customer_details.email) || '';
+  const phone = (full.customer_details && full.customer_details.phone) || '';
+
+  await sendEmail({
+    to: ORDER_EMAIL_TO,
+    replyTo: email || undefined,
+    subject: `Ordine pagato — ${money((full.amount_total || 0) / 100)}`,
+    html: `
+      <h2 style="font-family:system-ui,sans-serif">Ordine pagato</h2>
+      <table cellpadding="6" style="font-family:system-ui,sans-serif;border-collapse:collapse">
+        ${rows}
+        <tr><td></td><td><b>Totale</b></td>
+            <td align="right"><b>${money((full.amount_total || 0) / 100)}</b></td></tr>
+      </table>
+      <h3 style="font-family:system-ui,sans-serif">Spedire a</h3>
+      <p style="font-family:system-ui,sans-serif">${lines || '—'}</p>
+      <p style="font-family:system-ui,sans-serif">
+        ${email ? esc(email) : ''}${phone ? '<br>' + esc(phone) : ''}
+      </p>
+      <p style="font-family:system-ui,sans-serif;color:#666;font-size:13px">
+        Pagato con carta su Stripe. Riferimento: ${esc(full.id)}
+        ${lines ? '' : '<br><b>Indirizzo non disponibile qui: aprilo su Stripe.</b>'}
+      </p>`,
+  });
 }
 
 app.post('/api/subscribe', async (req, res) => {
@@ -292,7 +497,7 @@ app.post('/api/order/bank-transfer', async (req, res) => {
     if (!cart || typeof cart !== 'object' || Array.isArray(cart)) {
       return res.status(400).json({ error: 'Invalid cart' });
     }
-    const bad = checkCart(cart);
+    const bad = await checkCart(cart);
     if (bad) {
       const { status, ...body } = bad;
       return res.status(status).json(body);
