@@ -1494,11 +1494,14 @@ const PRODUCTS = [
    desc:{it:'Il favo intero, così come le api lo hanno costruito e sigillato: nessuna estrazione, nessun filtro, nessun passaggio in centrifuga. Si taglia a pezzi e si mangia tutto, cera compresa — è cera d\'api vergine, masticabile e commestibile. L\'acacia è la più delicata delle fioriture e nel favo resta liquida a lungo, con il profumo che la cera tiene chiuso fino al momento in cui lo apri.',
          en:'The whole comb, exactly as the bees built and sealed it: no extraction, no filtering, no spinning. Cut a piece and eat all of it, wax included — it is virgin beeswax, chewable and edible. Acacia is the most delicate of blooms, and in the comb it stays liquid for a long time, its scent held shut by the wax until you open it.'}},
 
-  {id:2, sku:2, farm:'Apicoltura Marco Ruga', soon:true, emoji:'🍯', img:'prodotti/ruga-tiglio.webp',
+  {id:2, sku:2, farm:'Apicoltura Marco Ruga', emoji:'🍯', img:'prodotti/ruga-tiglio.webp',
    tastes:['balsamic'],
-   sizes:[{sku:201, g:125, price:12.90, stock:0},
-          {sku:202, g:200, price:19.00, stock:0},
-          {sku:203, g:400, price:35.00, stock:0}],
+   /* Cut to order from one weight rather than stocked as packs: the three
+      sizes share these grams and a cart is weighed against them. */
+   pool:'ruga-tiglio', grams:2000,
+   sizes:[{sku:201, g:125, price:12.90},
+          {sku:202, g:200, price:19.00},
+          {sku:203, g:400, price:35.00}],
    cat:{it:'Aromatico',en:'Aromatic'},
    name:{it:'Favo di Tiglio',en:'Linden Comb'},
    region:{it:'Lombardia',en:'Lombardy'},
@@ -1510,21 +1513,20 @@ const PRODUCTS = [
    desc:{it:'Il tiglio non è un miele facile: è fresco, quasi mentolato, e chiude con un fondo amaro che la prima volta non ti aspetti e che poi vai a cercare. Nel favo quell\'aroma resta chiuso nella cera fino al momento in cui lo tagli, cosa che il miele estratto non può fare. Marco porta gli apiari in montagna per questa fioritura, che dura poche settimane e certe annate non si raccoglie affatto.',
          en:'Linden is not an easy honey: fresh, almost minty, closing on a bitter note you do not expect the first time and then go looking for. In the comb that aroma stays shut inside the wax until you cut it, which extracted honey cannot do. Marco takes his hives up the mountain for this bloom, which lasts a few weeks and in some years gives nothing at all.'}},
 
-  {id:3, sku:3, farm:'Apicoltura El Veler', soon:true, emoji:'🍯', img:null,
+  {id:3, sku:3, farm:'Apicoltura El Veler', emoji:'🍯', img:null,
+   unitWord:{it:'vaschetta',en:'tray'},
    tastes:['floral'],
-   sizes:[{sku:301, g:125, price:12.90, stock:0},
-          {sku:302, g:200, price:19.00, stock:0},
-          {sku:303, g:400, price:35.00, stock:0}],
+   sizes:[{sku:303, g:400, price:35.00, stock:4}],
    cat:{it:'Delicato',en:'Delicate'},
-   name:{it:'Miele in favo',en:'Honey in the Comb'},
+   name:{it:'Favo Millefiori',en:'Wildflower Comb'},
    region:{it:'Lombardia',en:'Lombardy'},
-   color:{it:'Varia con la fioritura e con l\'annata',en:'Varies with the bloom and the year'},
-   harvest:{it:'Secondo la fioritura',en:'Depending on the bloom'},
-   crystal:{it:'Dipende dal raccolto',en:'Depends on the harvest'},
-   flavor:{it:'Cambia a ogni raccolto: te lo diciamo quando ordini',en:'Changes with every harvest: we tell you when you order'},
-   pairing:{it:'Formaggi, colazione, da solo a cucchiaio',en:'Cheese, breakfast, on its own by the spoon'},
-   desc:{it:'El Veler lavora sull\'alto lago di Como e in montagna, e il favo che arriva dipende da cosa ha dato la stagione: tiglio, castagno, millefiori o acacia. Non scegliamo noi la fioritura, la sceglie l\'annata — e preferiamo dirti quale ti stiamo mandando piuttosto che promettertene una che non c\'è.',
-         en:'El Veler works the upper reaches of Lake Como and the mountains above it, and which comb arrives depends on what the season gave: linden, chestnut, wildflower or acacia. We do not choose the bloom, the year does — and we would rather tell you which one we are sending than promise you one that does not exist.'}},
+   color:{it:'Ambra dorato, diverso a ogni annata',en:'Golden amber, different every year'},
+   harvest:{it:'Estate',en:'Summer'},
+   crystal:{it:'Cristallizza lentamente dentro le celle',en:'Crystallises slowly inside the cells'},
+   flavor:{it:'Equilibrato, floreale, mai uguale',en:'Balanced, floral, never the same twice'},
+   pairing:{it:'Formaggi freschi, colazione, da solo a cucchiaio',en:'Fresh cheese, breakfast, on its own by the spoon'},
+   desc:{it:'Il millefiori è la fotografia di una stagione: quello che le api hanno trovato sull\'alto lago di Como e sulle montagne sopra, sigillato come l\'hanno lasciato. Per questo nessun raccolto è uguale al precedente — cambia il colore, cambia il profumo, cambia quanto resta liquido. Quattro vaschette da 400 grammi: quando finiscono, si aspetta l\'estate.',
+         en:'Wildflower honey is a photograph of a season: whatever the bees found on the upper reaches of Lake Como and the mountains above it, sealed as they left it. No two harvests are alike — the colour changes, the scent changes, how long it stays liquid changes. Four 400 g trays: when they are gone, we wait for summer.'}},
 ];
 
 const FARMERS = [
@@ -1552,13 +1554,19 @@ function allSizes(){
 function findSku(sku){
   return allSizes().find(x => x.s.sku === +sku) || null;
 }
-function sizeLabel(g){
-  return (lang === 'en' ? 'comb ' : 'favo ') + g + ' g';
+/* Most of these are combs cut to size; El Veler's come ready in trays, and
+   the word has to match what the server writes on the order. */
+function sizeLabel(g, p){
+  const word = p && p.unitWord ? p.unitWord[lang] : (lang === 'en' ? 'comb' : 'favo');
+  return word + ' ' + g + ' g';
 }
 function cheapest(p){
   return p.sizes.reduce((a, b) => (a.price <= b.price ? a : b));
 }
+/* Whether anything at all can still be bought: packs left, or enough grams
+   for the smallest size on offer. */
 function anyStock(p){
+  if (p.pool) return (p.grams ?? 0) >= Math.min(...p.sizes.map(s => s.g)) ? 1 : 0;
   return p.sizes.reduce((n, s) => n + (s.stock ?? 0), 0);
 }
 
@@ -1858,7 +1866,7 @@ function renderGrid(){
       // has to be made on the product page first.
       if (prod && prod.sizes.length === 1 && (prod.sizes[0].stock ?? 0) > 0){
         addToCart(prod.sizes[0].sku);
-        flashAdded(b);
+        flashAdded(b, () => renderGrid());
       } else {
         openDetail(+b.dataset.id);
       }
@@ -1866,11 +1874,16 @@ function renderGrid(){
   });
 }
 
-function flashAdded(btn){
-  const t = T();
-  btn.textContent = t.added;
+/* "Aggiunto" is shown for a moment and then the button has to go back to
+   whatever is true by then — which may be "Esaurito", if that was the last
+   one. Restoring the label blindly left a dead button inviting another click. */
+function flashAdded(btn, after){
+  btn.textContent = T().added;
   btn.classList.add('added');
-  setTimeout(() => { btn.textContent = T().add; btn.classList.remove('added'); }, 1300);
+  setTimeout(() => {
+    btn.classList.remove('added');
+    if (after) after(); else btn.textContent = T().add;
+  }, 1300);
 }
 
 /* ============ producers ============ */
@@ -1918,7 +1931,7 @@ function renderDetail(id){
   const pick = el('d-sizes');
   pick.hidden = p.sizes.length < 2;
   pick.innerHTML = p.sizes.map(x => {
-    const gone = (x.stock ?? 0) <= 0 && !p.soon;
+    const gone = !p.soon && stockOf(x.sku) <= (cart[x.sku] || 0);
     return `<button class="size${x.sku === detailSku ? ' on' : ''}${gone ? ' gone' : ''}"
       data-sku="${x.sku}">${x.g} g<span>${money(x.price)}</span></button>`;
   }).join('');
@@ -1927,18 +1940,22 @@ function renderDetail(id){
   });
 
   const chosen = p.sizes.find(x => x.sku === detailSku);
-  el('d-price').innerHTML = `${money(chosen.price)}<span>${sizeLabel(chosen.g)}</span>`;
+  el('d-price').innerHTML = `${money(chosen.price)}<span>${sizeLabel(chosen.g, p)}</span>`;
 
-  const left = chosen.stock ?? 0;
+  const room = stockOf(chosen.sku) - (cart[chosen.sku] || 0);
   const add = el('d-add');
   add.classList.remove('added');
-  add.disabled = p.soon || left <= 0;
-  add.textContent = p.soon ? t.comingSoon : left <= 0 ? t.soldOut : t.add;
-  add.onclick = () => { if (!add.disabled){ addToCart(chosen.sku); flashAdded(add); } };
+  add.disabled = p.soon || room <= 0;
+  add.textContent = p.soon ? t.comingSoon : room <= 0 ? t.soldOut : t.add;
+  add.onclick = () => {
+    if (add.disabled) return;
+    addToCart(chosen.sku);
+    flashAdded(add, () => renderDetail(id));
+  };
 
   const note = el('d-note');
-  note.hidden = !(p.soon || left <= 0);
-  note.innerHTML = p.soon ? t.soonNote : left <= 0 ? t.soldNote : '';
+  note.hidden = !(p.soon || room <= 0);
+  note.innerHTML = p.soon ? t.soonNote : room <= 0 ? t.soldNote : '';
 
   el('d-specs').innerHTML = [
     [t.charColor, p.color[lang]],
@@ -1954,9 +1971,22 @@ function renderDetail(id){
 /* ============ cart ============ */
 /* The page ships with a stock figure per honey, and asks the server for the
    current one on load. Either way the server has the last word at checkout. */
+/* How many more of this size the cart may take. For a honey cut from one
+   weight that depends on everything already in the cart from the same honey,
+   which is why it is worked out here rather than read off the size. */
 function stockOf(sku){
   const hit = findSku(sku);
-  return hit ? (hit.s.stock ?? 0) : 0;
+  if (!hit) return 0;
+  const { p, s } = hit;
+  if (!p.pool) return s.stock ?? 0;
+  return Math.floor(gramsLeft(p) / s.g) + (cart[s.sku] || 0);
+}
+
+function gramsUsed(p){
+  return p.sizes.reduce((n, s) => n + (cart[s.sku] || 0) * s.g, 0);
+}
+function gramsLeft(p){
+  return Math.max(0, (p.grams ?? 0) - gramsUsed(p));
 }
 
 async function loadStock(){
@@ -1964,7 +1994,12 @@ async function loadStock(){
     const r = await fetch(CHECKOUT_API.replace('/api/checkout', '/api/stock'));
     if (!r.ok) return;
     const live = await r.json();
-    allSizes().forEach(({ s }) => { if (live[s.sku] !== undefined) s.stock = live[s.sku]; });
+    const items = live.items || {};
+    const pools = live.pools || {};
+    allSizes().forEach(({ p, s }) => {
+      if (!p.pool && items[s.sku] !== undefined) s.stock = items[s.sku];
+    });
+    PRODUCTS.forEach(p => { if (p.pool && pools[p.pool] !== undefined) p.grams = pools[p.pool]; });
     // A comb that sold out while the tab was open must leave the cart too.
     Object.keys(cart).forEach(sku => {
       const left = stockOf(sku);
@@ -1982,6 +2017,9 @@ function addToCart(sku){
   if (have >= left) { showToast(T().toastMax); return; }
   cart[sku] = have + 1;
   updateCount();
+  if (el('view-detail').classList.contains('active') && currentDetailId != null) {
+    renderDetail(currentDetailId);
+  }
   showToast(T().toastAdd);
 }
 
@@ -2032,7 +2070,7 @@ function renderCart(){
         ${tile}
         <div>
           <div class="cart-name">${p.name[lang]}</div>
-          <div class="cart-sub">${p.farm} · ${sizeLabel(s.g)} · ${money(s.price)}</div>
+          <div class="cart-sub">${p.farm} · ${sizeLabel(s.g, p)} · ${money(s.price)}</div>
         </div>
         <div class="qty">
           <button onclick="chQty(${s.sku},-1)" aria-label="−">−</button>
@@ -2166,7 +2204,7 @@ function renderMission(){
 
 /* Set PHONE to the number to publish, e.g. '+39 333 1234567'. While it is
    empty the contact page simply has no telephone line. */
-const PHONE = '';
+const PHONE = '+39 347 392 9653';
 
 function renderContactPages(){
   const t = T();

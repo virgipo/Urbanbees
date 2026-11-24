@@ -31,6 +31,22 @@ cart whatever its stock says. To open sales: set the real prices in both
 files, give the sizes a stock count in both files, and delete the `soon` flag
 from that product in `index.html`.
 
+### Packs, or a weight
+
+A size is stocked one of two ways, and the file says which.
+
+**Countable packs** carry `stock`: El Veler's four 400 g trays are four
+things, and the fourth order takes the last one.
+
+**A weight** is for honey cut to order. Marco Ruga sent two kilos of comb; it
+is not six of this and four of that, it is 2000 grams that can be cut any way
+a customer asks. Those sizes carry `pool` and `g` instead of `stock`, and the
+pool's grams live under `pools`. The server adds up the grams a whole cart
+asks for and refuses to go past the pool — checking line by line would let
+three 400 g combs through on a kilo, because each line on its own looks fine.
+
+After shipping, lower the pool's grams by what you cut, in both files.
+
 ### Stock
 
 Each entry carries a `stock` count. **This file is the one that counts**: the

@@ -1,7 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const Stripe = require('stripe');
-const prices = require('./prices.json');
+const catalogue = require('./prices.json');
+const prices = catalogue.items;
+const pools = catalogue.pools || {};
 
 const { STRIPE_SECRET_KEY, SITE_URL, PORT } = process.env;
 
@@ -16,6 +18,34 @@ if (!SITE_URL) {
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
 const priceById = new Map(prices.map(p => [p.id, p]));
+
+/* A honey cut to order has no count of packs: it has a weight, and the sizes
+   share it. So stock is checked twice — once per row for countable packs, and
+   once per pool for the grams a whole cart asks for. Doing it per line would
+   let three 400 g combs through on 1 kg of honey, because each line on its own
+   looks fine. */
+function checkCart(cart){
+  const used = {};
+  for (const [idStr, qty] of Object.entries(cart)) {
+    const product = priceById.get(Number(idStr));
+    const quantity = Number(qty);
+    if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
+      return { error: 'Invalid cart line', id: idStr, status: 400 };
+    }
+    if (product.pool) {
+      used[product.pool] = (used[product.pool] || 0) + product.g * quantity;
+    } else if (quantity > (product.stock ?? 0)) {
+      return { error: 'Out of stock', id: product.id, left: product.stock ?? 0, status: 409 };
+    }
+  }
+  for (const [name, grams] of Object.entries(used)) {
+    const have = pools[name] ? pools[name].grams : 0;
+    if (grams > have) {
+      return { error: 'Out of stock', pool: name, wanted: grams, left: have, status: 409 };
+    }
+  }
+  return null;
+}
 
 // Which payment methods Stripe should offer. Each one has to be switched on in
 // the Stripe dashboard first: asking for one that is not activated makes the
@@ -39,7 +69,11 @@ app.get('/health', (req, res) => res.json({ ok: true }));
 // What is actually left, straight from the authoritative copy. The storefront
 // asks on load so a page left open overnight does not keep offering sold-out jars.
 app.get('/api/stock', (req, res) => {
-  res.json(Object.fromEntries(prices.map(p => [p.id, p.stock ?? 0])));
+  const perItem = Object.fromEntries(
+    prices.filter(p => !p.pool).map(p => [p.id, p.stock ?? 0]));
+  const perPool = Object.fromEntries(
+    Object.entries(pools).map(([name, v]) => [name, v.grams ?? 0]));
+  res.json({ items: perItem, pools: perPool });
 });
 
 app.post('/api/checkout', async (req, res) => {
@@ -53,18 +87,15 @@ app.post('/api/checkout', async (req, res) => {
       return res.status(400).json({ error: 'Invalid cart' });
     }
 
+    // Stock is checked here, not in the browser: the page's copy is only for
+    // display and anyone can edit it. The whole cart is weighed at once.
+    const bad = checkCart(cart);
+    if (bad) throw new Error(`${bad.error}: ${JSON.stringify(bad)}`);
+
     const line_items = Object.entries(cart).map(([idStr, qty]) => {
       const id = Number(idStr);
       const quantity = Number(qty);
       const product = priceById.get(id);
-      if (!product || !Number.isInteger(quantity) || quantity < 1) {
-        throw new Error(`Invalid cart line: id=${idStr} qty=${qty}`);
-      }
-      // Stock is checked here, not in the browser: the page's copy is only for
-      // display and anyone can edit it.
-      if (quantity > (product.stock ?? 0)) {
-        throw new Error(`Out of stock: id=${idStr} wanted=${quantity} left=${product.stock ?? 0}`);
-      }
       return {
         quantity,
         price_data: {
@@ -261,21 +292,17 @@ app.post('/api/order/bank-transfer', async (req, res) => {
     if (!cart || typeof cart !== 'object' || Array.isArray(cart)) {
       return res.status(400).json({ error: 'Invalid cart' });
     }
+    const bad = checkCart(cart);
+    if (bad) {
+      const { status, ...body } = bad;
+      return res.status(status).json(body);
+    }
+
     const lines = [];
     let total = 0;
     for (const [idStr, qty] of Object.entries(cart)) {
       const product = priceById.get(Number(idStr));
       const quantity = Number(qty);
-      if (!product || !Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
-        return res.status(400).json({ error: 'Invalid cart line' });
-      }
-      if (quantity > (product.stock ?? 0)) {
-        return res.status(409).json({
-          error: 'Out of stock',
-          id: product.id,
-          left: product.stock ?? 0,
-        });
-      }
       const sum = product.price * quantity;
       total += sum;
       lines.push({ name: product.name[it ? 'it' : 'en'], unit: product.unit[it ? 'it' : 'en'], quantity, sum });
