@@ -10,6 +10,27 @@ frontend a redirect URL.
 `index.html`. When you add, remove, re-price **or re-stock** a honey on the
 site, update both files.
 
+### One row per size, not per honey
+
+A honey is one card on the site and several rows here: each size is its own
+code, and the cart, the stock check and the checkout all work on those codes
+and never need to know that two of them are the same honey. The code is
+`<beekeeper><size>`: 1xx Cazzola, 2xx Marco Ruga, 3xx El Veler, and within a
+beekeeper x01 = 125 g, x02 = 200 g, x03 = 400 g. In `index.html` the same
+number is the `sku` of an entry in a product's `sizes` array.
+
+Codes must never be reused for something else. A visitor with the shop open
+holds codes in the page, and the server would happily sell them whatever that
+code means at checkout time.
+
+### Putting a honey on sale
+
+A product carries `soon: true` while it is announced but not sellable: the
+card and the button read "Presto disponibile" and nothing can be added to the
+cart whatever its stock says. To open sales: set the real prices in both
+files, give the sizes a stock count in both files, and delete the `soon` flag
+from that product in `index.html`.
+
 ### Stock
 
 Each entry carries a `stock` count. **This file is the one that counts**: the
@@ -20,11 +41,11 @@ the number here before it is accepted.
 It does **not** count down by itself. Nothing is written back after a sale,
 because the server keeps no state between restarts. So after shipping, lower
 the number here and in `index.html`, and commit. Two people buying the last
-jar in the same minute will both get through; with ten jars per honey that is
-a small risk, and the fix when it stops being small is a real datastore
-(Render Key Value or Postgres) holding the counts. There's no shared data source yet — for a catalog this size
-(8 items) duplicating with this warning was simpler than building one; worth
-revisiting if the catalog grows a lot.
+comb in the same minute will both get through; at these quantities that is a
+small risk, and the fix when it stops being small is a real datastore (Render
+Key Value or Postgres) holding the counts. There's no shared data source yet —
+for a catalogue this size duplicating with this warning was simpler than
+building one; worth revisiting if it grows a lot.
 
 ## Environment variables
 
