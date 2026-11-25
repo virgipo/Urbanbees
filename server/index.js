@@ -120,6 +120,9 @@ app.post('/api/checkout', async (req, res) => {
       // Shows the "Add promotion code" field on Stripe's page. The codes
       // themselves are created in the Stripe dashboard, not here.
       allow_promotion_codes: true,
+      // Asks for a phone number on Stripe's page, so the courier and we can
+      // reach the customer. It arrives on the session as customer_details.phone.
+      phone_number_collection: { enabled: true },
       line_items,
       locale,
       // Italy only for now: the business is not yet set up to charge another
@@ -223,9 +226,25 @@ async function sendEmail({ to, subject, html, replyTo }) {
   if (!r.ok) throw new Error(`Resend ${r.status}`);
 }
 
+/* Newsletter signups are written to a Google Sheet: the server posts each
+   address to a small Google Apps Script web app bound to that sheet, which
+   appends a row (see server/README.md). Set NEWSLETTER_SHEET_URL on Render
+   to that web app's URL. Without it, each signup is emailed to
+   ORDER_EMAIL_TO instead, so no address is ever lost. */
+const NEWSLETTER_SHEET_URL = process.env.NEWSLETTER_SHEET_URL || '';
+
+async function addToSheet(email, lang){
+  const r = await fetch(NEWSLETTER_SHEET_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, lang, source: 'sito' }),
+    redirect: 'follow',     // Apps Script answers through a redirect
+  });
+  if (!r.ok) throw new Error(`Sheet ${r.status}`);
+}
+
 app.post('/api/subscribe', async (req, res) => {
-  if (!RESEND_API_KEY || !ORDER_EMAIL_TO) {
-    // The page falls back to opening the reader's mail client.
+  if (!NEWSLETTER_SHEET_URL && (!RESEND_API_KEY || !ORDER_EMAIL_TO)) {
     return res.status(503).json({ error: 'Newsletter is not configured' });
   }
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
@@ -237,6 +256,11 @@ app.post('/api/subscribe', async (req, res) => {
   if (!looksLikeEmail(email)) return res.status(400).json({ error: 'Invalid email' });
 
   try {
+    if (NEWSLETTER_SHEET_URL) {
+      await addToSheet(email, (req.body || {}).lang === 'en' ? 'en' : 'it');
+      console.log('Newsletter signup saved');   // the address itself stays out of the logs
+      return res.json({ ok: true });
+    }
     await sendEmail({
       to: ORDER_EMAIL_TO,
       replyTo: email,

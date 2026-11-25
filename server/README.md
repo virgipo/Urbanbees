@@ -95,6 +95,32 @@ are set; otherwise the button stays hidden and `/api/config` reports it off.
 No order is written to disk: the customer's details go into the two emails and
 are then discarded. Only the reference and the total reach the logs.
 
+### Newsletter (Google Sheet)
+
+- `NEWSLETTER_SHEET_URL` — the URL of a Google Apps Script web app bound to
+  the sheet that holds the list. Each signup from the site is posted there and
+  becomes a row. Without it, signups are emailed to `ORDER_EMAIL_TO` (needs
+  `RESEND_API_KEY`); with neither, the form says it could not sign you up.
+
+The script, pasted into the sheet via Extensions → Apps Script and deployed as
+a web app (Execute as: me, Who has access: Anyone):
+
+```js
+function doPost(e) {
+  const d = JSON.parse(e.postData.contents);
+  const email = String(d.email || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return out({ ok: false });
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  if (sheet.getLastRow() === 0) sheet.appendRow(['Data', 'Email', 'Lingua', 'Fonte']);
+  const known = sheet.getRange(1, 2, sheet.getLastRow(), 1).getValues().flat();
+  if (!known.includes(email)) sheet.appendRow([new Date(), email, d.lang || '', d.source || '']);
+  return out({ ok: true });
+}
+function out(o) {
+  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+```
+
 ## Local run
 
 ```
