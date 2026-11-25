@@ -17,6 +17,13 @@ if (!SITE_URL) {
 }
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
+
+// Shipping: a flat fee on small orders, free from a threshold. The storefront
+// shows the same two numbers in the cart (SHIPPING in index.html), so change
+// them together.
+const SHIPPING_FEE = 4.90;
+const FREE_SHIPPING_FROM = 35;
+const shippingFor = subtotal => (subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE);
 const priceById = new Map(prices.map(p => [p.id, p]));
 
 /* A honey cut to order has no count of packs: it has a weight, and the sizes
@@ -113,6 +120,25 @@ app.post('/api/checkout', async (req, res) => {
       return res.status(400).json({ error: 'Cart is empty' });
     }
 
+    // Decided on the cart before any promotion code, which Stripe applies
+    // later on its own page.
+    const subtotal = Object.entries(cart).reduce(
+      (n, [id, qty]) => n + priceById.get(Number(id)).price * Number(qty), 0);
+    const fee = shippingFor(Math.round(subtotal * 100) / 100);
+    const shipping_options = [{
+      shipping_rate_data: {
+        type: 'fixed_amount',
+        fixed_amount: { amount: Math.round(fee * 100), currency: 'eur' },
+        display_name: fee
+          ? (locale === 'it' ? 'Spedizione' : 'Shipping')
+          : (locale === 'it' ? 'Spedizione gratuita' : 'Free shipping'),
+        delivery_estimate: {
+          minimum: { unit: 'business_day', value: 2 },
+          maximum: { unit: 'business_day', value: 4 },
+        },
+      },
+    }];
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       // Apple Pay and Google Pay ride along with 'card' and need no entry here.
@@ -128,6 +154,7 @@ app.post('/api/checkout', async (req, res) => {
       // Italy only for now: the business is not yet set up to charge another
       // country's VAT, and honey is restricted at several non-EU borders.
       shipping_address_collection: { allowed_countries: ['IT'] },
+      shipping_options,
       success_url: `${returnTo}/?success=1`,
       cancel_url: `${returnTo}/?canceled=1`,
     });
@@ -333,6 +360,8 @@ app.post('/api/order/bank-transfer', async (req, res) => {
     }
     if (!lines.length) return res.status(400).json({ error: 'Cart is empty' });
     total = Math.round(total * 100) / 100;
+    const shipping = shippingFor(total);
+    total = Math.round((total + shipping) * 100) / 100;
 
     const reference = orderReference();
     const rows = lines.map(l =>
@@ -342,6 +371,8 @@ app.post('/api/order/bank-transfer', async (req, res) => {
     const orderTable =
       `<table cellpadding="6" style="border-collapse:collapse;font-family:sans-serif;font-size:14px">` +
       rows +
+      `<tr><td></td><td>${it ? 'Spedizione' : 'Shipping'}</td>` +
+      `<td align="right">${shipping ? money(shipping) : (it ? 'Gratis' : 'Free')}</td></tr>` +
       `<tr><td></td><td><strong>${it ? 'Totale' : 'Total'}</strong></td>` +
       `<td align="right"><strong>${money(total)}</strong></td></tr></table>`;
 
@@ -392,8 +423,8 @@ app.post('/api/order/bank-transfer', async (req, res) => {
             : '<strong>Please quote the reference exactly</strong>: it is how we match your payment to your order.'}</p>
           ${orderTable}
           <p>${it
-            ? 'Spediamo appena il bonifico arriva, di solito in due o tre giorni lavorativi. Spedizione inclusa.'
-            : 'We ship as soon as the transfer arrives, usually within two or three working days. Shipping included.'}</p>
+            ? 'Spediamo appena il bonifico arriva, di solito in due o tre giorni lavorativi.'
+            : 'We ship as soon as the transfer arrives, usually within two or three working days.'}</p>
           <p style="color:#6E6A64">Urban Bees — urbanbees.it</p>
         </div>`,
     });

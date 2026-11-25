@@ -477,6 +477,7 @@ a{color:inherit;text-decoration:none}
 .srow{display:flex;justify-content:space-between;gap:14px;font-size:14px;padding:7px 0;color:var(--ink-2)}
 .srow span:last-child{font-variant-numeric:tabular-nums;color:var(--ink)}
 .srow.free span:last-child{color:var(--accent);font-weight:600}
+.summary-ship{margin:-2px 0 8px;font-size:12.5px;color:var(--ink-3)}
 .srow.total{
   margin-top:12px;padding-top:16px;border-top:1px solid var(--line-2);
   font-size:17px;font-weight:600;color:var(--ink);
@@ -1315,12 +1316,13 @@ const I18N = {
     trRefWarn:'Scrivi la causale esattamente così: è come riconosciamo il tuo ordine.',
     trDone:'Torna al negozio',
     summaryTitle:'Riepilogo',
-    subtotal:'Subtotale', shipping:'Spedizione', shipIncluded:'Inclusa',
+    subtotal:'Subtotale', shipping:'Spedizione', shipFree:'Gratis',
+    shipMissing:'Ti mancano {p} per la spedizione gratuita.', shipGot:'La spedizione è gratuita.',
     total:'Totale', checkout:'Procedi al pagamento',
     checkoutLoading:'Reindirizzamento…',
     checkoutError:'Qualcosa è andato storto — riprova.',
     checkoutSuccess:'Ordine effettuato. Controlla la tua email per la conferma.',
-    summaryNote:'Ogni apicoltore spedisce dal proprio territorio. Nessun costo di spedizione, mai.',
+    summaryNote:'Ogni apicoltore spedisce dal proprio territorio. Spedizione gratuita da {f}.',
     charColor:'Colore', charHarvest:'Raccolta', charCrystal:'Cristallizzazione', charFlavor:'Sapore',
     aboutTitle:'Il miele', pairingTitle:'Abbinamenti',
     footBlurb:'Miele in favo da apicoltori italiani indipendenti: come le api l\'hanno sigillato, senza estrazione e senza filtri.',
@@ -1335,7 +1337,7 @@ const I18N = {
     footProducers:'Gli apicoltori', footShipping:'Spedizioni', footContact:'Contatti',
     footBeekeep:'Sei un apicoltore?',
     footPrivacy:'Privacy',
-    footRights:'© 2026 Urban Bees', footShipNote:'Spedizione inclusa in ogni ordine',
+    footRights:'© 2026 Urban Bees', footShipNote:'Spedizione gratuita da {f}',
     dec:',',
   },
   en: {
@@ -1462,12 +1464,13 @@ const I18N = {
     trRefWarn:'Please quote the reference exactly: it is how we match your payment to your order.',
     trDone:'Back to the shop',
     summaryTitle:'Summary',
-    subtotal:'Subtotal', shipping:'Shipping', shipIncluded:'Included',
+    subtotal:'Subtotal', shipping:'Shipping', shipFree:'Free',
+    shipMissing:'Add {p} more for free shipping.', shipGot:'Your shipping is free.',
     total:'Total', checkout:'Proceed to payment',
     checkoutLoading:'Redirecting…',
     checkoutError:'Something went wrong — please try again.',
     checkoutSuccess:'Order placed. Check your email for confirmation.',
-    summaryNote:'Every beekeeper ships from their own region. No shipping cost, ever.',
+    summaryNote:'Every beekeeper ships from their own region. Free shipping from {f}.',
     charColor:'Colour', charHarvest:'Harvest', charCrystal:'Crystallisation', charFlavor:'Flavour',
     aboutTitle:'About this honey', pairingTitle:'Pairings',
     footBlurb:'Honey in the comb from independent Italian beekeepers: as the bees sealed it, never extracted, never filtered.',
@@ -1482,7 +1485,7 @@ const I18N = {
     footProducers:'The beekeepers', footShipping:'Shipping', footContact:'Contact',
     footBeekeep:'Are you a beekeeper?',
     footPrivacy:'Privacy',
-    footRights:'© 2026 Urban Bees', footShipNote:'Shipping included on every order',
+    footRights:'© 2026 Urban Bees', footShipNote:'Free shipping from {f}',
     dec:'.',
   }
 };
@@ -1597,6 +1600,12 @@ let detailSku = null;
 
 const T = () => I18N[lang];
 const money = v => '€' + v.toFixed(2).replace('.', T().dec);
+
+// Same two numbers as SHIPPING_FEE and FREE_SHIPPING_FROM in server/index.js,
+// which is what actually charges: change them together.
+const SHIPPING = { fee: 4.90, freeFrom: 35 };
+const shippingFor = subtotal => (subtotal >= SHIPPING.freeFrom ? 0 : SHIPPING.fee);
+const freeFromLabel = () => money(SHIPPING.freeFrom).replace(/[.,]00$/, '');
 const el = id => document.getElementById(id);
 const setText = (id, v) => { const n = el(id); if (n) n.textContent = v; };
 
@@ -1660,7 +1669,7 @@ function renderChrome(){
   setText('t-foot-contact', t.footContact);
   setText('t-foot-beekeep', t.footBeekeep);
   setText('t-foot-rights', t.footRights);
-  setText('t-foot-ship-note', t.footShipNote);
+  setText('t-foot-ship-note', t.footShipNote.replace('{f}', freeFromLabel()));
 
   renderMission();
   renderBlog();
@@ -2094,17 +2103,23 @@ function renderCart(){
       </div>`;
   }).join('');
 
+  subtotal = Math.round(subtotal * 100) / 100;
+  const ship = shippingFor(subtotal);
+
   box.innerHTML = `
     <div class="cart-wrap">
       <div>${lines}</div>
       <aside class="summary">
         <h3>${t.summaryTitle}</h3>
         <div class="srow"><span>${t.subtotal}</span><span>${money(subtotal)}</span></div>
-        <div class="srow free"><span>${t.shipping}</span><span>${t.shipIncluded}</span></div>
-        <div class="srow total"><span>${t.total}</span><span>${money(subtotal)}</span></div>
+        <div class="srow${ship ? '' : ' free'}"><span>${t.shipping}</span><span>${ship ? money(ship) : t.shipFree}</span></div>
+        <p class="summary-ship">${ship
+          ? t.shipMissing.replace('{p}', money(SHIPPING.freeFrom - subtotal))
+          : t.shipGot}</p>
+        <div class="srow total"><span>${t.total}</span><span>${money(subtotal + ship)}</span></div>
         <button class="btn btn-solid" onclick="startCheckout()">${t.payCard}</button>
         <button class="btn btn-outline pay-alt" id="pay-transfer" onclick="showTransferForm()" hidden>${t.payTransfer}</button>
-        <p class="summary-note">${t.summaryNote}</p>
+        <p class="summary-note">${t.summaryNote.replace('{f}', freeFromLabel())}</p>
       </aside>
     </div>`;
 
