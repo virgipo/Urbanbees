@@ -10,8 +10,8 @@
     {
       "id": 101,
       "name": {
-        "it": "Favo di Acacia — Apicoltura Cazzola",
-        "en": "Acacia Comb — Apicoltura Cazzola"
+        "it": "Favo di Acacia – Apicoltura Cazzola",
+        "en": "Acacia Comb – Apicoltura Cazzola"
       },
       "unit": {
         "it": "favo 100 g",
@@ -23,8 +23,8 @@
     {
       "id": 201,
       "name": {
-        "it": "Favo di Tiglio — Apicoltura Marco Ruga",
-        "en": "Linden Comb — Apicoltura Marco Ruga"
+        "it": "Favo di Tiglio – Apicoltura Marco Ruga",
+        "en": "Linden Comb – Apicoltura Marco Ruga"
       },
       "unit": {
         "it": "favo 125 g",
@@ -37,8 +37,8 @@
     {
       "id": 202,
       "name": {
-        "it": "Favo di Tiglio — Apicoltura Marco Ruga",
-        "en": "Linden Comb — Apicoltura Marco Ruga"
+        "it": "Favo di Tiglio – Apicoltura Marco Ruga",
+        "en": "Linden Comb – Apicoltura Marco Ruga"
       },
       "unit": {
         "it": "favo 200 g",
@@ -51,8 +51,8 @@
     {
       "id": 203,
       "name": {
-        "it": "Favo di Tiglio — Apicoltura Marco Ruga",
-        "en": "Linden Comb — Apicoltura Marco Ruga"
+        "it": "Favo di Tiglio – Apicoltura Marco Ruga",
+        "en": "Linden Comb – Apicoltura Marco Ruga"
       },
       "unit": {
         "it": "favo 400 g",
@@ -65,8 +65,8 @@
     {
       "id": 303,
       "name": {
-        "it": "Favo Millefiori — Apicoltura El Veler",
-        "en": "Wildflower Comb — Apicoltura El Veler"
+        "it": "Favo Millefiori – Apicoltura El Veler",
+        "en": "Wildflower Comb – Apicoltura El Veler"
       },
       "unit": {
         "it": "vaschetta 400 g",

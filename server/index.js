@@ -33,7 +33,7 @@ const priceById = new Map(prices.map(p => [p.id, p]));
    session carries the cart that produced it in its metadata, so what has been
    sold can be asked for rather than stored. That means the counts survive a
    restart, a redeploy and a new container without a database to pay for and
-   keep alive, and they cannot drift from the money — the till and the shelf
+   keep alive, and they cannot drift from the money – the till and the shelf
    are the same record.
 
    The figures in prices.json are therefore a *starting* stock, true as of
@@ -77,7 +77,7 @@ async function soldSoFar() {
 
 /* Starting stock minus what Stripe says went out. If Stripe cannot be reached
    the last good answer is used, and only on a cold start does it fall back to
-   the starting figures — refusing every sale because of a network blip would
+   the starting figures – refusing every sale because of a network blip would
    be a worse failure than briefly offering one comb too many. */
 async function availability() {
   let sold = {};
@@ -104,7 +104,7 @@ async function availability() {
 }
 
 /* A honey cut to order has no count of packs: it has a weight, and the sizes
-   share it. So stock is checked twice — once per row for countable packs, and
+   share it. So stock is checked twice – once per row for countable packs, and
    once per pool for the grams a whole cart asks for. Doing it per line would
    let three 400 g combs through on 1 kg of honey, because each line on its own
    looks fine. */
@@ -373,7 +373,7 @@ app.post('/api/subscribe', async (req, res) => {
     await sendEmail({
       to: ORDER_EMAIL_TO,
       replyTo: email,
-      subject: `Iscrizione newsletter — ${email}`,
+      subject: `Iscrizione newsletter – ${email}`,
       html: `<div style="font-family:sans-serif;font-size:14px">
                <p>Nuova iscrizione alla newsletter:</p>
                <p><strong>${esc(email)}</strong></p>
@@ -462,11 +462,11 @@ app.post('/api/order/bank-transfer', async (req, res) => {
     await sendEmail({
       to: ORDER_EMAIL_TO,
       replyTo: c.email,
-      subject: `Nuovo ordine ${reference} — ${money(total)} — ${c.name}`,
+      subject: `Nuovo ordine ${reference} – ${money(total)} – ${c.name}`,
       html: `
         <div style="font-family:sans-serif;font-size:14px;line-height:1.6;color:#212121">
           <h2 style="margin:0 0 4px">Nuovo ordine: ${esc(reference)}</h2>
-          <p style="margin:0 0 18px;color:#6E6A64">Pagamento con bonifico — da spedire quando il bonifico arriva.</p>
+          <p style="margin:0 0 18px;color:#6E6A64">Pagamento con bonifico – da spedire quando il bonifico arriva.</p>
           ${orderTable}
           <h3 style="margin:22px 0 6px">Spedire a</h3>
           <p style="margin:0">
@@ -507,12 +507,12 @@ app.post('/api/order/bank-transfer', async (req, res) => {
           <p>${it
             ? 'Spediamo appena il bonifico arriva, di solito in due o tre giorni lavorativi.'
             : 'We ship as soon as the transfer arrives, usually within two or three working days.'}</p>
-          <p style="color:#6E6A64">Urban Bees — urbanbees.it</p>
+          <p style="color:#6E6A64">Urban Bees – urbanbees.it</p>
         </div>`,
     });
 
     // Reference and total only: no personal data in the logs.
-    console.log(`Bank transfer order ${reference} — ${money(total)}`);
+    console.log(`Bank transfer order ${reference} – ${money(total)}`);
     res.json({ reference, iban: BANK.iban, holder: BANK.holder, bank: BANK.bank, total });
   } catch (err) {
     console.error('Bank transfer order error:', err.message);

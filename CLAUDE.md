@@ -1,4 +1,4 @@
-# Urban Bees — read this first
+# Urban Bees – read this first
 
 The shop at **urbanbees.it**: Italian honey in the comb (*miele in favo*) from
 small beekeepers, sold online by Virginia Ponti from Milan. She is not a
@@ -7,7 +7,7 @@ what you did and why before any jargon.
 
 ## Before you touch anything
 
-- **Other sessions push to this repository too** — other Claude Code
+- **Other sessions push to this repository too** – other Claude Code
   sessions and claude.ai project threads. Start every task with
   `git fetch origin` and work from the current `origin/main`, never from a
   checkout that might be days old. If `main` moved, merge it in first.
@@ -21,15 +21,15 @@ what you did and why before any jargon.
 
 | Part | Where | Deploys |
 | --- | --- | --- |
-| Storefront | `index.html` — one file, no build step, IT + EN strings inside | Render static site, auto from `main` |
-| Checkout server | `server/` — Express, Stripe, Resend | Render web service `urbanbees-checkout`, auto from `main` |
-| Fonts | `fonts/` — Plus Jakarta Sans, self-hosted on purpose (no Google Fonts) | with the site |
-| Photos | `blog/`, `prodotti/` — webp, EXIF stripped | with the site |
+| Storefront | `index.html` – one file, no build step, IT + EN strings inside | Render static site, auto from `main` |
+| Checkout server | `server/` – Express, Stripe, Resend | Render web service `urbanbees-checkout`, auto from `main` |
+| Fonts | `fonts/` – Plus Jakarta Sans, self-hosted on purpose (no Google Fonts) | with the site |
+| Photos | `blog/`, `prodotti/` – webp, EXIF stripped | with the site |
 
 Italian is the default language; **every visible string exists in both IT and
 EN**. Colours: dark green `#1F2A1E`, beige `#F1EADF`.
 
-## The catalogue lives in two files — keep them identical
+## The catalogue lives in two files – keep them identical
 
 `PRODUCTS` in `index.html` draws the shop. `server/prices.json` is the one that
 counts: prices and stock are always looked up there, never trusted from the
@@ -59,7 +59,7 @@ browser. Change one, change the other. `server/README.md` has the details.
 - Bank transfer is written but switched off until IBAN and holder are set on
   Render.
 
-## On hold — do not restart without asking
+## On hold – do not restart without asking
 
 - **Privacy policy**: removed from the site on purpose; the text is in git at
   `482a4ff:privacy.html`.
@@ -73,6 +73,7 @@ business matters belong in her claude.ai project, not here.
 
 - It sells **combs**, not jars. Say *favo*, never *vasetto*.
 - No superlatives ("il più autentico"). Say what is true and checkable.
+- No long dashes (—) anywhere on the site, in either language. Use the short one (–) instead.
 - Never invent facts about a beekeeper or a honey. Ask.
 
 ## Checking your work
