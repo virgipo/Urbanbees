@@ -1578,7 +1578,10 @@ function cheapest(p){
 /* Whether anything at all can still be bought: packs left, or enough grams
    for the smallest size on offer. */
 function anyStock(p){
-  if (p.pool) return (p.grams ?? 0) >= Math.min(...p.sizes.map(s => s.g)) ? 1 : 0;
+  // A honey sold by weight counts as many packs as its smallest size fits,
+  // so 2 kg of tiglio reads as 16, not as a bare "yes" (1) that the grid
+  // would show as "Ultimi 1".
+  if (p.pool) return Math.floor((p.grams ?? 0) / Math.min(...p.sizes.map(s => s.g)));
   return p.sizes.reduce((n, s) => n + (s.stock ?? 0), 0);
 }
 
