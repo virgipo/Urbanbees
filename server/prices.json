@@ -6,7 +6,7 @@
   },
 
   "items": [
-    {"id": 101, "name": {"it": "Favo di Acacia — Apicoltura Cazzola", "en": "Acacia Comb — Apicoltura Cazzola"}, "unit": {"it": "favo 125 g", "en": "125 g comb"}, "price": 11.90, "stock": 0},
+    {"id": 101, "name": {"it": "Favo di Acacia — Apicoltura Cazzola", "en": "Acacia Comb — Apicoltura Cazzola"}, "unit": {"it": "favo 90 g", "en": "90 g comb"}, "price": 11.90, "stock": 0},
 
     {"id": 201, "name": {"it": "Favo di Tiglio — Apicoltura Marco Ruga", "en": "Linden Comb — Apicoltura Marco Ruga"}, "unit": {"it": "favo 125 g", "en": "125 g comb"}, "price": 6.90, "pool": "ruga-tiglio", "g": 125},
     {"id": 202, "name": {"it": "Favo di Tiglio — Apicoltura Marco Ruga", "en": "Linden Comb — Apicoltura Marco Ruga"}, "unit": {"it": "favo 200 g", "en": "200 g comb"}, "price": 10.90, "pool": "ruga-tiglio", "g": 200},
