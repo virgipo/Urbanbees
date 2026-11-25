@@ -446,6 +446,8 @@ a{color:inherit;text-decoration:none}
   aspect-ratio:3/2;background:var(--tint);border-radius:var(--r);
   display:flex;align-items:center;justify-content:center;font-size:58px;
 }
+.producer-tile.has-img{overflow:hidden}
+.producer-tile.has-img img{width:100%;height:100%;object-fit:cover;display:block}
 .producer h3{font-size:15.5px;font-weight:600;margin-top:16px;letter-spacing:-.012em}
 .producer .loc{margin-top:5px}
 .producer p{font-size:13.5px;line-height:1.6;color:var(--ink-2);margin-top:10px}
@@ -1528,7 +1530,7 @@ const PRODUCTS = [
    desc:{it:'Il tiglio non è un miele facile: è fresco, quasi mentolato, e chiude con un fondo amaro che la prima volta non ti aspetti e che poi vai a cercare. Nel favo quell\'aroma resta chiuso nella cera fino al momento in cui lo tagli, cosa che il miele estratto non può fare. Marco porta gli apiari in montagna per questa fioritura, che dura poche settimane e certe annate non si raccoglie affatto.',
          en:'Linden is not an easy honey: fresh, almost minty, closing on a bitter note you do not expect the first time and then go looking for. In the comb that aroma stays shut inside the wax until you cut it, which extracted honey cannot do. Marco takes his hives up the mountain for this bloom, which lasts a few weeks and in some years gives nothing at all.'}},
 
-  {id:3, sku:3, farm:'Apicoltura El Veler', emoji:'🍯', img:null,
+  {id:3, sku:3, farm:'Apicoltura El Veler', emoji:'🍯', img:'prodotti/elveler-millefiori.webp',
    unitWord:{it:'vaschetta',en:'tray'},
    tastes:['floral'],
    sizes:[{sku:303, g:400, price:35.00, stock:4}],
@@ -1545,12 +1547,12 @@ const PRODUCTS = [
 ];
 
 const FARMERS = [
-  {emoji:'🍯', name:'Apicoltura Marco Ruga', products:1,
+  {emoji:'🍯', name:'Apicoltura Marco Ruga', products:1, img:'apicoltori/marco-ruga.webp',
    loc:{it:'San Siro, lago di Como',en:'San Siro, Lake Como'},
    desc:{it:'Marco ha cominciato da bambino, seguendo suo padre nell\'apiario, e a diciotto anni ha comprato i suoi primi tre alveari. Da lì è diventato un mestiere: oggi l\'azienda è a San Siro, sul lago di Como, e pratica apicoltura nomade — gli apiari si spostano dietro le fioriture, fino alle montagne della Valtellina, lontano dalle strade e dalle colture trattate. Produce acacia, castagno, tiglio, millefiori, rododendro e melata, oltre a polline e propoli. Dice che il metro di giudizio sono lui e la sua famiglia, che del suo miele sono i primi consumatori.',
          en:'Marco started as a child, following his father into the apiary, and bought his first three hives at eighteen. It became a trade from there: the business is now at San Siro on Lake Como, and it is nomadic — the hives move with the blooms, as far as the mountains of the Valtellina, away from roads and treated crops. He produces acacia, chestnut, linden, wildflower, rhododendron and honeydew, as well as pollen and propolis. He says the standard he works to is his own family, who are the first to eat what he makes.'}},
 
-  {emoji:'🍯', name:'Apicoltura El Veler', products:1,
+  {emoji:'🍯', name:'Apicoltura El Veler', products:1, img:'apicoltori/el-veler.webp',
    loc:{it:'Pianello del Lario, alto lago di Como',en:'Pianello del Lario, upper Lake Como'},
    desc:{it:'Una realtà giovane: dal 2015, fra l\'alto lago di Como e le montagne che lo chiudono. Il nome viene da El Veler, la località di Pianello del Lario dove è stata messa la prima arnia, a quattrocento metri — e le arnie del loro progetto di adozione portano il nome delle cime sopra i boschi dove le api bottinano. Fanno tiglio, castagno, millefiori, acacia e qualche volta melata, e da qualche anno allevano anche api regine di razza ligustica. Un ambiente, dicono loro, de muntagn e acqua dulza: duro, e proprio per questo capace di dare soddisfazioni.',
          en:'A young operation: since 2015, between the upper reaches of Lake Como and the mountains that close it in. The name comes from El Veler, the spot at Pianello del Lario where the first hive was placed, four hundred metres up — and the hives in their adoption scheme are named after the peaks above the woods where the bees forage. They make linden, chestnut, wildflower, acacia and sometimes honeydew, and for a few years now they have also been raising Ligustica queens. A landscape, as they put it, de muntagn e acqua dulza: hard, and generous for exactly that reason.'}},
@@ -1914,7 +1916,9 @@ function renderProducers(){
   const t = T();
   el('producers').innerHTML = FARMERS.map(f => `
     <article class="producer">
-      <div class="producer-tile">${f.emoji}</div>
+      ${f.img
+        ? `<div class="producer-tile has-img"><img src="${f.img}" alt="${f.name}" loading="lazy"></div>`
+        : `<div class="producer-tile">${f.emoji}</div>`}
       <h3>${f.name}</h3>
       <span class="u-label loc">${f.loc[lang]}</span>
       <p>${f.desc[lang]}</p>
