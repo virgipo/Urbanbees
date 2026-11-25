@@ -61,7 +61,11 @@ browser. Change one, change the other. `server/README.md` has the details.
 
 - **Privacy policy**: removed from the site on purpose; the text is in git at
   `482a4ff:privacy.html`.
-- Terms of sale, VAT registration: Virginia's decisions, not ours.
+- Terms of sale: not written yet. Ask Virginia before drafting.
+
+This file is public: the static site serves the whole repository, so anyone
+who types `urbanbees.it/CLAUDE.md` can read it. Keep it to how the code works;
+business matters belong in her claude.ai project, not here.
 
 ## Writing for this shop
 
