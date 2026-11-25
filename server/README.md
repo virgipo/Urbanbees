@@ -99,13 +99,12 @@ building one; worth revisiting if it grows a lot.
   Payment methods. Asking Stripe for a method that is not activated makes the
   whole checkout fail, which is why this is a variable and not code.
 
-### Order notifications
+### Mail
 
 | Variable | What it is |
 | --- | --- |
-| `STRIPE_WEBHOOK_SECRET` | `whsec_…` from the Stripe dashboard, for the endpoint above |
-| `RESEND_API_KEY` | Resend API key; without it a paid order is logged, not emailed |
-| `ORDER_EMAIL_TO` | where the order lands, e.g. `hey.urbanbees@gmail.com` |
+| `RESEND_API_KEY` | Resend API key, used by the bank-transfer and newsletter fallbacks |
+| `ORDER_EMAIL_TO` | where those emails land, e.g. `hey.urbanbees@gmail.com` |
 | `ORDER_EMAIL_FROM` | optional; defaults to Resend's shared sender until a domain is verified |
 | `RESEND_API_URL` | **tests only**: points the mailer at a stub instead of Resend |
 
@@ -128,6 +127,32 @@ are set; otherwise the button stays hidden and `/api/config` reports it off.
 No order is written to disk: the customer's details go into the two emails and
 are then discarded. Only the reference and the total reach the logs.
 
+### Newsletter (Google Sheet)
+
+- `NEWSLETTER_SHEET_URL` — the URL of a Google Apps Script web app bound to
+  the sheet that holds the list. Each signup from the site is posted there and
+  becomes a row. Without it, signups are emailed to `ORDER_EMAIL_TO` (needs
+  `RESEND_API_KEY`); with neither, the form says it could not sign you up.
+
+The script, pasted into the sheet via Extensions → Apps Script and deployed as
+a web app (Execute as: me, Who has access: Anyone):
+
+```js
+function doPost(e) {
+  const d = JSON.parse(e.postData.contents);
+  const email = String(d.email || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return out({ ok: false });
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
+  if (sheet.getLastRow() === 0) sheet.appendRow(['Data', 'Email', 'Lingua', 'Fonte']);
+  const known = sheet.getRange(1, 2, sheet.getLastRow(), 1).getValues().flat();
+  if (!known.includes(email)) sheet.appendRow([new Date(), email, d.lang || '', d.source || '']);
+  return out({ ok: true });
+}
+function out(o) {
+  return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);
+}
+```
+
 ## Local run
 
 ```
@@ -138,30 +163,13 @@ STRIPE_SECRET_KEY=sk_test_... SITE_URL=http://localhost:8930 npm start
 
 ## Telling Virginia an order came in
 
-Stripe calls `POST /api/stripe-webhook` when a payment succeeds, and the
-server emails her the lines, the shipping address and a reply-to. It is
-mounted before `express.json()` and takes the raw body, because Stripe signs
-the exact bytes.
+**Not this server's job.** Paid card orders reach Virginia through a Zapier
+automation reading Stripe directly, set up outside this repository. There is
+no webhook endpoint here, and none should be added without retiring the Zap
+first, or every order arrives twice.
 
-Set it up once, in the Stripe dashboard, **in live mode**:
-
-1. Developers → Webhooks → Add endpoint
-2. URL: `https://urbanbees-checkout.onrender.com/api/stripe-webhook`
-3. Event: `checkout.session.completed`
-4. Copy the signing secret (`whsec_…`) into `STRIPE_WEBHOOK_SECRET` on Render
-
-Without the secret the endpoint answers 503 and logs; with a wrong signature,
-400. It answers Stripe before sending the mail, because Stripe retries
-anything slow and a duplicate email is worse than a late one.
-
-If the follow-up call to Stripe for the lines and the address fails, the email
-still goes out, naming what was bought from the cart in the metadata and
-saying to open Stripe for the address. The one thing this must never do is
-stay silent.
-
-The stock does not depend on this endpoint: the same paid session it announces
-is the one `/api/stock` reads. If the webhook were down, the shelf would still
-be right and only the email would be missing.
+The stock does not depend on any notification: `/api/stock` reads the paid
+sessions themselves, so the shelf stays right whatever announces the sale.
 
 ## Endpoints
 

@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Urban Bees</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
 /* Plus Jakarta Sans, served from this site. SIL Open Font License 1.1 —
    see fonts/LICENSE.txt. Self-hosted so that no visitor's IP reaches a
@@ -474,6 +477,7 @@ a{color:inherit;text-decoration:none}
 .srow{display:flex;justify-content:space-between;gap:14px;font-size:14px;padding:7px 0;color:var(--ink-2)}
 .srow span:last-child{font-variant-numeric:tabular-nums;color:var(--ink)}
 .srow.free span:last-child{color:var(--accent);font-weight:600}
+.summary-ship{margin:-2px 0 8px;font-size:12.5px;color:var(--ink-3)}
 .srow.total{
   margin-top:12px;padding-top:16px;border-top:1px solid var(--line-2);
   font-size:17px;font-weight:600;color:var(--ink);
@@ -521,6 +525,18 @@ a{color:inherit;text-decoration:none}
 .page-head{padding:44px 0 30px;max-width:620px}
 .page-head h1{font-size:clamp(26px,3.6vw,36px);font-weight:600;letter-spacing:-.025em;line-height:1.12;margin:14px 0 12px}
 .page-head p{font-size:15.5px;line-height:1.62;color:var(--ink-2);max-width:56ch}
+/* ---------- contact & beekeeper cards ---------- */
+.contact-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:16px;padding-bottom:88px;
+}
+.ct-block{padding:26px 26px 28px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.ct-block h3{font-size:16.5px;font-weight:600;letter-spacing:-.012em;margin-bottom:10px}
+.ct-block p{font-size:14.5px;line-height:1.7;color:var(--ink-2)}
+.ct-block a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line-2)}
+.ct-block a:hover{text-decoration-color:var(--ink)}
+.ct-block .ct-big{display:inline-block;margin-top:6px;font-size:16px;font-weight:600;text-decoration:none}
+@media (max-width:640px){.contact-grid{padding-bottom:56px}.ct-block{padding:22px 20px 24px}}
 /* ---------- mission ---------- */
 .mission{max-width:760px;padding-bottom:20px}
 .mission .lede{
@@ -1159,8 +1175,7 @@ a{color:inherit;text-decoration:none}
     <div class="footer-col">
       <h4 id="t-foot-about-h"></h4>
       <ul>
-        <li id="t-foot-producers"></li>
-        <li id="t-foot-shipping"></li>
+        <li><button class="foot-link" data-nav="producers" id="t-foot-producers"></button></li>
         <li><button class="foot-link" data-nav="contact" id="t-foot-contact"></button></li>
         <li><button class="foot-link" data-nav="beekeep" id="t-foot-beekeep"></button></li>
       </ul>
@@ -1247,10 +1262,10 @@ const I18N = {
       ['Scrivici','<span class="js-mail"></span>'],
     ],
     annPrev:'Messaggio precedente', annNext:'Messaggio successivo',
-    ticker:['Scopri il miele in favo'],
+    ticker:[['Spediamo in Italia, presto in tutto il mondo · Dall\'estero? Scrivici','contact'],'Scopri il miele in favo'],
     heroLabel:'Apicoltori indipendenti · Italia',
     heroTitle:'Il miele in favo, direttamente a casa tua.',
-    heroSub:'Non estratto, non filtrato, non scaldato: arriva nelle celle di cera che le api hanno sigillato, e si mangia tutto, cera compresa.',
+    heroSub:'Non estratto, non filtrato, non scaldato: arriva nelle celle di cera che le api hanno sigillato.',
     filtersTitle:'Filtra', filtersClear:'Azzera tutto', filtersApply:'Mostra i risultati',
     filtersHide:'Nascondi i filtri', filtersShow:'Mostra i filtri',
     fOrigin:'Provenienza', fTaste:'Gusto', fFarm:'Apicoltore',
@@ -1269,7 +1284,7 @@ const I18N = {
     soonNote:'Questo favo non è ancora in vendita: lo stiamo mettendo a punto con l\'apicoltore. <b>Iscriviti alla newsletter</b> qui sotto e lo saprai per primo.',
     soldNote:'Questa pezzatura è finita. Quando una varietà termina si aspetta il raccolto successivo: non la sostituiamo con qualcos\'altro.',
     wholeTitle:'Vuoi un favo intero?',
-    wholeText:'Oltre alle pezzature in vendita qui, possiamo mandarti <b>il telaino intero</b>, come esce dall\'arnia. Non lo mettiamo a carrello perché peso e prezzo cambiano con il telaino e con la stagione: ce lo diciamo prima, poi te lo spediamo.',
+    wholeText:'Oltre ai formati disponibili nel nostro shop, puoi ricevere anche <b>un telaino intero di favo</b>, proprio come viene raccolto dall\'arnia.<br><br>Non lo trovi nel carrello perché ogni telaino è diverso: il peso e il prezzo variano in base alle dimensioni e alla stagione.<br><br>Se ti interessa, contattaci: ci accordiamo insieme sul telaino disponibile, sul prezzo e sulla spedizione. Poi lo prepariamo per te!',
     wholeCta:'Scrivici e te lo prepariamo',
     soldOut:'Esaurito', onlyLeft:'Ultimi {n}',
     toastMax:'Non ne abbiamo altri di questo miele.',
@@ -1301,28 +1316,28 @@ const I18N = {
     trRefWarn:'Scrivi la causale esattamente così: è come riconosciamo il tuo ordine.',
     trDone:'Torna al negozio',
     summaryTitle:'Riepilogo',
-    subtotal:'Subtotale', shipping:'Spedizione', shipIncluded:'Inclusa',
+    subtotal:'Subtotale', shipping:'Spedizione', shipFree:'Gratis',
+    shipMissing:'Ti mancano {p} per la spedizione gratuita.', shipGot:'La spedizione è gratuita.',
     total:'Totale', checkout:'Procedi al pagamento',
     checkoutLoading:'Reindirizzamento…',
     checkoutError:'Qualcosa è andato storto — riprova.',
     checkoutSuccess:'Ordine effettuato. Controlla la tua email per la conferma.',
-    summaryNote:'Ogni apicoltore spedisce dal proprio territorio. Nessun costo di spedizione, mai.',
+    summaryNote:'Ogni apicoltore spedisce dal proprio territorio. Spedizione gratuita da {f}.',
     charColor:'Colore', charHarvest:'Raccolta', charCrystal:'Cristallizzazione', charFlavor:'Sapore',
     aboutTitle:'Il miele', pairingTitle:'Abbinamenti',
     footBlurb:'Miele in favo da apicoltori italiani indipendenti: come le api l\'hanno sigillato, senza estrazione e senza filtri.',
     newsTitle:'Resta aggiornato',
     newsSub:'Quando arriva un favo nuovo, quando una fioritura va male, quando c\'è qualcosa che vale la pena raccontare. Poche email, scritte a mano.',
     newsLabel:'Il tuo indirizzo email', newsPlaceholder:'nome@esempio.it', newsBtn:'Iscriviti',
-    newsNote:'Iscrivendoti accetti che usiamo il tuo indirizzo solo per scriverti di Urban Bees. Puoi cancellarti quando vuoi rispondendo a una qualsiasi email.',
+    newsNote:'Iscrivendoti accetti che usiamo il tuo indirizzo solo per scriverti di Urban Bees. Puoi cancellarti quando vuoi dal link in fondo a ogni email.',
     newsOk:'Fatto — ti scriveremo.',
     newsBad:'Controlla l\'indirizzo email.',
-    newsFallback:'Apriamo la tua email: mandaci il messaggio e ti aggiungiamo noi.',
-    newsSubject:'Iscrizione newsletter Urban Bees',
+    newsFail:'Non siamo riusciti a iscriverti. Riprova tra qualche minuto.',
     footFollowH:'Seguici', footAboutH:'Urban Bees',
     footProducers:'Gli apicoltori', footShipping:'Spedizioni', footContact:'Contatti',
     footBeekeep:'Sei un apicoltore?',
     footPrivacy:'Privacy',
-    footRights:'© 2026 Urban Bees', footShipNote:'Spedizione inclusa in ogni ordine',
+    footRights:'© 2026 Urban Bees', footShipNote:'Spedizione gratuita da {f}',
     dec:',',
   },
   en: {
@@ -1395,10 +1410,10 @@ const I18N = {
       ['Write to us','<span class="js-mail"></span>'],
     ],
     annPrev:'Previous message', annNext:'Next message',
-    ticker:['Discover honey in the comb'],
+    ticker:[['We ship within Italy, worldwide soon · Abroad? Write to us','contact'],'Discover honey in the comb'],
     heroLabel:'Independent beekeepers · Italy',
     heroTitle:'Honey in the comb, from the hive to your shelf.',
-    heroSub:'Never extracted, never filtered, never warmed: it arrives in the wax cells the bees sealed, and you eat all of it, wax included.',
+    heroSub:'Never extracted, never filtered, never warmed: it arrives in the wax cells the bees sealed.',
     filtersTitle:'Filter', filtersClear:'Clear all', filtersApply:'Show results',
     filtersHide:'Hide filters', filtersShow:'Show filters',
     fOrigin:'Origin', fTaste:'Taste', fFarm:'Beekeeper',
@@ -1417,7 +1432,7 @@ const I18N = {
     soonNote:'This comb is not on sale yet: we are still working it out with the beekeeper. <b>Join the newsletter</b> below and you will be the first to know.',
     soldNote:'This size has run out. When a variety ends we wait for the next harvest: we do not replace it with something else.',
     wholeTitle:'Would you like a whole comb?',
-    wholeText:'As well as the sizes sold here, we can send you <b>the whole frame</b>, exactly as it comes out of the hive. We keep it off the cart because weight and price change with the frame and the season: we agree it first, then we ship it.',
+    wholeText:'As well as the sizes available in our shop, you can also receive <b>a whole frame of comb</b>, just as it is taken from the hive.<br><br>You will not find it in the cart because every frame is different: weight and price vary with its size and the season.<br><br>If you are interested, get in touch: together we agree on the available frame, the price and the shipping. Then we prepare it for you!',
     wholeCta:'Write to us and we will prepare it',
     soldOut:'Sold out', onlyLeft:'Only {n} left',
     toastMax:'We have no more of this honey.',
@@ -1449,28 +1464,28 @@ const I18N = {
     trRefWarn:'Please quote the reference exactly: it is how we match your payment to your order.',
     trDone:'Back to the shop',
     summaryTitle:'Summary',
-    subtotal:'Subtotal', shipping:'Shipping', shipIncluded:'Included',
+    subtotal:'Subtotal', shipping:'Shipping', shipFree:'Free',
+    shipMissing:'Add {p} more for free shipping.', shipGot:'Your shipping is free.',
     total:'Total', checkout:'Proceed to payment',
     checkoutLoading:'Redirecting…',
     checkoutError:'Something went wrong — please try again.',
     checkoutSuccess:'Order placed. Check your email for confirmation.',
-    summaryNote:'Every beekeeper ships from their own region. No shipping cost, ever.',
+    summaryNote:'Every beekeeper ships from their own region. Free shipping from {f}.',
     charColor:'Colour', charHarvest:'Harvest', charCrystal:'Crystallisation', charFlavor:'Flavour',
     aboutTitle:'About this honey', pairingTitle:'Pairings',
     footBlurb:'Honey in the comb from independent Italian beekeepers: as the bees sealed it, never extracted, never filtered.',
     newsTitle:'Stay in touch',
     newsSub:'When a new comb arrives, when a bloom fails, when there is something worth telling. A few emails, written by hand.',
     newsLabel:'Your email address', newsPlaceholder:'name@example.com', newsBtn:'Subscribe',
-    newsNote:'By subscribing you agree that we use your address only to write to you about Urban Bees. Unsubscribe whenever you like by replying to any email.',
+    newsNote:'By subscribing you agree that we use your address only to write to you about Urban Bees. Unsubscribe whenever you like from the link at the bottom of every email.',
     newsOk:'Done — we will be in touch.',
     newsBad:'Please check your email address.',
-    newsFallback:'Opening your mail app: send us the message and we will add you.',
-    newsSubject:'Urban Bees newsletter signup',
+    newsFail:'We could not sign you up. Please try again in a few minutes.',
     footFollowH:'Follow us', footAboutH:'Urban Bees',
     footProducers:'The beekeepers', footShipping:'Shipping', footContact:'Contact',
     footBeekeep:'Are you a beekeeper?',
     footPrivacy:'Privacy',
-    footRights:'© 2026 Urban Bees', footShipNote:'Shipping included on every order',
+    footRights:'© 2026 Urban Bees', footShipNote:'Free shipping from {f}',
     dec:'.',
   }
 };
@@ -1491,8 +1506,8 @@ const PRODUCTS = [
    crystal:{it:'Resta liquido nelle celle molto a lungo',en:'Stays liquid in the cells for a long time'},
    flavor:{it:'Delicato, vaniglia e fiori bianchi',en:'Delicate, vanilla and white flowers'},
    pairing:{it:'Su pane e burro, con i formaggi freschi, o da solo',en:'On bread and butter, with fresh cheese, or on its own'},
-   desc:{it:'Il favo intero, così come le api lo hanno costruito e sigillato: nessuna estrazione, nessun filtro, nessun passaggio in centrifuga. Si taglia a pezzi e si mangia tutto, cera compresa — è cera d\'api vergine, masticabile e commestibile. L\'acacia è la più delicata delle fioriture e nel favo resta liquida a lungo, con il profumo che la cera tiene chiuso fino al momento in cui lo apri.',
-         en:'The whole comb, exactly as the bees built and sealed it: no extraction, no filtering, no spinning. Cut a piece and eat all of it, wax included — it is virgin beeswax, chewable and edible. Acacia is the most delicate of blooms, and in the comb it stays liquid for a long time, its scent held shut by the wax until you open it.'}},
+   desc:{it:'Il favo intero, così come le api lo hanno costruito e sigillato: nessuna estrazione, nessun filtro, nessun passaggio in centrifuga. L\'acacia è la più delicata delle fioriture e nel favo resta liquida a lungo, con il profumo che la cera tiene chiuso fino al momento in cui lo apri.',
+         en:'The whole comb, exactly as the bees built and sealed it: no extraction, no filtering, no spinning. Acacia is the most delicate of blooms, and in the comb it stays liquid for a long time, its scent held shut by the wax until you open it.'}},
 
   {id:2, sku:2, farm:'Apicoltura Marco Ruga', emoji:'🍯', img:'prodotti/ruga-tiglio.webp',
    tastes:['balsamic'],
@@ -1566,7 +1581,10 @@ function cheapest(p){
 /* Whether anything at all can still be bought: packs left, or enough grams
    for the smallest size on offer. */
 function anyStock(p){
-  if (p.pool) return (p.grams ?? 0) >= Math.min(...p.sizes.map(s => s.g)) ? 1 : 0;
+  // A honey sold by weight counts as many packs as its smallest size fits,
+  // so 2 kg of tiglio reads as 16, not as a bare "yes" (1) that the grid
+  // would show as "Ultimi 1".
+  if (p.pool) return Math.floor((p.grams ?? 0) / Math.min(...p.sizes.map(s => s.g)));
   return p.sizes.reduce((n, s) => n + (s.stock ?? 0), 0);
 }
 
@@ -1582,6 +1600,12 @@ let detailSku = null;
 
 const T = () => I18N[lang];
 const money = v => '€' + v.toFixed(2).replace('.', T().dec);
+
+// Same two numbers as SHIPPING_FEE and FREE_SHIPPING_FROM in server/index.js,
+// which is what actually charges: change them together.
+const SHIPPING = { fee: 4.90, freeFrom: 35 };
+const shippingFor = subtotal => (subtotal >= SHIPPING.freeFrom ? 0 : SHIPPING.fee);
+const freeFromLabel = () => money(SHIPPING.freeFrom).replace(/[.,]00$/, '');
 const el = id => document.getElementById(id);
 const setText = (id, v) => { const n = el(id); if (n) n.textContent = v; };
 
@@ -1642,11 +1666,10 @@ function renderChrome(){
   setText('t-foot-follow-h', t.footFollowH);
   setText('t-foot-about-h', t.footAboutH);
   setText('t-foot-producers', t.footProducers);
-  setText('t-foot-shipping', t.footShipping);
   setText('t-foot-contact', t.footContact);
   setText('t-foot-beekeep', t.footBeekeep);
   setText('t-foot-rights', t.footRights);
-  setText('t-foot-ship-note', t.footShipNote);
+  setText('t-foot-ship-note', t.footShipNote.replace('{f}', freeFromLabel()));
 
   renderMission();
   renderBlog();
@@ -2080,17 +2103,23 @@ function renderCart(){
       </div>`;
   }).join('');
 
+  subtotal = Math.round(subtotal * 100) / 100;
+  const ship = shippingFor(subtotal);
+
   box.innerHTML = `
     <div class="cart-wrap">
       <div>${lines}</div>
       <aside class="summary">
         <h3>${t.summaryTitle}</h3>
         <div class="srow"><span>${t.subtotal}</span><span>${money(subtotal)}</span></div>
-        <div class="srow free"><span>${t.shipping}</span><span>${t.shipIncluded}</span></div>
-        <div class="srow total"><span>${t.total}</span><span>${money(subtotal)}</span></div>
+        <div class="srow${ship ? '' : ' free'}"><span>${t.shipping}</span><span>${ship ? money(ship) : t.shipFree}</span></div>
+        <p class="summary-ship">${ship
+          ? t.shipMissing.replace('{p}', money(SHIPPING.freeFrom - subtotal))
+          : t.shipGot}</p>
+        <div class="srow total"><span>${t.total}</span><span>${money(subtotal + ship)}</span></div>
         <button class="btn btn-solid" onclick="startCheckout()">${t.payCard}</button>
         <button class="btn btn-outline pay-alt" id="pay-transfer" onclick="showTransferForm()" hidden>${t.payTransfer}</button>
-        <p class="summary-note">${t.summaryNote}</p>
+        <p class="summary-note">${t.summaryNote.replace('{f}', freeFromLabel())}</p>
       </aside>
     </div>`;
 
@@ -2164,18 +2193,15 @@ function initNewsletter(){
       const r = await fetch(CHECKOUT_API.replace('/api/checkout', '/api/subscribe'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, company: el('news-company').value }),
+        body: JSON.stringify({ email, lang, company: el('news-company').value }),
       });
-      if (!r.ok) throw new Error('not configured');
+      if (!r.ok) throw new Error(`subscribe ${r.status}`);
       say(t.newsOk);
       form.reset();
     } catch (err) {
-      // Until the mail service is wired up, hand the reader their own mail client
-      // rather than swallow the address.
-      const subject = encodeURIComponent(T().newsSubject);
-      const body = encodeURIComponent(email);
-      location.href = `mailto:hey.urbanbees@gmail.com?subject=${subject}&body=${body}`;
-      say(t.newsFallback);
+      // Never send the reader off to write an email themselves: say it did
+      // not go through and leave the address in the box to try again.
+      say(t.newsFail);
     }
     btn.disabled = false;
   };
@@ -2440,17 +2466,6 @@ const POSTS = [
 
 const postBySlug = slug => POSTS.find(x => x.slug === slug);
 
-function postDate(iso){
-  const months = {
-    it:['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio',
-        'agosto','settembre','ottobre','novembre','dicembre'],
-    en:['January','February','March','April','May','June','July',
-        'August','September','October','November','December'],
-  };
-  const [y,m,d] = iso.split('-').map(Number);
-  return lang === 'en' ? `${months.en[m-1]} ${d}, ${y}` : `${d} ${months.it[m-1]} ${y}`;
-}
-
 /* A field of hexagons, drawn rather than photographed. The pattern id has to
    be unique per card or the second one reuses the first one's definition. */
 function combPanel(id){
@@ -2485,7 +2500,7 @@ function renderBlog(){
       : `<span class="shot blank">${combPanel(post.slug)}</span>`;
     return `<button class="post-card" data-slug="${post.slug}">
       ${shot}
-      <span class="post-meta">${c.kicker} · ${postDate(post.date)}</span>
+      <span class="post-meta">${c.kicker}</span>
       <h3>${c.title}</h3>
       <p>${c.lede}</p>
     </button>`;
@@ -2522,7 +2537,7 @@ function renderEntry(slug){
       <svg viewBox="0 0 10 10" fill="none" aria-hidden="true" style="width:11px;height:11px">
         <path d="M6.5 1 2.5 5l4 4" stroke="currentColor" stroke-width="1.5"
               stroke-linecap="round" stroke-linejoin="round"/></svg>${t.blogBack}</button>
-    <span class="post-meta">${c.kicker} · ${postDate(post.date)}</span>
+    <span class="post-meta">${c.kicker}</span>
     <h1>${c.title}</h1>
     <p class="lede">${c.lede}</p>
     ${post.img ? `<figure>
@@ -2557,13 +2572,20 @@ let annIndex = 0, annTimer = null;
 const ANN_EVERY = 7000;
 const annStill = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* A ticker entry is either plain text, which leads to the shop, or a
+   [text, view] pair that opens that view instead. */
+function annItem(i){
+  const it = T().ticker[i];
+  return Array.isArray(it) ? { text: it[0], go: it[1] } : { text: it, go: null };
+}
+
 function annShow(i, animate){
   const items = T().ticker;
   annIndex = (i + items.length) % items.length;
   const node = el('ann-text');
   const paint = () => {
     node.innerHTML = '';
-    node.appendChild(document.createTextNode(items[annIndex]));
+    node.appendChild(document.createTextNode(annItem(annIndex).text));
     node.insertAdjacentHTML('beforeend',
       `<svg class="arr" viewBox="0 0 14 10" fill="none" aria-hidden="true">
          <path d="M1 5h11.5M8.6 1.2 12.8 5 8.6 8.8" stroke="currentColor"
@@ -2603,6 +2625,8 @@ function renderTicker(){
 function initAnnounce(){
   const bar = document.querySelector('.announce');
   el('ann-link').onclick = () => {
+    const go = annItem(annIndex).go;
+    if (go) { showView(go); return; }
     showView('shop');
     el('facet-bar').scrollIntoView({ behavior: annStill ? 'auto' : 'smooth', block:'start' });
   };

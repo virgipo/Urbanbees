@@ -1,7 +1,7 @@
 # Urban Bees 🐝
 
 High-end marketplace connecting Italy's finest independent beekeepers directly with consumers.
-Shipping is always paid by the producer — never the buyer.
+Shipping is €4.90 on orders under €35 and free from €35 (set in `server/index.js` and `index.html`).
 
 ## What's here
 

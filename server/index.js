@@ -17,6 +17,13 @@ if (!SITE_URL) {
 }
 
 const stripe = new Stripe(STRIPE_SECRET_KEY);
+
+// Shipping: a flat fee on small orders, free from a threshold. The storefront
+// shows the same two numbers in the cart (SHIPPING in index.html), so change
+// them together.
+const SHIPPING_FEE = 4.90;
+const FREE_SHIPPING_FROM = 35;
+const shippingFor = subtotal => (subtotal >= FREE_SHIPPING_FROM ? 0 : SHIPPING_FEE);
 const priceById = new Map(prices.map(p => [p.id, p]));
 
 /* ============================================================
@@ -141,61 +148,6 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
 const app = express();
 app.use(cors({ origin: ALLOWED_ORIGINS }));
 
-/* ============================================================
-   Stripe webhook
-
-   Mounted before express.json(), and only for this path, because Stripe signs
-   the raw bytes: parsing them to an object first and re-serialising would
-   change them and the signature would never verify.
-
-   Its job is to tell Virginia. The stock takes care of itself — the same paid
-   session this call announces is the one availability() reads — so if this
-   endpoint were down the shelf would still be right and only the email would
-   be missing.
-   ============================================================ */
-
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
-
-app.post('/api/stripe-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  if (!STRIPE_WEBHOOK_SECRET) {
-    console.error('Webhook received but STRIPE_WEBHOOK_SECRET is not set.');
-    return res.status(503).send('not configured');
-  }
-
-  let event;
-  try {
-    event = stripe.webhooks.constructEvent(
-      req.body, req.headers['stripe-signature'], STRIPE_WEBHOOK_SECRET);
-  } catch (err) {
-    // Anyone can POST here; only Stripe can sign.
-    console.error('Webhook signature rejected:', err.message);
-    return res.status(400).send('bad signature');
-  }
-
-  // Answer first: Stripe retries anything slow or failed, and a second email
-  // for the same order is worse than a late one.
-  res.json({ received: true });
-
-  if (event.type !== 'checkout.session.completed') return;
-  const session = event.data.object;
-  if (session.payment_status !== 'paid') return;
-
-  // A sale means the figures on the shelf are stale.
-  soldCache = { at: 0, map: null };
-
-  if (!RESEND_API_KEY || !ORDER_EMAIL_TO) {
-    console.error('Paid order received but no mail is configured:', session.id);
-    return;
-  }
-
-  try {
-    await emailPaidOrder(session);
-    console.log('Order email sent for session', session.id);
-  } catch (err) {
-    console.error('Could not email the order for', session.id, err.message);
-  }
-});
-
 app.use(express.json());
 
 app.get('/health', (req, res) => res.json({ ok: true }));
@@ -243,6 +195,25 @@ app.post('/api/checkout', async (req, res) => {
       return res.status(400).json({ error: 'Cart is empty' });
     }
 
+    // Decided on the cart before any promotion code, which Stripe applies
+    // later on its own page.
+    const subtotal = Object.entries(cart).reduce(
+      (n, [id, qty]) => n + priceById.get(Number(id)).price * Number(qty), 0);
+    const fee = shippingFor(Math.round(subtotal * 100) / 100);
+    const shipping_options = [{
+      shipping_rate_data: {
+        type: 'fixed_amount',
+        fixed_amount: { amount: Math.round(fee * 100), currency: 'eur' },
+        display_name: fee
+          ? (locale === 'it' ? 'Spedizione' : 'Shipping')
+          : (locale === 'it' ? 'Spedizione gratuita' : 'Free shipping'),
+        delivery_estimate: {
+          minimum: { unit: 'business_day', value: 2 },
+          maximum: { unit: 'business_day', value: 4 },
+        },
+      },
+    }];
+
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       // Apple Pay and Google Pay ride along with 'card' and need no entry here.
@@ -250,11 +221,15 @@ app.post('/api/checkout', async (req, res) => {
       // Shows the "Add promotion code" field on Stripe's page. The codes
       // themselves are created in the Stripe dashboard, not here.
       allow_promotion_codes: true,
+      // Asks for a phone number on Stripe's page, so the courier and we can
+      // reach the customer. It arrives on the session as customer_details.phone.
+      phone_number_collection: { enabled: true },
       line_items,
       locale,
       // Italy only for now: the business is not yet set up to charge another
       // country's VAT, and honey is restricted at several non-EU borders.
       shipping_address_collection: { allowed_countries: ['IT'] },
+      shipping_options,
       // The cart rides along so a paid session can be read back as a sale.
       // This is what makes the stock count possible without a database.
       metadata: { ub_items: JSON.stringify(cart).slice(0, 480) },
@@ -357,80 +332,25 @@ async function sendEmail({ to, subject, html, replyTo }) {
   if (!r.ok) throw new Error(`Resend ${r.status}`);
 }
 
-/* When the lines could not be fetched, the cart we put in the metadata is
-   still there, so the email can at least say what was bought. */
-function itemsFromMetadata(session) {
-  const raw = session.metadata && session.metadata.ub_items;
-  if (!raw) return 'Vedi l\'ordine su Stripe';
-  try {
-    return Object.entries(JSON.parse(raw)).map(([sku, qty]) => {
-      const product = priceById.get(Number(sku));
-      return `${qty}× ${product ? product.name.it + ' (' + product.unit.it + ')' : 'codice ' + sku}`;
-    }).join(' · ');
-  } catch {
-    return 'Vedi l\'ordine su Stripe';
-  }
-}
+/* Newsletter signups are written to a Google Sheet: the server posts each
+   address to a small Google Apps Script web app bound to that sheet, which
+   appends a row (see server/README.md). Set NEWSLETTER_SHEET_URL on Render
+   to that web app's URL. Without it, each signup is emailed to
+   ORDER_EMAIL_TO instead, so no address is ever lost. */
+const NEWSLETTER_SHEET_URL = process.env.NEWSLETTER_SHEET_URL || '';
 
-/* What Virginia needs in order to pack a parcel: what, how much, where to,
-   and who to answer. Everything here comes from Stripe, not from the browser. */
-async function emailPaidOrder(session) {
-  /* The event already carries enough to raise the alarm. Asking Stripe for the
-     lines and the address makes a better email, but if that call fails the
-     notification must still go out: an order nobody hears about is the whole
-     thing this endpoint exists to prevent. */
-  let full = session;
-  try {
-    full = await stripe.checkout.sessions.retrieve(session.id, { expand: ['line_items'] });
-  } catch (err) {
-    console.error('Could not expand session', session.id, '—', err.message);
-  }
-
-  const items = (full.line_items && full.line_items.data) || [];
-  const rows = items.length
-    ? items.map(li =>
-        `<tr><td>${esc(li.quantity)}&times;</td><td>${esc(li.description || '')}</td>` +
-        `<td align="right">${money((li.amount_total || 0) / 100)}</td></tr>`).join('')
-    : `<tr><td colspan="3">${esc(itemsFromMetadata(full))}</td></tr>`;
-
-  const ship = full.shipping_details || full.customer_details || {};
-  const addr = ship.address || {};
-  const lines = [
-    ship.name,
-    addr.line1, addr.line2,
-    [addr.postal_code, addr.city, addr.state].filter(Boolean).join(' '),
-    addr.country,
-  ].filter(Boolean).map(esc).join('<br>');
-
-  const email = (full.customer_details && full.customer_details.email) || '';
-  const phone = (full.customer_details && full.customer_details.phone) || '';
-
-  await sendEmail({
-    to: ORDER_EMAIL_TO,
-    replyTo: email || undefined,
-    subject: `Ordine pagato — ${money((full.amount_total || 0) / 100)}`,
-    html: `
-      <h2 style="font-family:system-ui,sans-serif">Ordine pagato</h2>
-      <table cellpadding="6" style="font-family:system-ui,sans-serif;border-collapse:collapse">
-        ${rows}
-        <tr><td></td><td><b>Totale</b></td>
-            <td align="right"><b>${money((full.amount_total || 0) / 100)}</b></td></tr>
-      </table>
-      <h3 style="font-family:system-ui,sans-serif">Spedire a</h3>
-      <p style="font-family:system-ui,sans-serif">${lines || '—'}</p>
-      <p style="font-family:system-ui,sans-serif">
-        ${email ? esc(email) : ''}${phone ? '<br>' + esc(phone) : ''}
-      </p>
-      <p style="font-family:system-ui,sans-serif;color:#666;font-size:13px">
-        Pagato con carta su Stripe. Riferimento: ${esc(full.id)}
-        ${lines ? '' : '<br><b>Indirizzo non disponibile qui: aprilo su Stripe.</b>'}
-      </p>`,
+async function addToSheet(email, lang){
+  const r = await fetch(NEWSLETTER_SHEET_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, lang, source: 'sito' }),
+    redirect: 'follow',     // Apps Script answers through a redirect
   });
+  if (!r.ok) throw new Error(`Sheet ${r.status}`);
 }
 
 app.post('/api/subscribe', async (req, res) => {
-  if (!RESEND_API_KEY || !ORDER_EMAIL_TO) {
-    // The page falls back to opening the reader's mail client.
+  if (!NEWSLETTER_SHEET_URL && (!RESEND_API_KEY || !ORDER_EMAIL_TO)) {
     return res.status(503).json({ error: 'Newsletter is not configured' });
   }
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
@@ -442,6 +362,11 @@ app.post('/api/subscribe', async (req, res) => {
   if (!looksLikeEmail(email)) return res.status(400).json({ error: 'Invalid email' });
 
   try {
+    if (NEWSLETTER_SHEET_URL) {
+      await addToSheet(email, (req.body || {}).lang === 'en' ? 'en' : 'it');
+      console.log('Newsletter signup saved');   // the address itself stays out of the logs
+      return res.json({ ok: true });
+    }
     await sendEmail({
       to: ORDER_EMAIL_TO,
       replyTo: email,
@@ -514,6 +439,8 @@ app.post('/api/order/bank-transfer', async (req, res) => {
     }
     if (!lines.length) return res.status(400).json({ error: 'Cart is empty' });
     total = Math.round(total * 100) / 100;
+    const shipping = shippingFor(total);
+    total = Math.round((total + shipping) * 100) / 100;
 
     const reference = orderReference();
     const rows = lines.map(l =>
@@ -523,6 +450,8 @@ app.post('/api/order/bank-transfer', async (req, res) => {
     const orderTable =
       `<table cellpadding="6" style="border-collapse:collapse;font-family:sans-serif;font-size:14px">` +
       rows +
+      `<tr><td></td><td>${it ? 'Spedizione' : 'Shipping'}</td>` +
+      `<td align="right">${shipping ? money(shipping) : (it ? 'Gratis' : 'Free')}</td></tr>` +
       `<tr><td></td><td><strong>${it ? 'Totale' : 'Total'}</strong></td>` +
       `<td align="right"><strong>${money(total)}</strong></td></tr></table>`;
 
@@ -573,8 +502,8 @@ app.post('/api/order/bank-transfer', async (req, res) => {
             : '<strong>Please quote the reference exactly</strong>: it is how we match your payment to your order.'}</p>
           ${orderTable}
           <p>${it
-            ? 'Spediamo appena il bonifico arriva, di solito in due o tre giorni lavorativi. Spedizione inclusa.'
-            : 'We ship as soon as the transfer arrives, usually within two or three working days. Shipping included.'}</p>
+            ? 'Spediamo appena il bonifico arriva, di solito in due o tre giorni lavorativi.'
+            : 'We ship as soon as the transfer arrives, usually within two or three working days.'}</p>
           <p style="color:#6E6A64">Urban Bees — urbanbees.it</p>
         </div>`,
     });
