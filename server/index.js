@@ -351,6 +351,9 @@ async function addToSheet(email, lang){
 
 app.post('/api/subscribe', async (req, res) => {
   if (!NEWSLETTER_SHEET_URL && (!RESEND_API_KEY || !ORDER_EMAIL_TO)) {
+    // Said out loud, because a refusal nobody can see is how every signup
+    // was lost for days without anyone knowing why.
+    console.error('Newsletter signup refused: set NEWSLETTER_SHEET_URL (or RESEND_API_KEY + ORDER_EMAIL_TO) on Render.');
     return res.status(503).json({ error: 'Newsletter is not configured' });
   }
   const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim()
