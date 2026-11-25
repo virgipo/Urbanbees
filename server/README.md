@@ -16,7 +16,8 @@ A honey is one card on the site and several rows here: each size is its own
 code, and the cart, the stock check and the checkout all work on those codes
 and never need to know that two of them are the same honey. The code is
 `<beekeeper><size>`: 1xx Cazzola, 2xx Marco Ruga, 3xx El Veler, and within a
-beekeeper x01 = 125 g, x02 = 200 g, x03 = 400 g. In `index.html` the same
+beekeeper x01 = small, x02 = medium, x03 = large — the grams are in the row
+(Cazzola's 101 is 90 g, Ruga's 201 is 125 g), not in the code. In `index.html` the same
 number is the `sku` of an entry in a product's `sizes` array.
 
 Codes must never be reused for something else. A visitor with the shop open

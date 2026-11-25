@@ -14,8 +14,8 @@
         "en": "Acacia Comb — Apicoltura Cazzola"
       },
       "unit": {
-        "it": "favo 125 g",
-        "en": "125 g comb"
+        "it": "favo 90 g",
+        "en": "90 g comb"
       },
       "price": 11.9,
       "stock": 0
@@ -30,7 +30,7 @@
         "it": "favo 125 g",
         "en": "125 g comb"
       },
-      "price": 12.9,
+      "price": 6.9,
       "pool": "ruga-tiglio",
       "g": 125
     },
@@ -44,7 +44,7 @@
         "it": "favo 200 g",
         "en": "200 g comb"
       },
-      "price": 19.0,
+      "price": 10.9,
       "pool": "ruga-tiglio",
       "g": 200
     },
@@ -58,7 +58,7 @@
         "it": "favo 400 g",
         "en": "400 g comb"
       },
-      "price": 35.0,
+      "price": 19.9,
       "pool": "ruga-tiglio",
       "g": 400
     },
@@ -72,7 +72,7 @@
         "it": "vaschetta 400 g",
         "en": "400 g tray"
       },
-      "price": 35.0,
+      "price": 29.9,
       "stock": 4
     }
   ]

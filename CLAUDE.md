@@ -36,7 +36,9 @@ counts: prices and stock are always looked up there, never trusted from the
 browser. Change one, change the other. `server/README.md` has the details.
 
 - **One card per honey, one code per size.** Code = beekeeper + size:
-  1xx Cazzola, 2xx Marco Ruga, 3xx El Veler; x01 125 g, x02 200 g, x03 400 g.
+  1xx Cazzola, 2xx Marco Ruga, 3xx El Veler; x01 small, x02 medium, x03
+  large. The grams live in the entry, not in the code: Cazzola's 101 is
+  90 g, Ruga's 201/202/203 are 125/200/400 g.
   Never reuse a code for something else.
 - **Two kinds of stock.** Packs carry `stock` (El Veler: trays). Honey cut to
   order carries a weight shared by its sizes (`pool` + `grams`; Marco Ruga's
