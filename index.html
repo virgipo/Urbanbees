@@ -803,6 +803,84 @@ a{color:inherit;text-decoration:none}
   .whole .btn{width:100%}
 }
 
+
+/* ---------- hotels, retreats, events ---------- */
+.ev-hero{background:var(--tint)}
+.ev-hero-in{
+  display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
+  gap:56px;align-items:center;padding-top:64px;padding-bottom:64px;
+}
+.ev-hero-text h1{
+  font-size:clamp(32px,4.6vw,54px);font-weight:600;line-height:1.06;
+  letter-spacing:-.03em;margin:16px 0 20px;
+}
+.ev-hero-text p{font-size:17px;line-height:1.7;color:var(--ink-2);max-width:48ch}
+.ev-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.ev-ctas .btn{width:auto;padding:14px 26px;text-decoration:none;display:inline-block}
+.ev-hero-img{margin:0;border-radius:var(--r);overflow:hidden;aspect-ratio:1/1}
+.ev-hero-img img{width:100%;height:100%;object-fit:cover;display:block}
+
+.ev-block{padding:72px 0 0}
+.ev-h2{font-size:clamp(24px,3vw,32px);font-weight:600;letter-spacing:-.02em;margin-bottom:28px}
+.ev-uses{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.ev-use{border-top:1px solid var(--ink);padding-top:18px}
+.ev-use .n{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--ink-3)}
+.ev-use h3{font-size:17px;font-weight:600;letter-spacing:-.01em;margin:10px 0 8px}
+.ev-use p{font-size:14.5px;line-height:1.7;color:var(--ink-2)}
+
+.ev-offer{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1fr);gap:56px;align-items:center}
+.ev-offer-img{margin:0;border-radius:var(--r);overflow:hidden;aspect-ratio:4/5}
+.ev-offer-img img{width:100%;height:100%;object-fit:cover;display:block}
+.ev-list{list-style:none;padding:0;margin:0}
+.ev-list li{
+  font-size:15.5px;line-height:1.7;color:var(--ink-2);
+  padding:14px 0;border-bottom:1px solid var(--line);
+}
+.ev-list li b{color:var(--ink);font-weight:600}
+.ev-note{font-size:13.5px;line-height:1.65;color:var(--ink-3);margin-top:18px;max-width:58ch}
+
+.ev-steps{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;counter-reset:ev}
+.ev-steps li{counter-increment:ev;background:var(--tint);border-radius:var(--r);padding:26px 24px}
+.ev-steps li::before{
+  content:counter(ev);display:flex;align-items:center;justify-content:center;
+  width:30px;height:30px;border-radius:50%;background:var(--deep);color:var(--tint);
+  font-size:13px;font-weight:600;margin-bottom:16px;
+}
+.ev-steps h3{font-size:17px;font-weight:600;margin-bottom:6px}
+.ev-steps p{font-size:14.5px;line-height:1.65;color:var(--ink-2)}
+
+.ev-final{
+  margin:72px 0 80px;padding:44px 44px;background:var(--deep);color:var(--tint);
+  border-radius:var(--r);display:flex;flex-wrap:wrap;gap:28px 48px;
+  align-items:center;justify-content:space-between;
+}
+.ev-final h2{font-size:clamp(26px,3.4vw,38px);font-weight:600;letter-spacing:-.025em;margin-bottom:8px}
+.ev-final p{font-size:15.5px;line-height:1.65;opacity:.78;max-width:46ch}
+.ev-contacts{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.ev-final .btn-solid{background:var(--tint);color:var(--deep);width:auto;padding:14px 26px;text-decoration:none}
+.ev-line{color:var(--tint);font-size:15px;text-decoration:none;opacity:.85}
+.ev-line:hover{opacity:1;text-decoration:underline}
+.ev-line[hidden]{display:none}
+
+.whole-ctas{display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.whole-ev{font-size:13.5px;color:var(--ink-2);text-decoration:underline;text-underline-offset:3px;text-align:left}
+.whole-ev:hover{color:var(--ink)}
+
+@media (max-width:900px){
+  .ev-hero-in,.ev-offer{grid-template-columns:1fr;gap:32px}
+  .ev-hero-in{padding-top:36px;padding-bottom:44px}
+  .ev-hero-img{aspect-ratio:4/3}
+  .ev-uses{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ev-steps{grid-template-columns:1fr}
+  .ev-block{padding-top:52px}
+}
+@media (max-width:560px){
+  .ev-uses{grid-template-columns:1fr}
+  .ev-final{padding:32px 24px;margin-bottom:56px}
+  .ev-ctas .btn,.ev-final .btn-solid{width:100%;text-align:center}
+  .whole-ctas{width:100%}
+}
+
 /* ---------- toast ---------- */
 .toast{
   position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(14px);
@@ -895,6 +973,7 @@ a{color:inherit;text-decoration:none}
         <span id="t-menu"></span>
       </button>
       <button class="navlink" data-nav="shop" id="t-nav-shop"></button>
+      <button class="navlink" data-nav="eventi" id="t-nav-eventi"></button>
       <div class="has-menu" id="about-menu">
         <button class="navlink" id="about-trigger" aria-expanded="false" aria-haspopup="true">
           <span id="t-nav-about"></span>
@@ -941,6 +1020,7 @@ a{color:inherit;text-decoration:none}
 
   <nav class="mobile-nav" id="mobile-nav">
     <button data-nav="shop" id="t-m-shop"></button>
+    <button data-nav="eventi" id="t-m-eventi"></button>
     <span class="m-group" id="t-m-about"></span>
     <button data-nav="producers" class="sub" id="t-m-beekeepers"></button>
     <button data-nav="about" class="sub" id="t-m-mission"></button>
@@ -1001,7 +1081,10 @@ a{color:inherit;text-decoration:none}
               <h3 id="t-whole-title"></h3>
               <p id="t-whole-text"></p>
             </div>
-            <button class="btn btn-outline" data-nav="contact" id="t-whole-cta"></button>
+            <div class="whole-ctas">
+              <button class="btn btn-outline" data-nav="contact" id="t-whole-cta"></button>
+              <button class="whole-ev" data-nav="eventi" id="t-whole-ev"></button>
+            </div>
           </section>
         </div>
       </div>
@@ -1092,6 +1175,59 @@ a{color:inherit;text-decoration:none}
   </section>
 
   <!-- ============ editorial pages ============ -->
+  <!-- ============ hotels, retreats, catering, events ============ -->
+  <section class="view" id="view-eventi">
+    <div class="ev-hero">
+      <div class="shell ev-hero-in">
+        <div class="ev-hero-text">
+          <span class="u-label" id="t-ev-label"></span>
+          <h1 id="t-ev-title"></h1>
+          <p id="t-ev-sub"></p>
+          <div class="ev-ctas">
+            <a class="btn btn-solid" id="ev-mail-top"></a>
+            <a class="btn btn-outline" id="ev-ig-top" href="https://www.instagram.com/urbanbees.it/" target="_blank" rel="noopener"></a>
+          </div>
+        </div>
+        <figure class="ev-hero-img">
+          <img src="blog/favi-nel-frutteto.webp" alt="" id="ev-hero-img">
+        </figure>
+      </div>
+    </div>
+
+    <div class="shell">
+      <section class="ev-block">
+        <h2 class="ev-h2" id="t-ev-where"></h2>
+        <div class="ev-uses" id="ev-uses"></div>
+      </section>
+
+      <section class="ev-block ev-offer">
+        <figure class="ev-offer-img"><img src="eventi/telaino.webp" alt="" id="ev-offer-img"></figure>
+        <div>
+          <h2 class="ev-h2" id="t-ev-offer"></h2>
+          <ul class="ev-list" id="ev-offer-list"></ul>
+          <p class="ev-note" id="t-ev-note"></p>
+        </div>
+      </section>
+
+      <section class="ev-block">
+        <h2 class="ev-h2" id="t-ev-how"></h2>
+        <ol class="ev-steps" id="ev-steps"></ol>
+      </section>
+
+      <section class="ev-final">
+        <div>
+          <h2 id="t-ev-final"></h2>
+          <p id="t-ev-final-sub"></p>
+        </div>
+        <div class="ev-contacts">
+          <a class="btn btn-solid" id="ev-mail-bottom"></a>
+          <a class="ev-line" id="ev-tel"></a>
+          <a class="ev-line" href="https://www.instagram.com/urbanbees.it/" target="_blank" rel="noopener">@urbanbees.it</a>
+        </div>
+      </section>
+    </div>
+  </section>
+
   <section class="view" id="view-about">
     <div class="shell">
       <div class="page-head">
@@ -1178,6 +1314,7 @@ a{color:inherit;text-decoration:none}
       <h4 id="t-foot-about-h"></h4>
       <ul>
         <li><button class="foot-link" data-nav="producers" id="t-foot-producers"></button></li>
+        <li><button class="foot-link" data-nav="eventi" id="t-foot-eventi"></button></li>
         <li><button class="foot-link" data-nav="contact" id="t-foot-contact"></button></li>
         <li><button class="foot-link" data-nav="beekeep" id="t-foot-beekeep"></button></li>
       </ul>
@@ -1199,6 +1336,40 @@ const I18N = {
     navShop:'Shop', navAbout:'Chi siamo', navBlog:'Blog', navCart:'Carrello', menu:'Menu',
     menuBeekeepers:'I nostri apicoltori',
     menuMission:'La nostra missione',
+    navEventi:'Eventi',
+    footEventi:'Hotel, retreat ed eventi',
+    wholeEv:'Organizzi un evento o gestisci un hotel? Vedi come lavoriamo →',
+    evLabel:'Per hotel, retreat ed eventi',
+    evTitle:'Il favo intero, al centro della tavola.',
+    evSub:'Un telaino di miele in favo, presentato così com\'è uscito dall\'arnia. Si taglia davanti agli ospiti, si mangia tutto, cera compresa, e porta con sé il nome dell\'apicoltore che l\'ha fatto. È un prodotto raro, e si vede.',
+    evMail:'Richiedi una proposta',
+    evIg:'Scrivici su Instagram',
+    evWhere:'Dove funziona',
+    evUses:[
+      ['Colazioni in hotel','Il telaino sul buffet, con un coltello accanto: ogni ospite si taglia il suo pezzo. È la colazione che si ricorda, e che si fotografa.'],
+      ['Retreat e benessere','Un cibo che nessuno ha lavorato: non estratto, non filtrato, non scaldato. Sta bene dentro giornate fatte di lentezza e di cose vere.'],
+      ['Catering e matrimoni','Accanto ai formaggi o nell\'angolo dei dolci, il favo intero diventa il centro della tavola. Basta tagliarlo al momento, davanti a tutti.'],
+      ['Eventi e degustazioni','Per una cena, un evento aziendale o una degustazione: un prodotto che pochi hanno visto dal vivo, con una storia da raccontare.'],
+    ],
+    evOffer:'Cosa vi offriamo',
+    evOfferList:[
+      '<b>Il telaino intero</b>, come esce dall\'arnia. Il peso cambia da un telaino all\'altro: ve lo diciamo prima, insieme al prezzo.',
+      '<b>Miele di piccoli apicoltori italiani</b>, sempre con il loro nome: tiglio, millefiori o acacia, secondo quello che ha dato la stagione.',
+      '<b>Una scheda per gli ospiti</b> da mettere accanto al favo: chi l\'ha fatto, dove, da quale fioritura.',
+      '<b>Consigli su come presentarlo</b> e su cosa abbinarlo, se vi servono.',
+      '<b>Forniture ripetute</b> per hotel e ristoranti, compatibilmente con i raccolti.',
+    ],
+    evNote:'Le quantità dipendono dal raccolto e alcune fioriture non tornano ogni anno. Per un evento, scriveteci con qualche settimana di anticipo.',
+    evHow:'Come funziona',
+    evSteps:[
+      ['Scriveteci','Raccontateci il tipo di evento o di struttura, la data, quante persone e la città.'],
+      ['Vi facciamo una proposta','Quale miele, quanti telaini e a che prezzo. Su misura, non a listino.'],
+      ['Prepariamo i favi','Concordiamo insieme consegna o spedizione, e arrivano pronti da mettere in tavola.'],
+    ],
+    evFinal:'Parliamone.',
+    evFinalSub:'Ogni evento è diverso: ci basta qualche riga per capire cosa vi serve.',
+    evMailSubject:'Richiesta per un evento — Urban Bees',
+    evMailBody:'Ciao Urban Bees,\n\nNome:\nStruttura o azienda:\nTipo di evento:\nData:\nNumero di ospiti:\nCittà:\n\nGrazie!',
     misLabel:'Perché esistiamo', misTitle:'La nostra missione',
     misLede:'Il miele, proprio come nasce.',
     misBlocks:[
@@ -1347,6 +1518,40 @@ const I18N = {
     navShop:'Shop', navAbout:'About', navBlog:'Blog', navCart:'Cart', menu:'Menu',
     menuBeekeepers:'Our beekeepers',
     menuMission:'Our mission',
+    navEventi:'Events',
+    footEventi:'Hotels, retreats and events',
+    wholeEv:'Running an event or a hotel? See how we work with you →',
+    evLabel:'For hotels, retreats and events',
+    evTitle:'The whole comb, at the centre of the table.',
+    evSub:'A frame of comb honey, served just as it came out of the hive. It is cut in front of your guests, eaten whole, wax and all, and it carries the name of the beekeeper who made it. It is a rare thing, and it shows.',
+    evMail:'Ask for a proposal',
+    evIg:'Message us on Instagram',
+    evWhere:'Where it works',
+    evUses:[
+      ['Hotel breakfasts','The frame on the buffet with a knife beside it: every guest cuts their own piece. The breakfast people remember, and photograph.'],
+      ['Retreats and wellbeing','A food nobody has worked on: never extracted, filtered or warmed. It belongs in days made of slowness and real things.'],
+      ['Catering and weddings','Next to the cheeses or at the dessert table, the whole comb becomes the centre of the table. Just cut it on the spot, in front of everyone.'],
+      ['Events and tastings','For a dinner, a company event or a tasting: something few people have seen in person, with a story to tell.'],
+    ],
+    evOffer:'What we offer',
+    evOfferList:[
+      '<b>The whole frame</b>, as it comes out of the hive. Weight varies from frame to frame: we tell you beforehand, with the price.',
+      '<b>Honey from small Italian beekeepers</b>, always under their own name: linden, wildflower or acacia, depending on what the season gave.',
+      '<b>A card for your guests</b> to set beside the comb: who made it, where, from which bloom.',
+      '<b>Advice on presenting it</b> and on what to pair it with, if you want it.',
+      '<b>Regular supplies</b> for hotels and restaurants, as far as the harvests allow.',
+    ],
+    evNote:'Quantities depend on the harvest, and some blooms do not come back every year. For an event, write to us a few weeks ahead.',
+    evHow:'How it works',
+    evSteps:[
+      ['Write to us','Tell us the kind of event or venue, the date, how many people and the city.'],
+      ['We make you a proposal','Which honey, how many frames and at what price. Made to measure, not from a price list.'],
+      ['We prepare the combs','We agree delivery or shipping together, and they arrive ready for the table.'],
+    ],
+    evFinal:'Let\'s talk.',
+    evFinalSub:'Every event is different: a few lines are enough for us to understand what you need.',
+    evMailSubject:'Event enquiry — Urban Bees',
+    evMailBody:'Hello Urban Bees,\n\nName:\nVenue or company:\nKind of event:\nDate:\nNumber of guests:\nCity:\n\nThank you!',
     misLabel:'Why we exist', misTitle:'Our mission',
     misLede:'Honey, exactly as it is born.',
     misBlocks:[
@@ -1631,6 +1836,7 @@ function renderChrome(){
 
   setText('t-menu', t.menu);
   setText('t-nav-shop', t.navShop);
+  setText('t-nav-eventi', t.navEventi);
   setText('t-nav-about', t.navAbout);
   setText('t-nav-blog', t.navBlog);
   setText('t-nav-cart', t.navCart);
@@ -1639,6 +1845,7 @@ function renderChrome(){
   setText('t-menu-beekeepers', t.menuBeekeepers);
   setText('t-menu-mission', t.menuMission);
   setText('t-m-shop', t.navShop);
+  setText('t-m-eventi', t.navEventi);
   setText('t-m-about', t.navAbout);
   setText('t-m-beekeepers', t.menuBeekeepers);
   setText('t-m-mission', t.menuMission);
@@ -1668,12 +1875,14 @@ function renderChrome(){
   setText('t-foot-follow-h', t.footFollowH);
   setText('t-foot-about-h', t.footAboutH);
   setText('t-foot-producers', t.footProducers);
+  setText('t-foot-eventi', t.footEventi);
   setText('t-foot-contact', t.footContact);
   setText('t-foot-beekeep', t.footBeekeep);
   setText('t-foot-rights', t.footRights);
   setText('t-foot-ship-note', t.footShipNote.replace('{f}', freeFromLabel()));
 
   renderMission();
+  renderEventi();
   renderBlog();
   if (el('view-entry').classList.contains('active') && currentSlug) renderEntry(currentSlug);
 
@@ -1746,6 +1955,7 @@ function renderFilters(){
   setText('t-whole-title', t.wholeTitle);
   el('t-whole-text').innerHTML = t.wholeText;
   setText('t-whole-cta', t.wholeCta);
+  setText('t-whole-ev', t.wholeEv);
 
   const n = activeCount();
   el('facets-clear').hidden = n === 0;
@@ -2235,6 +2445,46 @@ function renderMission(){
 /* Set PHONE to the number to publish, e.g. '+39 333 1234567'. While it is
    empty the contact page simply has no telephone line. */
 const PHONE = '+39 347 392 9653';
+
+/* Hotels, retreats, caterers, event planners. Sold by conversation, never by
+   cart: weight and price change with every frame, and every event needs
+   something different. So the page's whole job is to make writing easy — the
+   mail opens with the questions already in it. */
+function renderEventi(){
+  const t = T();
+  const mail = 'hey.urbanbees@gmail.com';
+  const href = 'mailto:' + mail +
+    '?subject=' + encodeURIComponent(t.evMailSubject) +
+    '&body=' + encodeURIComponent(t.evMailBody);
+
+  setText('t-ev-label', t.evLabel);
+  setText('t-ev-title', t.evTitle);
+  setText('t-ev-sub', t.evSub);
+  ['ev-mail-top', 'ev-mail-bottom'].forEach(id => {
+    el(id).href = href;
+    el(id).textContent = t.evMail;
+  });
+  setText('ev-ig-top', t.evIg);
+
+  setText('t-ev-where', t.evWhere);
+  el('ev-uses').innerHTML = t.evUses.map(([h, p], i) =>
+    `<article class="ev-use"><span class="n">${String(i + 1).padStart(2, '0')}</span>
+       <h3>${h}</h3><p>${p}</p></article>`).join('');
+
+  setText('t-ev-offer', t.evOffer);
+  el('ev-offer-list').innerHTML = t.evOfferList.map(x => `<li>${x}</li>`).join('');
+  setText('t-ev-note', t.evNote);
+
+  setText('t-ev-how', t.evHow);
+  el('ev-steps').innerHTML = t.evSteps.map(([h, p]) =>
+    `<li><h3>${h}</h3><p>${p}</p></li>`).join('');
+
+  setText('t-ev-final', t.evFinal);
+  setText('t-ev-final-sub', t.evFinalSub);
+  const tel = el('ev-tel');
+  tel.hidden = !PHONE;
+  if (PHONE) { tel.href = 'tel:' + PHONE.replace(/\s/g, ''); tel.textContent = PHONE; }
+}
 
 function renderContactPages(){
   const t = T();
